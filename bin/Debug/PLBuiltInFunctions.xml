@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>PLBuiltInFunctions</name>
+  </assembly>
+  <members>
+    <member name="T:PowerLanguage.CustomInstrumentBase">
+      <summary>
+            Base class of custom instrument.
+            </summary>
+    </member>
+    <member name="T:PowerLanguage.CustomInstrument">
+      <summary>
+            Allows to access data series of another symbol without adding it as an additional data series.
+            Note: after using CustomInstrument you need to call the Dispose() method for proper operation of MultiCharts application. 
+            </summary>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.CStudyControl,PowerLanguage.Resolution)">
+      <summary>
+            Data series constructor.
+            </summary>
+      <param name="_this">The new series time scale is bound to time scale of data series the indicator is based on.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.IInstrument,PowerLanguage.Resolution)">
+      <summary>
+            Data series constructor.
+            </summary>
+      <param name="_base">The new series time scale is bound to time scale of specified data series on chart.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.IInstrument,System.String,PowerLanguage.Resolution)">
+      <summary>
+            Data series constructor.
+            </summary>
+      <param name="_base">The new series time scale is bound to time scale of specified data series.</param>
+      <param name="instrumentName">The name of the symbol.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.IInstrument,System.String,PowerLanguage.Resolution,System.Boolean)">
+      <summary>
+            Constructor.
+            </summary>
+      <param name="_base">The new series time scale is bound to time scale of specified data series.</param>
+      <param name="instrumentName">The name of the symbol.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+      <param name="needRT">Real-time data subcription mode. If only historical data is required, set the pearamterto "false".</param>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.IInstrument,System.String,ATCenterProxy.interop.MTPA_MCSymbolInfo2,PowerLanguage.Resolution,System.Boolean)">
+      <summary>
+            Data series constructor.
+            </summary>
+      <param name="_base">The new series time scale is bound to time scale of specified data series.</param>
+      <param name="datafeed">The name of the data provider.</param>
+      <param name="instrument">Attributes of the symbol.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+      <param name="needRT">Real-time data subcription mode. If only historical data is required, set the pearamterto "false".</param>
+    </member>
+    <member name="M:PowerLanguage.CustomInstrument.#ctor(PowerLanguage.IInstrument,System.String,ATCenterProxy.interop.MTPA_MCSymbolInfo2,PowerLanguage.Resolution,System.Boolean,PowerLanguage.RequestQuoteField)">
+      <summary>
+            Constructor.
+            </summary>
+      <param name="_base">The new series time scale is bound to time scale of specified data series.</param>
+      <param name="datafeed">The name of the data provider.</param>
+      <param name="instrument">Attributes of the symbol.</param>
+      <param name="resolution">The data resolution of the new symbol.</param>
+      <param name="needRT">Real-time data subcription mode. If only historical data is required, set the pearamterto "false".</param>
+            /// <param name="field">Quote field of the symbol. Possible values: Ask, Bid or Trade.</param></member>
+    <member name="P:PowerLanguage.CustomInstrument.WaitLoadTimeout">
+      <summary>
+            Time to wait for data when loading it upon accessing bars.
+            If the time is out and data is not loading, the System.TimeoutException is generated.
+            </summary>
+    </member>
+    <member name="T:PowerLanguage.DataLoader.DataLoaderCache">
+      <summary>
+            DataLoader singleton service.
+            Caches LoadData requests, what allows to avoid same data over-requestin. 
+            It increases the speed of script calculation. 
+            </summary>
+    </member>
+    <member name="P:PowerLanguage.DataLoader.DataLoaderCache.Instance">
+      <summary>
+            Returns reference to IDataLoader.
+            </summary>
+    </member>
+    <member name="T:PowerLanguage.Server.ServerProxyEditor">
+      <exclude />
+    </member>
+  </members>
+</doc>
