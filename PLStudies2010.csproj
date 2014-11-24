@@ -317,12 +317,11 @@
     <Compile Include="_GaryRevAverageFC.Function.CS" />
     <Compile Include="_GaryAvgTwo.Indicator.CS" />
     <Compile Include="_GaryTest.Indicator.CS" />
-    <Compile Include="_gConditionSumFC.Function.CS" />
-    <Compile Include="_gConditionAvgFC.Function.CS" />
     <Compile Include="_gConMov_Avg_1_Line.Indicator.CS" />
-    <Compile Include="_gSumFC.Function.CS" />
-    <Compile Include="_gAvgFC.Function.CS" />
-    <Compile Include="_gMov_Avg_1_Line.Indicator.CS" />
+    <Compile Include="_gConAvgFC.Function.CS" />
+    <Compile Include="_gTurnMetric_Delta.Indicator.CS" />
+    <Compile Include="_gConXAvgFC.Function.CS" />
+    <Compile Include="_gConSumFC.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
