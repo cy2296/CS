@@ -15,7 +15,7 @@ namespace PowerLanguage
 			public _gConXAvgFC(CStudyControl _master, int _ds) : base(_master, _ds) { }
 
             public ISeries<Double> price { get; set; }
-            //public ISeries<Double> price2 { get; set; }
+            public ISeries<Double> volume { get; set; }
 
             public double eventId { get; set; }    // 0: not a event, 1: dwon, 2: up
             public int length { get; set; }
@@ -32,11 +32,19 @@ namespace PowerLanguage
 
 			protected override System.Double CalcBar()
 			{
-                if (1 == Bars.CurrentBar)
-                    return price[0];
-
+				var barId = Bars.CurrentBar;
+				var barVol = volume[0];
+				var barPrice = price[0];
+				//if (Bars.Volume[0] == 2)
+				if (1 == Bars.CurrentBar)
+				{
+					if (volume[0] == eventId)
+						return price[0];
+					else
+						return 0;
+				}
                 double prev = this[1];
-                if (Bars.Volume[0] == eventId)
+				if (volume[0] == eventId)
                     return prev + 2.0 / (length + 1) * (price[0] - prev);
                 else
                     return prev;

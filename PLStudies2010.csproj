@@ -322,6 +322,7 @@
     <Compile Include="_gTurnMetric_Delta.Indicator.CS" />
     <Compile Include="_gConXAvgFC.Function.CS" />
     <Compile Include="_gConSumFC.Function.CS" />
+    <Compile Include="_gTurnMetric_Spread.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@ using PowerLanguage.Function;
 
 namespace PowerLanguage.Indicator
 {
-	public class _gTurnMetric_Delta : IndicatorObject 
+	public class _gTurnMetric_Spread : IndicatorObject 
     {
         private _gConXAvgFC m_xAvgUpEsFC;
         private _gConXAvgFC m_xAvgDnEsFC;
@@ -20,25 +20,25 @@ namespace PowerLanguage.Indicator
         private VariableSeries<Double> m_avgDn;
         private VariableSeries<Double> m_avgTot;
 
-		//private VariableSeries<Double> m_dollarSpread;
+		private VariableSeries<Double> m_dollarSpread;
 
-        public _gTurnMetric_Delta(object _ctx):base(_ctx)
+        public _gTurnMetric_Spread(object _ctx):base(_ctx)
 		{
 			length = 10;
 			vxWeight = 0.6;
 			upRatio = 0.5;
-			//spreadLookBack = 100;
+			spreadLookBack = 100;
 		}
 		
-		private IPlotObject upES;
-		private IPlotObject dnES;
-		private IPlotObject upVX;
-		private IPlotObject dnVX;
-		private IPlotObject upDel;
-		private IPlotObject dnDel;
-		private IPlotObject totDel;
+		//private IPlotObject upES;
+		//private IPlotObject dnES;
+		//private IPlotObject upVX;
+		//private IPlotObject dnVX;
+		//private IPlotObject upDel;
+		//private IPlotObject dnDel;
+		//private IPlotObject totDel;
 
-		//private IPlotObject spread;
+		private IPlotObject spread;
 
 		private ISeries<double> esDelta { get; set; }
 		private ISeries<double> esEvent { get; set; }
@@ -58,8 +58,8 @@ namespace PowerLanguage.Indicator
 		[Input]
 		public double upRatio { get; set; }
 
-		//[Input]
-		//public int spreadLookBack { get; set; }
+		[Input]
+		public int spreadLookBack { get; set; }
 
 		protected override void Create()
         {
@@ -76,17 +76,17 @@ namespace PowerLanguage.Indicator
             m_avgDn   = new VariableSeries<Double>(this);
             m_avgTot  = new VariableSeries<Double>(this);
 
-			//m_dollarSpread = new VariableSeries<Double>(this);
+			m_dollarSpread = new VariableSeries<Double>(this);
 
 			// create variable objects, function objects, plot objects etc.
-			upES   = AddPlot(new PlotAttributes("upES", 0, Color.MediumTurquoise, Color.Empty, 1, 0, true));
-			dnES = AddPlot(new PlotAttributes("dnES", 0, Color.LightPink, Color.Empty, 1, 0, true));
-			upVX = AddPlot(new PlotAttributes("upVX", 0, Color.LightCyan, Color.Empty, 1, 0, true));
-			dnVX = AddPlot(new PlotAttributes("dnVX", 0, Color.MistyRose, Color.Empty, 1, 0, true));
-			upDel = AddPlot(new PlotAttributes("Up", 0, Color.Aqua, Color.Empty, 2, 0, true));
-			dnDel = AddPlot(new PlotAttributes("Down", 0, Color.Red, Color.Empty, 2, 0, true));
-			totDel = AddPlot(new PlotAttributes("Total", 0, Color.Yellow, Color.Empty, 3, 0, true));
-			//spread = AddPlot(new PlotAttributes("Spread", EPlotShapes.Histogram, Color.Cyan, Color.Empty, 3, 0, true));
+			//upES   = AddPlot(new PlotAttributes("upES", 0, Color.MediumTurquoise, Color.Empty, 1, 0, true));
+			//dnES = AddPlot(new PlotAttributes("dnES", 0, Color.LightPink, Color.Empty, 1, 0, true));
+			//upVX = AddPlot(new PlotAttributes("upVX", 0, Color.LightCyan, Color.Empty, 1, 0, true));
+			//dnVX = AddPlot(new PlotAttributes("dnVX", 0, Color.MistyRose, Color.Empty, 1, 0, true));
+			//upDel = AddPlot(new PlotAttributes("Up", 0, Color.Aqua, Color.Empty, 2, 0, true));
+			//dnDel = AddPlot(new PlotAttributes("Down", 0, Color.Red, Color.Empty, 2, 0, true));
+			//totDel = AddPlot(new PlotAttributes("Total", 0, Color.Yellow, Color.Empty, 3, 0, true));
+			spread = AddPlot(new PlotAttributes("Spread", EPlotShapes.Histogram, Color.Cyan, Color.Empty, 3, 0, true));
 		}
 		protected override void StartCalc()
         {
@@ -96,8 +96,8 @@ namespace PowerLanguage.Indicator
 			vxDelta = BarsOfData(2).Close;
 			vxEvent = BarsOfData(2).TrueVolume();
 
-			//fvES = BarsOfData(3).Close;
-			//fvVX = BarsOfData(4).Close;
+			fvES = BarsOfData(3).Close;
+			fvVX = BarsOfData(4).Close;
 
             m_xAvgUpEsFC.price = esDelta;
             m_xAvgDnEsFC.price = esDelta;
@@ -131,19 +131,19 @@ namespace PowerLanguage.Indicator
             m_avgDn.Value = (1 - vxWeight) * m_avgDnES.Value + vxWeight * m_avgDnVX.Value;
             m_avgTot.Value = upRatio * m_avgUp.Value + (1 - upRatio) * m_avgDn.Value;
 
-			//var esChange = fvES[0] - fvES[spreadLookBack];
-			//var vxChange = fvVX[0] - fvVX[spreadLookBack];
-			//m_dollarSpread.Value = esChange * 50 + vxChange * 1000;
+			var esChange = fvES[0] - fvES[spreadLookBack];
+			var vxChange = fvVX[0] - fvVX[spreadLookBack];
+			m_dollarSpread.Value = esChange * 50 + vxChange * 1000;
 
-            upES.Set(0, m_avgUpES.Value);
-            dnES.Set(0, m_avgDnES.Value);
-            upVX.Set(0, m_avgUpVX.Value);
-            dnVX.Set(0, m_avgDnVX.Value);
-            upDel.Set(0, m_avgUp.Value);
-            dnDel.Set(0, m_avgDn.Value);
-            totDel.Set(0, m_avgTot.Value);
+			//upES.Set(0, m_avgUpES.Value);
+			//dnES.Set(0, m_avgDnES.Value);
+			//upVX.Set(0, m_avgUpVX.Value);
+			//dnVX.Set(0, m_avgDnVX.Value);
+			//upDel.Set(0, m_avgUp.Value);
+			//dnDel.Set(0, m_avgDn.Value);
+			//totDel.Set(0, m_avgTot.Value);
 
-			//spread.Set(0, m_dollarSpread.Value);
+			spread.Set(0, m_dollarSpread.Value);
 		}
 	}
 }
