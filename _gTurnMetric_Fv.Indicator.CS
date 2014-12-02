@@ -5,13 +5,13 @@ using PowerLanguage.Function;
 
 namespace PowerLanguage.Indicator
 {
-	public class _gTurnMetric_Spread : IndicatorObject 
+	public class _gTurnMetric_Fv : IndicatorObject 
     {
         private _gConXAvgFC m_xAvgUpEsFC;
         private _gConXAvgFC m_xAvgDnEsFC;
         private _gConXAvgFC m_xAvgUpVxFC;
         private _gConXAvgFC m_xAvgDnVxFC;
-
+		/// Variable series for computing deltas
         private VariableSeries<Double> m_avgUpES;
         private VariableSeries<Double> m_avgDnES;
         private VariableSeries<Double> m_avgUpVX;
@@ -19,29 +19,30 @@ namespace PowerLanguage.Indicator
         private VariableSeries<Double> m_avgUp;
         private VariableSeries<Double> m_avgDn;
         private VariableSeries<Double> m_avgTot;
+		/// Variable series for plotting dollar change value 
+		private VariableSeries<Double> m_dChangeES;
+		private VariableSeries<Double> m_dChangeVX;
+		private VariableSeries<Double> m_dChangeVxTheo;
 
-		private VariableSeries<Double> m_dollarSpreadTheo;
-		private VariableSeries<Double> m_dollarSpreadReal;
-
-        public _gTurnMetric_Spread(object _ctx):base(_ctx)
+		public _gTurnMetric_Fv(object _ctx)
+			: base(_ctx)
 		{
 			length = 10;
 			vxWeight = 0.6;
 			upRatio = 0.5;
 			spreadLookBack = 100;
 		}
-	
-		private IPlotObject spreadReal;
-		private IPlotObject spreadTheo;
+		private IPlotObject dChageES;
+		private IPlotObject dChangeVX;
+		private IPlotObject dChangeVxTheo;
 
 		private ISeries<double> esDelta { get; set; }
 		private ISeries<double> esEvent { get; set; }
 		private ISeries<double> vxDelta { get; set; }
 		private ISeries<double> vxEvent { get; set; }
 
-		private ISeries<double> fvES { get; set; }
-		private ISeries<double> fvVX { get; set; }
-
+		private ISeries<double> esFv { get; set; }
+		private ISeries<double> vxFv { get; set; }
 
 		[Input]
 		public int length { get; set; }
@@ -70,11 +71,14 @@ namespace PowerLanguage.Indicator
             m_avgDn   = new VariableSeries<Double>(this);
             m_avgTot  = new VariableSeries<Double>(this);
 
-			m_dollarSpreadReal = new VariableSeries<Double>(this);
-			m_dollarSpreadTheo = new VariableSeries<Double>(this);
+			m_dChangeES = new VariableSeries<Double>(this);
+			m_dChangeVX = new VariableSeries<Double>(this);
+			m_dChangeVxTheo = new VariableSeries<Double>(this);
 
-			spreadReal = AddPlot(new PlotAttributes("SpreadReal", EPlotShapes.Histogram, Color.Cyan, Color.Empty, 3, 0, true));
-			spreadTheo = AddPlot(new PlotAttributes("SpreadTheo", EPlotShapes.Line, Color.Red, Color.Empty, 3, 0, true));
+			dChageES = AddPlot(new PlotAttributes("dollarES", EPlotShapes.Line, Color.Red, Color.Empty, 3, 0, true));
+			dChangeVX = AddPlot(new PlotAttributes("dollarVX", EPlotShapes.Line, Color.Green, Color.Empty, 3, 0, true));
+			dChangeVxTheo = AddPlot(new PlotAttributes("dollarVxTheo", EPlotShapes.Line, Color.Cyan, Color.Empty, 3, 0, true));
+
 		}
 		protected override void StartCalc()
         {
@@ -84,8 +88,8 @@ namespace PowerLanguage.Indicator
 			vxDelta = BarsOfData(2).Close;
 			vxEvent = BarsOfData(2).TrueVolume();
 
-			fvES = BarsOfData(3).Close;
-			fvVX = BarsOfData(4).Close;
+			esFv = BarsOfData(3).Close;
+			vxFv = BarsOfData(4).Close;
 
             m_xAvgUpEsFC.price = esDelta;
             m_xAvgDnEsFC.price = esDelta;
@@ -118,15 +122,13 @@ namespace PowerLanguage.Indicator
             m_avgDn.Value = (1 - vxWeight) * m_avgDnES.Value + vxWeight * m_avgDnVX.Value;
             m_avgTot.Value = upRatio * m_avgUp.Value + (1 - upRatio) * m_avgDn.Value;
 
-			var esDollarChange = 50 * (fvES[0] - fvES[spreadLookBack]);
-			var vxDollarChangeReal = 1000 * (fvVX[0] - fvVX[spreadLookBack]);
-			var vxDollarChangeTheo = -1 * m_avgTot[spreadLookBack] * esDollarChange;
-
-			m_dollarSpreadReal.Value = esDollarChange + vxDollarChangeReal;
-			m_dollarSpreadTheo.Value = esDollarChange + vxDollarChangeTheo;
-
-			spreadTheo.Set(0, m_dollarSpreadTheo.Value);
-			spreadReal.Set(0, m_dollarSpreadReal.Value);
+			m_dChangeES.Value = 50 * (esFv[0] - esFv[spreadLookBack]);
+			m_dChangeVX.Value = 1000 * (vxFv[0] - vxFv[spreadLookBack]);
+			m_dChangeVxTheo.Value = -1 * m_avgTot[spreadLookBack] * m_dChangeES.Value;
+	
+			dChageES.Set(0, m_dChangeES.Value);
+			dChangeVX.Set(0, -1 * m_dChangeVX.Value);
+			dChangeVxTheo.Set(0, -1 * m_dChangeVxTheo.Value);
 		}
 	}
 }
