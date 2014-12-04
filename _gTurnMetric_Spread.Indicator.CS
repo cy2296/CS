@@ -7,18 +7,7 @@ namespace PowerLanguage.Indicator
 {
 	public class _gTurnMetric_Spread : IndicatorObject 
     {
-        private _gConXAvgFC m_xAvgUpEsFC;
-        private _gConXAvgFC m_xAvgDnEsFC;
-        private _gConXAvgFC m_xAvgUpVxFC;
-        private _gConXAvgFC m_xAvgDnVxFC;
-
-        private VariableSeries<Double> m_avgUpES;
-        private VariableSeries<Double> m_avgDnES;
-        private VariableSeries<Double> m_avgUpVX;
-        private VariableSeries<Double> m_avgDnVX;
-        private VariableSeries<Double> m_avgUp;
-        private VariableSeries<Double> m_avgDn;
-        private VariableSeries<Double> m_avgTot;
+		private _gDeltaFC m_deltaFC;
 
 		private VariableSeries<Double> m_dollarSpreadTheo;
 		private VariableSeries<Double> m_dollarSpreadReal;
@@ -33,11 +22,6 @@ namespace PowerLanguage.Indicator
 	
 		private IPlotObject spreadReal;
 		private IPlotObject spreadTheo;
-
-		private ISeries<double> esDelta { get; set; }
-		private ISeries<double> esEvent { get; set; }
-		private ISeries<double> vxDelta { get; set; }
-		private ISeries<double> vxEvent { get; set; }
 
 		private ISeries<double> fvES { get; set; }
 		private ISeries<double> fvVX { get; set; }
@@ -57,18 +41,7 @@ namespace PowerLanguage.Indicator
 
 		protected override void Create()
         {
-            m_xAvgUpEsFC = new _gConXAvgFC(this);
-            m_xAvgDnEsFC = new _gConXAvgFC(this);
-            m_xAvgUpVxFC = new _gConXAvgFC(this);
-            m_xAvgDnVxFC = new _gConXAvgFC(this);
-
-            m_avgUpES = new VariableSeries<Double>(this);
-            m_avgDnES = new VariableSeries<Double>(this);
-            m_avgUpVX = new VariableSeries<Double>(this);
-            m_avgDnVX = new VariableSeries<Double>(this);
-            m_avgUp   = new VariableSeries<Double>(this);
-            m_avgDn   = new VariableSeries<Double>(this);
-            m_avgTot  = new VariableSeries<Double>(this);
+			m_deltaFC = new _gDeltaFC(this);
 
 			m_dollarSpreadReal = new VariableSeries<Double>(this);
 			m_dollarSpreadTheo = new VariableSeries<Double>(this);
@@ -78,49 +51,22 @@ namespace PowerLanguage.Indicator
 		}
 		protected override void StartCalc()
         {
-			esDelta = Bars.Close;
-			esEvent = Bars.TrueVolume();
-			
-			vxDelta = BarsOfData(2).Close;
-			vxEvent = BarsOfData(2).TrueVolume();
+			m_deltaFC.esDelta = Bars.Close;
+			m_deltaFC.esEvent = Bars.TrueVolume();
+			m_deltaFC.vxDelta = BarsOfData(2).Close;
+			m_deltaFC.vxEvent = BarsOfData(2).TrueVolume();
+			m_deltaFC.length = length;
+			m_deltaFC.vxWeight = vxWeight;
+			m_deltaFC.upRatio = upRatio;
 
 			fvES = BarsOfData(3).Close;
 			fvVX = BarsOfData(4).Close;
-
-            m_xAvgUpEsFC.price = esDelta;
-            m_xAvgDnEsFC.price = esDelta;
-            m_xAvgUpVxFC.price = vxDelta;
-            m_xAvgDnVxFC.price = vxDelta;
-
-			m_xAvgUpEsFC.volume = esEvent;
-			m_xAvgDnEsFC.volume = esEvent;
-			m_xAvgUpVxFC.volume = vxEvent;
-			m_xAvgDnVxFC.volume = vxEvent;
-
-            m_xAvgUpEsFC.length = length;
-            m_xAvgDnEsFC.length = length;
-            m_xAvgUpVxFC.length = length;
-            m_xAvgDnVxFC.length = length;
-
-            m_xAvgUpEsFC.eventId = 2.0;
-            m_xAvgDnEsFC.eventId = 1.0;
-            m_xAvgUpVxFC.eventId = 2.0;
-            m_xAvgDnVxFC.eventId = 1.0;
 		}
 		protected override void CalcBar()
         {
-			m_avgUpES.Value = (0 == m_xAvgUpEsFC[0]) ? 0 : 1 / m_xAvgUpEsFC[0];
-            m_avgDnES.Value = (0 == m_xAvgDnEsFC[0]) ? 0 : 1 / m_xAvgDnEsFC[0];
-            m_avgUpVX.Value = m_xAvgUpVxFC[0];
-            m_avgDnVX.Value = m_xAvgDnVxFC[0];
-
-            m_avgUp.Value = (1 - vxWeight) * m_avgUpES.Value + vxWeight * m_avgUpVX.Value;
-            m_avgDn.Value = (1 - vxWeight) * m_avgDnES.Value + vxWeight * m_avgDnVX.Value;
-            m_avgTot.Value = upRatio * m_avgUp.Value + (1 - upRatio) * m_avgDn.Value;
-
 			var esDollarChange = 50 * (fvES[0] - fvES[spreadLookBack]);
 			var vxDollarChangeReal = 1000 * (fvVX[0] - fvVX[spreadLookBack]);
-			var vxDollarChangeTheo = -1 * m_avgTot[spreadLookBack] * esDollarChange;
+			var vxDollarChangeTheo = -1 * m_deltaFC[spreadLookBack] * esDollarChange;
 
 			m_dollarSpreadReal.Value = esDollarChange + vxDollarChangeReal;
 			m_dollarSpreadTheo.Value = esDollarChange + vxDollarChangeTheo;
