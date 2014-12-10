@@ -326,6 +326,7 @@
     <Compile Include="_gTurnMetric_Fv.Indicator.CS" />
     <Compile Include="_gDeltaFC.Function.CS" />
     <Compile Include="_gBollinger_Bands_AddOn.Function.CS" />
+    <Compile Include="Test_SignalByIndicator.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

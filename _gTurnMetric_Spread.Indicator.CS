@@ -33,11 +33,15 @@ namespace PowerLanguage.Indicator
 		//private IPlotObject Plot1;
 		//private IPlotObject Plot2;
 		//private IPlotObject Plot3;
-
+		
 		private ISeries<double> fvES { get; set; }
+
 		private ISeries<double> fvVX { get; set; }
 
 		/// inputs for delta 
+		//[Input]
+		//public ISeries<double> testInput { get; set; }
+
 		[Input]
 		public int deltaLength { get; set; }
 		[Input]
