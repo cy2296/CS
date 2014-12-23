@@ -29,7 +29,7 @@ namespace PowerLanguage.Indicator{
 		}
 		protected override void CalcBar()
         {
-			plot1.Set(m_adx_indic.Plots[0].Values[0]);
+			plot1.Set(m_adx_indic.Plots[0].Values[1]);
 		}
 	}
 }

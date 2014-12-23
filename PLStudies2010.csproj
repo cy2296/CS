@@ -309,22 +309,23 @@
     <Compile Include="Gap_Down_SE.Strategy.CS" />
     <Compile Include="Channel_Trailing_SX.Strategy.CS" />
     <Compile Include="MovAvg2Line_Cross_LE.Strategy.CS" />
+    <Compile Include="Test_SignalByIndicator.Strategy.CS" />
+    <Compile Include="_GaryAvgTwo.Indicator.CS" />
+    <Compile Include="_GaryRevAverageFC.Function.CS" />
+    <Compile Include="_GaryTest.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Strategy.CS" />
-    <Compile Include="_test.Indicator.CS" />
-    <Compile Include="_GaryRevAverageFC.Function.CS" />
-    <Compile Include="_GaryAvgTwo.Indicator.CS" />
-    <Compile Include="_GaryTest.Indicator.CS" />
-    <Compile Include="_gConMov_Avg_1_Line.Indicator.CS" />
-    <Compile Include="_gConAvgFC.Function.CS" />
-    <Compile Include="_gTurnMetric_Delta.Indicator.CS" />
-    <Compile Include="_gConXAvgFC.Function.CS" />
-    <Compile Include="_gConSumFC.Function.CS" />
-    <Compile Include="_gTurnMetric_Spread.Indicator.CS" />
-    <Compile Include="_gTurnMetric_Fv.Indicator.CS" />
-    <Compile Include="_gDeltaFC.Function.CS" />
     <Compile Include="_gBollinger_Bands_AddOn.Function.CS" />
-    <Compile Include="Test_SignalByIndicator.Strategy.CS" />
+    <Compile Include="_gConAvgFC.Function.CS" />
+    <Compile Include="_gConMov_Avg_1_Line.Indicator.CS" />
+    <Compile Include="_gConSumFC.Function.CS" />
+    <Compile Include="_gConXAvgFC.Function.CS" />
+    <Compile Include="_gDeltaFC.Function.CS" />
+    <Compile Include="_gTurnMetric_Delta.Indicator.CS" />
+    <Compile Include="_gTurnMetric_Fv.Indicator.CS" />
+    <Compile Include="_gTurnMetric_Spread.Indicator.CS" />
+    <Compile Include="_test.Indicator.CS" />
+    <Compile Include="_gVX_fv.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
