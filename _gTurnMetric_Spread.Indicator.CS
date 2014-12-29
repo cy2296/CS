@@ -24,7 +24,7 @@ namespace PowerLanguage.Indicator
 			deltaLength = 100;
 			vxWeight = 0.6;
 			upRatio = 0.5;
-			spreadLookBack = 5;
+			spreadLookBack = 10;
 		}
 	
 		private IPlotObject spreadReal;
