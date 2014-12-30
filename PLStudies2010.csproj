@@ -313,8 +313,8 @@
     <Compile Include="MovAvg2Line_Cross_LE.Strategy.CS" />
     <Compile Include="Test_SignalByIndicator.Strategy.CS" />
     <Compile Include="_GaryAvgTwo.Indicator.CS" />
-    <Compile Include="_GaryRevAverageFC.Function.CS" />
-    <Compile Include="_GaryTest.Indicator.CS" />
+    <Compile Include="_gTestSeriesFC.Function.CS" />
+    <Compile Include="_gTestIndic.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Strategy.CS" />
     <Compile Include="_gBollinger_Bands_AddOn.Function.CS" />
@@ -328,6 +328,11 @@
     <Compile Include="_gTurnMetric_Spread.Indicator.CS" />
     <Compile Include="_test.Indicator.CS" />
     <Compile Include="_gVX_fv.Indicator.CS" />
+    <Compile Include="_gTestSimpleFC.Function.CS" />
+    <Compile Include="_gHedgeRatio.Indicator.CS" />
+    <Compile Include="_gSingleReturnHedge.Indicator.CS" />
+    <Compile Include="_gSingleReturn.Indicator.CS" />
+    <Compile Include="_gVX_theoVX.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

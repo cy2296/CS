@@ -56,7 +56,8 @@ namespace PowerLanguage.Indicator
                                            Color.Empty, 0, 0, true));
         }
 
-        protected override void StartCalc(){
+        protected override void StartCalc()
+        {
             bollingerprice = Bars.Close;
             testpriceuband = Bars.Close;
             testpricelband = Bars.Close;
@@ -65,7 +66,8 @@ namespace PowerLanguage.Indicator
         }
 
 
-        protected override void CalcBar(){
+        protected override void CalcBar()
+        {
             var m_avg = m_averagefc1[0];
             var m_sdev = bollingerprice.StandardDeviationCustom(length, 1);
             m_upperband.Value = (m_avg + (numdevsup*m_sdev));
