@@ -333,6 +333,7 @@
     <Compile Include="_gSingleReturnHedge.Indicator.CS" />
     <Compile Include="_gSingleReturn.Indicator.CS" />
     <Compile Include="_gVX_theoVX.Indicator.CS" />
+    <Compile Include="_gTurnMetric_Pnl_1.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
