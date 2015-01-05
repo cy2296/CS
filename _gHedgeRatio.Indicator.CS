@@ -7,9 +7,6 @@ namespace PowerLanguage.Indicator{
 	public class _gHedgeRatio : IndicatorObject {
 		public _gHedgeRatio(object _ctx):base(_ctx)
 		{
-		    delta_length = 100;
-            delta_vxWeight = 0.6;
-            delta_upRatio = 0.5;
             sizeFactor = 100; 
 		}
 		
@@ -20,12 +17,12 @@ namespace PowerLanguage.Indicator{
 		private IPlotObject plot2;
 			
 		private _gTurnMetric_Delta m_delta_indic;
-		[Input]
-        public int delta_length { get; set; }
-        [Input]
-        public double delta_vxWeight { get; set; }
-        [Input]
-        public double delta_upRatio { get; set; }
+
+        // private variables for delta indicator
+        private int delta_length = 100;
+        private double delta_vxWeight = 0.6;
+        private double delta_upRatio = 0.5;
+        /////////////////////////////////////////
         [Input]
         public int sizeFactor { get; set; }
 		
@@ -46,15 +43,18 @@ namespace PowerLanguage.Indicator{
 			// assign inputs 
 		}
 		protected override void CalcBar(){
-			if (1 == Bars.CurrentBar)
-			{
-				m_esSize.Value = sizeFactor;
-				m_vxSize.Value = sizeFactor;
-			}
-			var delta = m_delta_indic.Plots[6].Values[1];
-			m_esSize.Value = 2 * sizeFactor * delta / (1 + delta);
-			m_vxSize.Value = 2 * sizeFactor - m_esSize.Value;
+            if (Bars.CurrentBar >= delta_length)
+            {
+                var delta = m_delta_indic.Plots[6].Values[1];
+                m_esSize.Value = 2 * sizeFactor * delta / (1 + delta);
+                m_vxSize.Value = 2 * sizeFactor - m_esSize.Value;
 
+            }
+            else 
+            {
+                m_esSize.Value = sizeFactor;
+                m_vxSize.Value = sizeFactor;
+            }
 			plot1.Set(0,m_esSize.Value);
 			plot2.Set(0,m_vxSize.Value);
 		}

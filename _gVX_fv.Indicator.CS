@@ -14,11 +14,16 @@ namespace PowerLanguage.Indicator{
         }
         private VariableSeries<Double> m_theoVX;
         private IPlotObject plot1;
-        //private _gTurnMetric_Delta m_delta_indic;
         private _gTurnMetric_Delta m_delta_indic;
 
         private ISeries<double> esFv { get; set; }
         private ISeries<double> vxFv { get; set; }
+
+        // private variables for delta indicator
+        private int delta_length = 100;
+        private double delta_vxWeight = 0.6;
+        private double delta_upRatio = 0.5;
+        /////////////////////////////////////////
 
         //[Input]
         //public int delta_length { get; set; }
@@ -33,9 +38,9 @@ namespace PowerLanguage.Indicator{
             m_theoVX = new VariableSeries<double>(this);
 			plot1 = AddPlot(new PlotAttributes("theoVX", EPlotShapes.Line, Color.Red));
             m_delta_indic = (_gTurnMetric_Delta)AddIndicator("_gTurnMetric_Delta");
-            m_delta_indic.length = 100;
-            m_delta_indic.vxWeight = 0.6;
-            m_delta_indic.upRatio = 0.5;
+            m_delta_indic.length = delta_length;
+            m_delta_indic.vxWeight = delta_vxWeight;
+            m_delta_indic.upRatio = delta_upRatio;
            
         }
 		protected override void StartCalc() 
@@ -43,14 +48,20 @@ namespace PowerLanguage.Indicator{
             esFv = BarsOfData(3).Close;
             vxFv = BarsOfData(4).Close;
 		}
-		protected override void CalcBar(){
-			// indicator logic 
-            //var theoVX = m_dChange_indic.Plots].Values[0] + vxFv[0];
-            var dollarChangeES = 50 * (esFv[0] - esFv[spreadLookBack]);
-            var theoDollarChangeVX = (m_delta_indic.Plots[6].Values[spreadLookBack] != 0) ?
-                -1 / m_delta_indic.Plots[6].Values[spreadLookBack] * dollarChangeES : 0;
-            var theoVX = vxFv[spreadLookBack] + (theoDollarChangeVX / 1000);
-            plot1.Set(0, theoVX);
+		protected override void CalcBar()
+        {
+            if (Bars.CurrentBar >= delta_length)
+            {
+                var dollarChangeES = 50 * (esFv[0] - esFv[spreadLookBack]);
+                var theoDollarChangeVX = (m_delta_indic.Plots[6].Values[spreadLookBack] != 0) ?
+                    -1 / m_delta_indic.Plots[6].Values[spreadLookBack] * dollarChangeES : 0;
+                m_theoVX.Value = vxFv[spreadLookBack] + (theoDollarChangeVX / 1000);
+            }
+            else
+            {
+                m_theoVX.Value = vxFv[0];
+            }
+            plot1.Set(0, m_theoVX.Value);
 		}
 	}
 }

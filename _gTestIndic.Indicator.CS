@@ -38,7 +38,7 @@ namespace PowerLanguage.Indicator{
             //m_theoVX_indic.delta_length = 100;
             //m_theoVX_indic.delta_vxWeight = 0.6;
             //m_theoVX_indic.delta_upRatio = 0.5;
-            m_theoVX_indic.spreadLookBack = 50;		
+            m_theoVX_indic.spreadLookBack = 10;		
 		}
 		protected override void StartCalc() 
         {
@@ -50,8 +50,6 @@ namespace PowerLanguage.Indicator{
 			// indicator logic 
             m_spread.Value = vxFv[0] - m_theoVX_indic.Plots[0].Values[0];
             plot1.Set(0, m_spread.Value);
-
-          
 		}
 	}
 }

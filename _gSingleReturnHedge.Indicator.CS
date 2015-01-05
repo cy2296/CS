@@ -8,9 +8,6 @@ namespace PowerLanguage.Indicator{
     {
 		public _gSingleReturnHedge(object _ctx):base(_ctx)
         {
-            delta_length = 100;
-            delta_vxWeight = 0.6;
-            delta_upRatio = 0.5;
             sizeFactor = 100; 
         }
 
@@ -21,12 +18,7 @@ namespace PowerLanguage.Indicator{
         private ISeries<double> fvVX { get; set; }
 
         private _gHedgeRatio m_hedge_indic;
-        [Input]
-        public int delta_length { get; set; }
-        [Input]
-        public double delta_vxWeight { get; set; }
-        [Input]
-        public double delta_upRatio { get; set; }
+
         [Input]
         public int sizeFactor { get; set; }
 
@@ -37,9 +29,6 @@ namespace PowerLanguage.Indicator{
                 Color.Cyan, Color.Empty, 0, 0, true));
 
             m_hedge_indic = (_gHedgeRatio)AddIndicator("_gHedgeRatio");
-            m_hedge_indic.delta_length = delta_length;
-            m_hedge_indic.delta_vxWeight = delta_vxWeight;
-            m_hedge_indic.delta_upRatio = delta_upRatio;
             m_hedge_indic.sizeFactor = sizeFactor;
 		}
 
@@ -51,9 +40,8 @@ namespace PowerLanguage.Indicator{
 
 		protected override void CalcBar()
         {
-            if (1 == Bars.CurrentBar)
-                m_bbDollarChange.Value = 0;
-
+            //if (1 == Bars.CurrentBar)
+             //   m_bbDollarChange.Value = 0;
             var dollarChangeES = m_hedge_indic.Plots[0].Values[1] * 50 * (fvES[0] - fvES[1]);
             var dollarChangeVX = m_hedge_indic.Plots[1].Values[1] * 1000 * (fvVX[0] - fvVX[1]);
             m_bbDollarChange.Value = dollarChangeES + dollarChangeVX;
