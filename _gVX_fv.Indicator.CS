@@ -7,9 +7,6 @@ namespace PowerLanguage.Indicator{
 	public class _gVX_fv : IndicatorObject {
 		public _gVX_fv(object _ctx):base(_ctx)
         {
-            //delta_length = 100;
-            //delta_vxWeight = 0.6;
-            //delta_upRatio = 0.5;
             spreadLookBack = 10;        
         }
         private VariableSeries<Double> m_theoVX;
@@ -24,24 +21,17 @@ namespace PowerLanguage.Indicator{
         private double delta_vxWeight = 0.6;
         private double delta_upRatio = 0.5;
         /////////////////////////////////////////
-
-        //[Input]
-        //public int delta_length { get; set; }
-        //[Input]
-        //public double delta_vxWeight { get; set; }
-        //[Input]
-        //public double delta_upRatio { get; set; }
         [Input]
         public int spreadLookBack { get; set; }
 
-        protected override void Create() {
+        protected override void Create() 
+        {
             m_theoVX = new VariableSeries<double>(this);
-			plot1 = AddPlot(new PlotAttributes("theoVX", EPlotShapes.Line, Color.Red));
+			plot1 = AddPlot(new PlotAttributes("theoVX", EPlotShapes.Line, Color.Cyan));
             m_delta_indic = (_gTurnMetric_Delta)AddIndicator("_gTurnMetric_Delta");
             m_delta_indic.length = delta_length;
             m_delta_indic.vxWeight = delta_vxWeight;
             m_delta_indic.upRatio = delta_upRatio;
-           
         }
 		protected override void StartCalc() 
         {

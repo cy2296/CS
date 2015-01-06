@@ -15,8 +15,9 @@ namespace PowerLanguage.Indicator{
         private _gSingleReturnHedge m_single_hedge_indic;
         //private ISeries<double> fvES { get; set; }
         //private ISeries<double> fvVX { get; set; }
-        //[Input]
-        //public int sizeFactor { get; set; }
+        [Input]
+        public int sizeFactor { get; set; }
+
         protected override void Create()
         {
             m_bbDollarChange = new VariableSeries<Double>(this);

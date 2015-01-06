@@ -29,7 +29,7 @@ namespace PowerLanguage.Indicator{
                 Color.Cyan, Color.Empty, 0, 0, true));
 
             m_hedge_indic = (_gHedgeRatio)AddIndicator("_gHedgeRatio");
-            m_hedge_indic.sizeFactor = sizeFactor;
+            m_hedge_indic.sizeFactor = 10;
 		}
 
 		protected override void StartCalc() 
@@ -40,8 +40,8 @@ namespace PowerLanguage.Indicator{
 
 		protected override void CalcBar()
         {
-            //if (1 == Bars.CurrentBar)
-             //   m_bbDollarChange.Value = 0;
+            //var ratio = sizeFactor / 100; // 100 is the default sizeFactor for m_hedge_indic
+
             var dollarChangeES = m_hedge_indic.Plots[0].Values[1] * 50 * (fvES[0] - fvES[1]);
             var dollarChangeVX = m_hedge_indic.Plots[1].Values[1] * 1000 * (fvVX[0] - fvVX[1]);
             m_bbDollarChange.Value = dollarChangeES + dollarChangeVX;

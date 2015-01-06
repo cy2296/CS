@@ -7,7 +7,7 @@ namespace PowerLanguage.Indicator{
 	public class _gHedgeRatio : IndicatorObject {
 		public _gHedgeRatio(object _ctx):base(_ctx)
 		{
-            sizeFactor = 100; 
+            sizeFactor = 10; 
 		}
 		
 		private VariableSeries<Double> m_esSize;
