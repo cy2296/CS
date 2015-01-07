@@ -6,41 +6,66 @@ using PowerLanguage.Function;
 namespace PowerLanguage.Indicator{
 	public class _test : IndicatorObject 
 	{
-        private VariableSeries<Double> m_bbDollarChange;
-		private IPlotObject plot1;
+        public _test(object _ctx) : base(_ctx)
+        {
 
-        public _test(object _ctx) : base(_ctx) { }
+        }
+        private VariableSeries<Double> m_closesES;
+        private VariableSeries<Double> m_closesVX;
+        private VariableSeries<Double> m_theoVX;
+        private VariableSeries<Double> m_spread;
+        private IPlotObject plot1;
 
 
-        private _gSingleReturnHedge m_single_hedge_indic;
-        //private ISeries<double> fvES { get; set; }
-        //private ISeries<double> fvVX { get; set; }
-        [Input]
-        public int sizeFactor { get; set; }
 
+        private _gTurnMetric_Delta m_delta_indic;
+
+        private ISeries<double> esFv { get; set; }
+        private ISeries<double> vxFv { get; set; }
+        // private variables for delta indicator
+        private int delta_length = 100;
+        private double delta_vxWeight = 0.6;
+        private double delta_upRatio = 0.5;
+        /////////////////////////////////////////
         protected override void Create()
         {
-            m_bbDollarChange = new VariableSeries<Double>(this);
-            m_single_hedge_indic = (_gSingleReturnHedge)AddIndicator("_gSingleReturnHedge");
-            plot1 = AddPlot(new PlotAttributes("BuyBuyPnl", 0, Color.Cyan, Color.Empty, 0, 0, true));
-
+            m_closesES = new VariableSeries<double>(this);
+            m_closesVX = new VariableSeries<double>(this);
+            m_theoVX = new VariableSeries<double>(this);
+            m_spread = new VariableSeries<double>(this);
+            plot1 = AddPlot(new PlotAttributes("theoVX_vx_spread", EPlotShapes.Histogram, Color.Cyan));
+            //plot1 = AddPlot(new PlotAttributes("theoVX_vx_spread", EPlotShapes.Line, Color.Yellow));
+            m_delta_indic = (_gTurnMetric_Delta)AddIndicator("_gTurnMetric_Delta");
+            m_delta_indic.length = delta_length;
+            m_delta_indic.vxWeight = delta_vxWeight;
+            m_delta_indic.upRatio = delta_upRatio;
         }
         protected override void StartCalc()
 		{
-            //fvES = BarsOfData(3).Close;
-            //fvVX = BarsOfData(4).Close;
+            esFv = BarsOfData(3).Close;
+            vxFv = BarsOfData(4).Close;
 		}
 		protected override void CalcBar()
 		{
-            //if (1 == Bars.CurrentBar)
-            //    m_bbDollarChange.Value = 0;
+            TimeSpan timeDiff = Bars.Time[0].Subtract(Bars.Time[1]);
+            if (timeDiff.TotalHours >= 10)
+            {
+                m_closesES.Value = esFv[1];
+                m_closesVX.Value = vxFv[1];
+            }
+            else
+            {
+                m_closesES.Value = m_closesES[1];
+                m_closesVX.Value = m_closesVX[1];
+            }
 
-            //var dollarChangeES = 50 * (fvES[0] - fvES[1]);
-            //var dollarChangeVX = 1000 * (fvVX[0] - fvVX[1]);
-            //var dollarChangeTot = dollarChangeES + dollarChangeVX;
-            m_bbDollarChange.Value = m_bbDollarChange[1] + m_single_hedge_indic.Plots[0].Values[0];
-
-            plot1.Set(0, m_bbDollarChange.Value);
+            var dollarChangeES = 50 * (esFv[0] - m_closesES.Value);
+            var theoDollarChangeVX = (m_delta_indic.Plots[6].Values[0] != 0) ?
+                    -1 / m_delta_indic.Plots[6].Values[0] * dollarChangeES : 0;
+            m_theoVX.Value = m_closesVX.Value + (theoDollarChangeVX / 1000);
+            m_spread.Value = vxFv[0] - m_theoVX.Value;
+            plot1.Set(0, m_spread.Value);
+            //plot1.Set(0, m_theoVX.Value);
 		}
 	}
 }

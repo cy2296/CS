@@ -18,8 +18,8 @@ namespace PowerLanguage.Indicator{
 
         // private variables for delta indicator
         private int delta_length = 100;
-        private double delta_vxWeight = 0.6;
-        private double delta_upRatio = 0.5;
+        private double delta_vxWeight = 0.74;
+        private double delta_upRatio = 0.49;
         /////////////////////////////////////////
         [Input]
         public int spreadLookBack { get; set; }
