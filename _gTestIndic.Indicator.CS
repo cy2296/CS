@@ -3,9 +3,13 @@ using System.Drawing;
 using System.Linq;
 using PowerLanguage.Function;
 
+using System.Text;
+
+
 namespace PowerLanguage.Indicator{
 	public class _gTestIndic : IndicatorObject 
     {
+        
 		public _gTestIndic(object _ctx):base(_ctx)
         {
             //delta_length = 100;
@@ -20,6 +24,8 @@ namespace PowerLanguage.Indicator{
         private _gVX_fv m_theoVX_indic;
         private ISeries<double> vxFv { get; set; }
 
+        private System.Text.StringBuilder csv;    
+
         //[Input]
         //public int delta_length { get; set; }
         //[Input]
@@ -31,6 +37,9 @@ namespace PowerLanguage.Indicator{
 
 		protected override void Create() 
         {
+            
+            csv = new StringBuilder();
+
             m_spread = new VariableSeries<double>(this);
             plot1 = AddPlot(new PlotAttributes("theoVX_vx_spread", EPlotShapes.Histogram, Color.Red));
            
@@ -50,6 +59,14 @@ namespace PowerLanguage.Indicator{
 			// indicator logic 
             m_spread.Value = vxFv[0] - m_theoVX_indic.Plots[0].Values[0];
             plot1.Set(0, m_spread.Value);
+
+            string data1 = m_spread.Value.ToString();
+            string data2 = m_spread.Value.ToString();
+            var newLine = string.Format("{0},{1}{2}", data1, data2, System.Environment.NewLine);
+            csv.Append(newLine);
+            //System.IO.File.WriteAllText("C:/Users/gyang/Google Drive/DeltaAnalysis/historical", csv.ToString());
+            System.IO.File.WriteAllText("C:/Users/gyang/Dropbox/mapping/test.csv", csv.ToString());
 		}
+        
 	}
 }
