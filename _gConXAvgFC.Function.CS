@@ -27,15 +27,13 @@ namespace PowerLanguage
 
 			protected override void StartCalc()
 			{
-				// assign inputs
 			}
 
 			protected override System.Double CalcBar()
 			{
-				var barId = Bars.CurrentBar;
 				var barVol = volume[0];
 				var barPrice = price[0];
-				//if (Bars.Volume[0] == 2)
+				
 				if (1 == Bars.CurrentBar)
 				{
 					if (volume[0] == eventId)

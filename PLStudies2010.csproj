@@ -336,6 +336,7 @@
     <Compile Include="_gTurnMetric_Pnl_1.Indicator.CS" />
     <Compile Include="_gES_fv.Indicator.CS" />
     <Compile Include="_gES_theoES.Indicator.CS" />
+    <Compile Include="_gDeltaFC2.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
