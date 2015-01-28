@@ -18,7 +18,10 @@ namespace PowerLanguage
             public _gConSumFC(CStudyControl _master, int _ds) : base(_master, _ds) { }
 
             public ISeries<Double> price { get; set; }
-    
+            public ISeries<Double> volume { get; set; }
+
+            public double eventId { get; set; }  
+            // if vloume == eventId, the count the price into sum
             public Int32 length { get; set; }           
             
             protected override void Create()
@@ -42,7 +45,7 @@ namespace PowerLanguage
                 while (sSize != length)
                 {
                     var debug = price[i];
-                    if (Bars.Volume[i] == 1)
+                    if (volume[i] == eventId)
                     {
                         m_conSum.Value += price[i];
                         m_initStack.Push(price[i]);
@@ -64,7 +67,7 @@ namespace PowerLanguage
                     on_first_bar();
                 else
                 {
-                    if (Bars.Volume[0] == 1)
+                    if (volume[0] == eventId)
                     {
                         m_conSum.Value = m_conSum[1] - m_priceQueue.Dequeue() + price.Value;
                         m_priceQueue.Enqueue(price.Value);  
