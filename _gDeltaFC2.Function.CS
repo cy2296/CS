@@ -80,11 +80,11 @@ namespace PowerLanguage
                 m_vxWeight.price = esDelta;
                 m_vxWeight.length = lenLookBack;
 
-                m_vxDnCount.price = 
-                m_esDnCount.length
+                //m_vxDnCount.price = 
+                //m_esDnCount.length
 
 
-                m_upWeight.length = lenLookBack;
+                //m_upWeight.length = lenLookBack;
 			}
 
 			protected override System.Double CalcBar()
