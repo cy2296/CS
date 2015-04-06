@@ -339,6 +339,9 @@
     <Compile Include="_gDeltaFC2.Function.CS" />
     <Compile Include="_gTurnMetric_Delta2.Indicator.CS" />
     <Compile Include="_gVX_theoVX_2.Indicator.CS" />
+    <Compile Include="_gOutput_1.Indicator.CS" />
+    <Compile Include="_gOutput_3.Indicator.CS" />
+    <Compile Include="_gOutput_4.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
