@@ -119,7 +119,7 @@ namespace PowerLanguage.Indicator
             {
                 csv.Append(newLine);
                 //System.IO.File.WriteAllText("C:/Users/gyang/Google Drive/DeltaAnalysis/historical", csv.ToString());
-                System.IO.File.WriteAllText("C:/Users/gyang/Dropbox/mapping/vx2.csv", csv.ToString());
+                System.IO.File.WriteAllText("C:/Users/gyang/Dropbox/mapping/vx1.csv", csv.ToString());
             }
         }
 

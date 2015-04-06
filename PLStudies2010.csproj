@@ -342,6 +342,7 @@
     <Compile Include="_gOutput_1.Indicator.CS" />
     <Compile Include="_gOutput_3.Indicator.CS" />
     <Compile Include="_gOutput_4.Indicator.CS" />
+    <Compile Include="_gOutput_2.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
