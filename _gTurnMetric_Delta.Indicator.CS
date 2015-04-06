@@ -77,7 +77,6 @@ namespace PowerLanguage.Indicator
         {
 			esDelta = Bars.Close;
 			esEvent = Bars.TrueVolume();
-			
 			vxDelta = BarsOfData(2).Close;
 			vxEvent = BarsOfData(2).TrueVolume();
 

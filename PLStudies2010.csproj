@@ -40,12 +40,12 @@
     <Reference Include="System.Data.dll" />
     <Reference Include="System.Xml.dll" />
     <Reference Include="System.Core.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\PLTypes.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\PLStudiesProxy.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\PLBuiltInFunctions.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\PLTradeManager.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\ATCenterProxy.interop.dll" />
-    <Reference Include="c:\program files\ts support\multicharts .net64\PLDataLoader.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLTypes.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLStudiesProxy.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLBuiltInFunctions.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLTradeManager.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\ATCenterProxy.interop.dll" />
+    <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLDataLoader.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Price_Less_Avg.Indicator.CS" />
@@ -341,6 +341,7 @@
     <Compile Include="_gOutput_2.Indicator.CS" />
     <Compile Include="_gOutput_4.Indicator.CS" />
     <Compile Include="_gOutput_3.Indicator.CS" />
+    <Compile Include="_gTurnMetric_Delta2.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
