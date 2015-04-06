@@ -4,12 +4,8 @@ using System.Linq;
 using PowerLanguage.Function;
 
 namespace PowerLanguage.Indicator{
-	public class _test : IndicatorObject 
-	{
-        public _test(object _ctx) : base(_ctx)
-        {
-
-        }
+	public class _gVX_theoVX_2 : IndicatorObject {
+		public _gVX_theoVX_2(object _ctx):base(_ctx){}
         private VariableSeries<Double> m_closesES;
         private VariableSeries<Double> m_closesVX;
         private VariableSeries<Double> m_theoVX;
@@ -25,7 +21,8 @@ namespace PowerLanguage.Indicator{
         private double delta_vxWeight = 0.6;
         private double delta_upRatio = 0.5;
         /////////////////////////////////////////
-        protected override void Create()
+
+		protected override void Create()
         {
             m_closesES = new VariableSeries<double>(this);
             m_closesVX = new VariableSeries<double>(this);
@@ -38,13 +35,13 @@ namespace PowerLanguage.Indicator{
             m_delta_indic.vxWeight = delta_vxWeight;
             m_delta_indic.upRatio = delta_upRatio;
         }
-        protected override void StartCalc()
-		{
+		protected override void StartCalc()
+        {
             esFv = BarsOfData(3).Close;
             vxFv = BarsOfData(4).Close;
-		}
+        }
 		protected override void CalcBar()
-		{
+        {
             TimeSpan timeDiff = Bars.Time[0].Subtract(Bars.Time[1]);
             if (timeDiff.TotalHours >= 10)
             {
@@ -64,6 +61,6 @@ namespace PowerLanguage.Indicator{
             m_spread.Value = vxFv[0] - m_theoVX.Value;
             plot1.Set(0, m_spread.Value);
             //plot1.Set(0, m_theoVX.Value);
-		}
+        }
 	}
 }

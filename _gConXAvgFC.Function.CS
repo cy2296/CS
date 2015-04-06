@@ -16,7 +16,6 @@ namespace PowerLanguage
 
             public ISeries<Double> price { get; set; }
             public ISeries<Double> volume { get; set; }
-
             public double eventId { get; set; }    // 0: not a event, 1: dwon, 2: up
             public int length { get; set; }
 

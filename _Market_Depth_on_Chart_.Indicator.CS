@@ -55,6 +55,7 @@ namespace PowerLanguage.Indicator
                 foreach (var domPrice in Bars.DOM.Bid)
                     m_value11 = Math.Max(m_value11, domPrice.Size);
 
+				if (m_value11 == 0) return;
                 m_draw_dom_level1.Call();
                 m_draw_dom_level2.Call();
 

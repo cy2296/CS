@@ -23,7 +23,15 @@ namespace PowerLanguage.Indicator{
         private _gConSumFC m_esUpCountFC;
         private VariableSeries<Double> m_vxWeight;
         private VariableSeries<Double> m_upWeight;	
-        
+      
+        // debug
+        private VariableSeries<Double> m_vxUpCnt;
+        private VariableSeries<Double> m_vxDnCnt;
+        private VariableSeries<Double> m_esUpCnt;
+        private VariableSeries<Double> m_upCnt;
+        // 
+
+
         public _gTurnMetric_Delta2(object _ctx):base(_ctx)
         {
             lenDelta = 100;
@@ -37,6 +45,15 @@ namespace PowerLanguage.Indicator{
         private IPlotObject upDel;
         private IPlotObject dnDel;
         private IPlotObject totDel;
+
+        // debug    
+        private IPlotObject vxUpCount;
+        private IPlotObject vxDnCount;
+        private IPlotObject esUpCount;
+        private IPlotObject upCount;
+        private IPlotObject vxWeight;
+        private IPlotObject upWeight;
+        // debug
 
         private ISeries<double> esDelta { get; set; }
         private ISeries<double> esEvent { get; set; }
@@ -68,6 +85,15 @@ namespace PowerLanguage.Indicator{
             m_vxWeight = new VariableSeries<Double>(this);
             m_upWeight = new VariableSeries<Double>(this);
 
+            // debug
+            m_vxUpCnt = new VariableSeries<Double>(this);
+            m_vxDnCnt = new VariableSeries<Double>(this);
+            m_esUpCnt = new VariableSeries<Double>(this);
+            m_upCnt = new VariableSeries<Double>(this);
+            //
+
+
+
             // create variable objects, function objects, plot objects etc.
             upES = AddPlot(new PlotAttributes("upES", 0, Color.MediumTurquoise, Color.Empty, 1, 0, true));
             dnES = AddPlot(new PlotAttributes("dnES", 0, Color.LightPink, Color.Empty, 1, 0, true));
@@ -76,6 +102,15 @@ namespace PowerLanguage.Indicator{
             upDel = AddPlot(new PlotAttributes("Up", 0, Color.Aqua, Color.Empty, 2, 0, true));
             dnDel = AddPlot(new PlotAttributes("Down", 0, Color.Red, Color.Empty, 2, 0, true));
             totDel = AddPlot(new PlotAttributes("Total", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            
+            // debug
+            vxUpCount = AddPlot(new PlotAttributes("vxUpCount", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            vxDnCount = AddPlot(new PlotAttributes("vxDnCount", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            esUpCount = AddPlot(new PlotAttributes("esUpCount", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            upCount = AddPlot(new PlotAttributes("upCount", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            vxWeight = AddPlot(new PlotAttributes("vxWeight", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            upWeight = AddPlot(new PlotAttributes("upWeight", 0, Color.Yellow, Color.Empty, 3, 0, true));
+            //
         }
 		protected override void StartCalc() 
         {
@@ -124,11 +159,11 @@ namespace PowerLanguage.Indicator{
             m_avgUpVX.Value = m_xAvgUpVxFC[0];
             m_avgDnVX.Value = m_xAvgDnVxFC[0];
 
-            var vxCount = ((int)m_vxUpCountFC[0] / 2) + m_vxDnCountFC[0];
+            var vxCount = (m_vxUpCountFC[0] / 2.0) + m_vxDnCountFC[0];
             m_vxWeight.Value = 1 - (vxCount / lenLookBack);
 
-            var upCount = ((int)m_vxUpCountFC[0] / 2) + ((int)m_esUpCountFC[0] / 2);
-            m_upWeight.Value = 1 - (upCount / lenLookBack);
+            var totUpCount = (m_vxUpCountFC[0] / 2.0) + (m_esUpCountFC[0] / 2.0);
+            m_upWeight.Value = 1 - (totUpCount / lenLookBack);
 
             m_avgUp.Value = (1 - m_vxWeight.Value) * m_avgUpES.Value + m_vxWeight.Value * m_avgUpVX.Value;
             m_avgDn.Value = (1 - m_vxWeight.Value) * m_avgDnES.Value + m_vxWeight.Value * m_avgDnVX.Value;
@@ -141,6 +176,21 @@ namespace PowerLanguage.Indicator{
             upDel.Set(0, m_avgUp.Value);
             dnDel.Set(0, m_avgDn.Value);
             totDel.Set(0, m_avgTot.Value);
+
+            // debug
+            m_vxUpCnt.Value = m_vxUpCountFC[0] / 2.0;
+            m_vxDnCnt.Value = m_vxDnCountFC[0];
+            m_esUpCnt.Value = m_esUpCountFC[0] / 2.0;
+            m_upCnt.Value = totUpCount;
+
+            vxUpCount.Set(0, m_vxUpCnt.Value);
+            vxDnCount.Set(0, m_vxDnCnt.Value);
+            esUpCount.Set(0, m_esUpCnt.Value);
+            upCount.Set(0, m_upCnt.Value);
+
+            vxWeight.Set(0, m_vxWeight.Value);
+            upWeight.Set(0, m_upWeight.Value); 
+            //
 		}
 	}
 }
