@@ -30,6 +30,15 @@ Namespace PowerLanguage.Indicator
             Me.m_my_font = New Font("Arial", CSng(Me.m_font_size), Me.m_font_style)
             Me.Layout = EDrawPhases.Final
         End Sub
+	
+		Protected Overrides Sub StopCalc()
+            m_last_cb = 0
+            m_last_tick_val = 0
+            m_volumes.Clear()
+            Asks = Nothing
+            Bids = Nothing
+            ChartCustomDraw.ReDraw()
+        End Sub
 
         Private Sub add_volume(ByVal price As Double, ByVal volume As Double)
             SyncLock Me.m_volumes

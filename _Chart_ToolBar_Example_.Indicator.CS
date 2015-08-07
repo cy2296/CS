@@ -26,7 +26,6 @@ namespace PowerLanguage.Indicator{
         protected override void StartCalc()
         {
 			if (!tool_bar_inited){
-				tool_bar_inited = true;
 				ChartToolBar.AccessToolBar(tb=>
 				                               {
 				                                   var _tsi3 = new ToolStripButton {Text = "plot color"};
@@ -48,6 +47,7 @@ namespace PowerLanguage.Indicator{
 
                                                    AddItem2ToolStrip(tb, new ToolStripSeparator());
 				                               });
+				tool_bar_inited = true;
 			}
 
 

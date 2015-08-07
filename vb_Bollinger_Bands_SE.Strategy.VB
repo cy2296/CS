@@ -30,7 +30,7 @@ Namespace PowerLanguage.Strategy
         Public Property Length As Integer
 
         <Input()> _
-        Public Property NumDevsUp As Integer
+        Public Property NumDevsUp As Double
 
 
         ' Fields

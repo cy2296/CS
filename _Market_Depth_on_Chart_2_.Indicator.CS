@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PowerLanguage.Indicator
 {
-    [SameAsSymbol]
+     [SameAsSymbol]
     public class _Market_Depth_on_Chart_2_ : IndicatorObject, IChartCustomDrawer
     {
         public _Market_Depth_on_Chart_2_(object ctx) :
@@ -26,11 +26,23 @@ namespace PowerLanguage.Indicator
             ChartCustomDraw.Register(this);
         }
 
+        protected override void StopCalc()
+        {
+            m_last_cb = 0;
+            m_last_tick_val = 0;
+            m_volumes.Clear();
+            Asks = null;
+            Bids = null;
+            ChartCustomDraw.ReDraw();
+        }
+
         protected override void StartCalc()
         {
             m_last_cb = 0;
             m_last_tick_val = 0;
             m_volumes.Clear();
+            Asks = null;
+            Bids = null;
             m_price_step = (1.0 / Bars.Info.PriceScale) * Bars.Info.MinMove;
             int PS = (int)Math.Log10(1.0 / Bars.Info.PriceScale);
             switch (PS)

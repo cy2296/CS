@@ -63,10 +63,10 @@ Namespace PowerLanguage.Indicator
         Public Property length As Integer
 
         <Input()> _
-        Public Property numdevsdn As Integer
+        Public Property numdevsdn As Double
 
         <Input()> _
-        Public Property numdevsup As Integer
+        Public Property numdevsup As Double
 
         Private Property testpricelband As ISeries(Of Double)
 

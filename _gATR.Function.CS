@@ -7,10 +7,10 @@ namespace PowerLanguage
 {
 	namespace Function
 	{
-		public sealed class _gTestSimpleFC : FunctionSimple<System.Double>
+		public sealed class _gATR : FunctionSeries<System.Double>
 		{
-			public _gTestSimpleFC(CStudyControl _master) : base(_master) { }
-			public _gTestSimpleFC(CStudyControl _master, int _ds) : base(_master, _ds) { }
+			public _gATR(CStudyControl _master) : base(_master) { }
+			public _gATR(CStudyControl _master, int _ds) : base(_master, _ds) { }
 
 			protected override void Create()
 			{

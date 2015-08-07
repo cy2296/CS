@@ -15,13 +15,13 @@ Namespace PowerLanguage.Strategy
         End Sub
 
         Protected Overrides Sub CalcBar()
-            If (MyBase.StrategyInfo.MarketPosition <= 0) Then
-                Me.m_EbAtrLX.Send((MyBase.Bars.Close.Item(0) - (Me.AverageTrueRange(Me.AtrLength) * Me.NumAtrs)))
+            If (MyBase.StrategyInfo.MarketPosition <> -1) Then
+                Me.m_EbAtrSX.Send((MyBase.Bars.Close.Item(0) + (Me.AverageTrueRange(Me.AtrLength) * Me.NumAtrs)))
             End If
         End Sub
 
         Protected Overrides Sub Create()
-            Me.m_EbAtrLX = MyBase.OrderCreator.Stop(New SOrderParameters(Contracts.Default, "EbAtrLX", EOrderAction.Sell, OrderExit.FromAll))
+            Me.m_EbAtrSX = MyBase.OrderCreator.Stop(New SOrderParameters(Contracts.Default, "EbAtrSX", EOrderAction.BuyToCover, OrderExit.FromAll))
         End Sub
 
 
@@ -34,6 +34,6 @@ Namespace PowerLanguage.Strategy
 
 
         ' Fields
-        Private m_EbAtrLX As IOrderPriced
+        Private m_EbAtrSX As IOrderPriced
     End Class
 End Namespace

@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5BDED609-14F2-4653-9A44-7681B05072BC}</ProjectGuid>
+    <ProjectGuid>{BA43FF06-FD46-45B7-BAC8-6E047AD0F86C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>PLStudies2010</RootNamespace>
     <AssemblyName>PLStudies2010</AssemblyName>
@@ -152,9 +152,7 @@
     <Compile Include="Formula_OHLC.Indicator.CS" />
     <Compile Include="Ease_of_Movement.Indicator.CS" />
     <Compile Include="Custom_ShowMe.Indicator.CS" />
-    <Compile Include="_TPO_.Indicator.CS">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="_TPO_.Indicator.CS" />
     <Compile Include="Pivot_High.Indicator.CS" />
     <Compile Include="C_BullEng_BearEng.Indicator.CS" />
     <Compile Include="ADXR.Indicator.CS" />
@@ -313,9 +311,11 @@
     <Compile Include="MovAvg2Line_Cross_LE.Strategy.CS" />
     <Compile Include="Test_SignalByIndicator.Strategy.CS" />
     <Compile Include="_GaryAvgTwo.Indicator.CS" />
+    <Compile Include="_gSpreadRsiDnBB.Function.CS" />
+    <Compile Include="_gTestIndic.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Indicator.CS" />
     <Compile Include="_GaryTrendPower.Strategy.CS" />
-    <Compile Include="_gBollinger_Bands_AddOn.Function.CS" />
+    <Compile Include="_gSprdRsi_BB_SX.Strategy.CS" />
     <Compile Include="_gConAvgFC.Function.CS" />
     <Compile Include="_gConMov_Avg_1_Line.Indicator.CS" />
     <Compile Include="_gConSumFC.Function.CS" />
@@ -324,25 +324,41 @@
     <Compile Include="_gTurnMetric_Delta.Indicator.CS" />
     <Compile Include="_gTurnMetric_Fv.Indicator.CS" />
     <Compile Include="_gTurnMetric_Spread.Indicator.CS" />
-    <Compile Include="_gVX_fv.Indicator.CS" />
     <Compile Include="_test.Indicator.CS" />
-    <Compile Include="_gSingleReturnHedge.Indicator.CS" />
-    <Compile Include="_gTestIndic.Indicator.CS" />
-    <Compile Include="_gTestSeriesFC.Function.CS" />
-    <Compile Include="_gTestSimpleFC.Function.CS" />
-    <Compile Include="_gTurnMetric_Pnl_1.Indicator.CS" />
-    <Compile Include="_gVX_theoVX.Indicator.CS" />
+    <Compile Include="_gVX_fv.Indicator.CS" />
+    <Compile Include="_gSprdRsi_BB_LX.Strategy.CS" />
     <Compile Include="_gHedgeRatio.Indicator.CS" />
+    <Compile Include="_gSingleReturnHedge.Indicator.CS" />
     <Compile Include="_gSingleReturn.Indicator.CS" />
+    <Compile Include="_gVX_theoVX.Indicator.CS" />
+    <Compile Include="_gTurnMetric_Pnl_1.Indicator.CS" />
     <Compile Include="_gES_fv.Indicator.CS" />
     <Compile Include="_gES_theoES.Indicator.CS" />
     <Compile Include="_gDeltaFC2.Function.CS" />
+    <Compile Include="_gOutput_1.Indicator.CS" />
+    <Compile Include="_gOutput_2.Indicator.CS" />
+    <Compile Include="_gOutput_4.Indicator.CS" />
+    <Compile Include="_gOutput_3.Indicator.CS" />
     <Compile Include="_gTurnMetric_Delta2.Indicator.CS" />
     <Compile Include="_gVX_theoVX_2.Indicator.CS" />
-    <Compile Include="_gOutput_1.Indicator.CS" />
-    <Compile Include="_gOutput_3.Indicator.CS" />
-    <Compile Include="_gOutput_4.Indicator.CS" />
-    <Compile Include="_gOutput_2.Indicator.CS" />
+    <Compile Include="_gEnergyComboIndex.Indicator.CS" />
+    <Compile Include="_gSpreadRsiUpBB.Function.CS" />
+    <Compile Include="_gSpreadFC.Function.CS" />
+    <Compile Include="_gSpreadRSI.Indicator.CS" />
+    <Compile Include="_gRsiBBand.Indicator.CS" />
+    <Compile Include="_gSpread.Indicator.CS" />
+    <Compile Include="_gSpreadRSI.Function.CS" />
+    <Compile Include="_gSpreadRsiBB.Indicator.CS" />
+    <Compile Include="_gSprdRsi_BB_LE.Strategy.CS" />
+    <Compile Include="_gSprdRsi_BB_SE.Strategy.CS" />
+    <Compile Include="_gAtrStop.Indicator.CS" />
+    <Compile Include="_gATR_LX.Strategy.CS" />
+    <Compile Include="_gATR_SX.Strategy.CS" />
+    <Compile Include="PPB.Indicator.CS" />
+    <Compile Include="_gSprdLong.Indicator.CS" />
+    <Compile Include="_gSprdShort.Indicator.CS" />
+    <Compile Include="_gSpreadATR.Indicator.CS" />
+    <Compile Include="_gATR.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

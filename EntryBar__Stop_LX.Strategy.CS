@@ -5,7 +5,7 @@
     {
         private double m_BigPointRisk;
 
-        private IOrderPriced m_EbDlrSX;
+        private IOrderPriced m_EbDlrLX;
 
         public EntryBar__Stop_LX(object ctx) :
             base(ctx)
@@ -17,8 +17,8 @@
         public double DollarRisk { get; set; }
 
         protected override void Create(){
-            m_EbDlrSX =
-                OrderCreator.Stop(new SOrderParameters(Contracts.Default, "EbDlrSX", EOrderAction.BuyToCover,
+            m_EbDlrLX =
+                OrderCreator.Stop(new SOrderParameters(Contracts.Default, "EbDlrLX", EOrderAction.Sell,
                                                              OrderExit.FromAll));
         }
 
@@ -28,8 +28,8 @@
 
 
         protected override void CalcBar(){
-            if (StrategyInfo.MarketPosition >= 0){
-                m_EbDlrSX.Send(Bars.Close[0] + m_BigPointRisk);
+            if (StrategyInfo.MarketPosition != 1){
+                m_EbDlrLX.Send(Bars.Close[0] - m_BigPointRisk);
             }
         }
     }

@@ -73,8 +73,7 @@ Namespace PowerLanguage.Indicator
         End Sub
 
         Protected Overrides Sub StartCalc()
-            If Not tool_bar_inited Then
-                tool_bar_inited = True
+            If Not tool_bar_inited Then                
                 MyBase.ChartToolBar.AccessToolBar(
                     Sub(toolBar)
                         Dim tsi3 As New ToolStripButton
@@ -97,6 +96,7 @@ Namespace PowerLanguage.Indicator
                         AddItem2ToolStrip(toolBar, New ToolStripSeparator())
                     End Sub
                 )
+			tool_bar_inited = True
             End If
         End Sub
 

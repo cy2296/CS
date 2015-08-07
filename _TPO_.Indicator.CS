@@ -1108,6 +1108,7 @@ namespace PowerLanguage.Indicator
         public static char num2char(int _num)
         {
             const int _count = 'Z' - 'A';
+			_num = _num % (2 * _count);
             if (_count <= _num)
                 return (char)('a' + (char)(_num - _count));
             return (char)('A' + _num);

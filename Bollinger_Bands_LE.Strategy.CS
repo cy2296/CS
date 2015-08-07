@@ -17,7 +17,7 @@ namespace PowerLanguage.Strategy
         public int Length { get; set; }
 
         [Input]
-        public int NumDevsDn { get; set; }
+        public double NumDevsDn { get; set; }
 
         private VariableSeries<double> m_LowerBand;
 

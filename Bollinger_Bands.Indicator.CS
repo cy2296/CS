@@ -18,7 +18,7 @@ namespace PowerLanguage.Indicator
 
         public Bollinger_Bands(object ctx) :
             base(ctx){
-            numdevsdn = (-1*2);
+            numdevsdn = -2;
             numdevsup = 2;
             length = 20;
         }
@@ -33,10 +33,10 @@ namespace PowerLanguage.Indicator
         public int length { get; set; }
 
         [Input]
-        public int numdevsup { get; set; }
+        public double numdevsup { get; set; }
 
         [Input]
-        public int numdevsdn { get; set; }
+        public double numdevsdn { get; set; }
 
         [Input]
         public int displace { get; set; }

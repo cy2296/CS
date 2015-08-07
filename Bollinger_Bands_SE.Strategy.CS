@@ -17,7 +17,7 @@ namespace PowerLanguage.Strategy
         public int Length { get; set; }
 
         [Input]
-        public int NumDevsUp { get; set; }
+        public double NumDevsUp { get; set; }
 
         private VariableSeries<double> m_HigherBand;
 

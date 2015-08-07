@@ -111,7 +111,6 @@ Namespace PowerLanguage.Strategy
 
         Protected Overrides Sub StartCalc()
             If Not Me.tool_bar_inited Then
-                Me.tool_bar_inited = True
                 MyBase.ChartToolBar.AccessToolBar(
                     Sub(toolBar)
                         Dim tsiButton As New ToolStripButton
@@ -138,6 +137,7 @@ Namespace PowerLanguage.Strategy
                         AddItem2ToolStrip(toolBar, New ToolStripSeparator())
                     End Sub
                 )
+			Me.tool_bar_inited = True
             End If
 
             Me.m_prof = Nothing
