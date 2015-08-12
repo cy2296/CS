@@ -21,6 +21,8 @@ namespace PowerLanguage
 
 			public _gSpreadFC(CStudyControl _master) : base(_master) { }
 			public _gSpreadFC(CStudyControl _master, int _ds) : base(_master, _ds) { }
+            public _gSpreadFC(CStudyControl _master, FunctionSeries<System.Double> func) 
+                : base(_master) { }
 
 			protected override void Create()
 			{

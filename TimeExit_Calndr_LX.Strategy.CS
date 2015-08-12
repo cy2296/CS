@@ -37,6 +37,7 @@ namespace PowerLanguage.Strategy
 
 
         protected override void CalcBar(){
+
             int m_MP = StrategyInfo.MarketPosition;
 
             if (m_MP != 0){

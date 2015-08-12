@@ -24,8 +24,8 @@ namespace PowerLanguage.Indicator{
             spread_leg3 = -0.5;
             numdevsdn = 2;
             numdevsup = 2;
-            len_BBand = 20;
-            len_RSI = 14;        
+            len_BBand = 15;
+            len_RSI = 10;        
         }
         private IPlotObject plot1;          // Plot RSI 
         private IPlotObject plot2;          // uppper bband    
@@ -45,10 +45,10 @@ namespace PowerLanguage.Indicator{
         public int len_BBand { get; set; }
 
         [Input]
-        public int numdevsup { get; set; }
+        public double numdevsup { get; set; }
 
         [Input]
-        public int numdevsdn { get; set; }
+        public double numdevsdn { get; set; }
 
 		protected override void Create() 
         {

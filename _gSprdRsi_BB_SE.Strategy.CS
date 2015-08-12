@@ -8,19 +8,21 @@ namespace PowerLanguage.Strategy {
 	public class _gSprdRsi_BB_SE : SignalObject 
     {
         private VariableSeries<int> m_mp;   // position info
+        private TimeSpan startTime, endTime;
 
         private _gSpreadRSI m_spreadRsiFC;
         private _gSpreadRsiUpBB m_spreadRsiUpBbFC;
 
         private VariableObject<Int32> m_counter;
 
-        private IOrderPriced m_rsiBbCrossSE;
+        private IOrderPriced m_rsiBbCrossSE_Prc;
+        private IOrderMarket m_rsiBbCrossSE_Mkt;
 
 		public _gSprdRsi_BB_SE(object _ctx):base(_ctx)
         {
             leg1 = 1;
-            leg2 = -1;
-            leg3 = 0;
+            leg2 = -0.333;
+            leg3 = -0.5;
             len_rsi = 10;
             numdevsup = 2;
             numdevsdn = 2;
@@ -48,18 +50,31 @@ namespace PowerLanguage.Strategy {
         public Int32 len_bb { get; set; }
         [Input]
         public int confirmbars { get; set; }
+        [Input]
+        public string StartTime { get; set; }
+        [Input]
+        public string EndTime { get; set; }
 		
 		protected override void Create()
         {
             m_mp = new VariableSeries<int>(this);
             m_spreadRsiFC = new _gSpreadRSI(this);
             m_spreadRsiUpBbFC = new _gSpreadRsiUpBB(this);
-            m_rsiBbCrossSE = OrderCreator.Limit
-                (new SOrderParameters(Contracts.Default, "short", EOrderAction.SellShort));
+            //m_rsiBbCrossSE_Prc = OrderCreator.Limit
+            //    (new SOrderParameters(Contracts.Default, "short", EOrderAction.SellShort));
+
+            m_rsiBbCrossSE_Mkt = OrderCreator.MarketThisBar
+                (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
+
             m_counter = new VariableObject<int>(this);
+            StartTime = "9:30";
+            EndTime = "16:00";
         }
 		protected override void StartCalc() 
         {
+            startTime = ConvertToTime(StartTime);
+            endTime = ConvertToTime(EndTime);
+
             m_spreadRsiFC.price1 = Bars.Close;
             m_spreadRsiFC.price2 = BarsOfData(2).Close;
             m_spreadRsiFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
@@ -82,8 +97,9 @@ namespace PowerLanguage.Strategy {
 		protected override void CalcBar()
         {
             m_mp.Value = StrategyInfo.MarketPosition;
-            if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]) &&
-                PublicFunctions.DoubleGreater(m_spreadRsiFC[1], m_spreadRsiUpBbFC[1]))
+            //if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]) &&
+            //    PublicFunctions.DoubleGreater(m_spreadRsiFC[1], m_spreadRsiUpBbFC[1]))
+            if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]))
             {
                 ++m_counter.Value;
             }
@@ -93,10 +109,34 @@ namespace PowerLanguage.Strategy {
             }
             if (Bars.CurrentBar > (len_bb + len_rsi)
                 && m_counter.Value == confirmbars
-                && m_mp[0] >= 0)
+                && m_mp[0] >= 0
+                && TimeToTrade())
             {
-                m_rsiBbCrossSE.Send(Bars.Close[0]);
+                //m_rsiBbCrossSE_Prc.Send(Bars.Close[0]);
+                m_rsiBbCrossSE_Mkt.Send();
             }
 		}
-	}
+        private TimeSpan ConvertToTime(string timeToConvert)
+        {
+            DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
+                System.Globalization.CultureInfo.InvariantCulture);
+ 
+            return dt.TimeOfDay;
+        }
+ 
+        // The TimeToTrade() method returns 'true' if the current bar
+        // time falls within the trading hours range, or else returns 'false'.
+        private bool TimeToTrade()
+        {
+            TimeSpan barTime = Bars.TimeValue.TimeOfDay;
+ 
+            // If the range is on the same day, both expressions must be true
+            if (startTime < endTime)
+                return (barTime >= startTime) && (barTime <= endTime);
+ 
+            // Otherwise the range crosses midnight, and only one of
+            // the expressions need to be true
+            return (barTime > startTime) || (barTime < endTime);
+        }
+    }
 }
