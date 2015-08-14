@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Drawing;
 using System.Linq;
 using PowerLanguage.Function;
@@ -62,6 +62,7 @@ namespace PowerLanguage.Indicator{
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.slippage = slippage;
+            m_sprdPnl.calltype = "indic";
             m_atrFC.leg1 = leg1;
             m_atrFC.leg2 = leg2;
             m_atrFC.leg3 = leg3;
@@ -75,13 +76,12 @@ namespace PowerLanguage.Indicator{
             //plot1.Set(m_sprdPnl[0]);
             if (type == 1)  // on lossing
             {
-                Console.WriteLine("test", Bars.CurrentBar);
                 if (m_pos.Value == 0)
                 {
-                    if (m_pos[1] != 0 && m_sprdPnl[0] < 0)
+                    if (m_pos[1] != 0 && m_sprdPnl[0] < 0)   // just close position
                     {
-                        m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
-                        plot1.Set(m_sprdPnl.Value - m_atr.Value);
+                        m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
+                        plot1.Set(m_atr.Value - Math.Abs(m_sprdPnl.Value));
                     }
                     else
                         plot1.Set(0);
@@ -90,18 +90,44 @@ namespace PowerLanguage.Indicator{
                 {
                     if (m_sprdPnl[0] < 0)
                     {
-                        m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(m_pos[0] / leg1) * spreadBigPtVal;
-                        if (Math.Abs(m_sprdPnl[0]) > Math.Abs(m_atr.Value))
-                            plot1.Set(m_sprdPnl.Value - m_atr.Value);
+                        m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[0] / leg1) * spreadBigPtVal;
+
+                        if (Math.Abs(m_sprdPnl[0]) > m_atr.Value)
+                            plot1.Set(m_atr.Value - Math.Abs(m_sprdPnl[0]));
                         else
                             plot1.Set(0);
                     }
                     else
                         plot1.Set(0);
                 }
-                
             }
-        
+            if (type == 2)  // on winning
+            {
+                if (m_pos.Value == 0)
+                {
+                    if (m_pos[1] != 0 && m_sprdPnl[0] > 0)   // just close position
+                    {
+                        m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
+                        plot1.Set(Math.Abs(m_sprdPnl.Value) - m_atr.Value);
+                    }
+                    else
+                        plot1.Set(0);
+                }
+                else  // m_pos.Value != 0
+                {
+                    if (m_sprdPnl[0] > 0)
+                    {
+                        m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[0] / leg1) * spreadBigPtVal;
+
+                        if (Math.Abs(m_sprdPnl[0]) > m_atr.Value)
+                            plot1.Set(Math.Abs(m_sprdPnl[0]) - m_atr.Value);
+                        else
+                            plot1.Set(0);
+                    }
+                    else
+                        plot1.Set(0);
+                }
+            }        
 
 		}
 	}

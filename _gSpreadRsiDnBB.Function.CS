@@ -27,8 +27,8 @@ namespace PowerLanguage
             private AverageFC m_averagefc1;
             private VariableSeries<Double> m_spread_rsi;
 
-            public int numdevsup { get; set; }
-            public int numdevsdn { get; set; }
+            public double numdevsup { get; set; }
+            public double numdevsdn { get; set; }
             public Int32 len_bb { get; set; }
 
 			protected override void Create()

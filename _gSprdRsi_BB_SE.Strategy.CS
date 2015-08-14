@@ -3,7 +3,9 @@ using System.Drawing;
 using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
-
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
 namespace PowerLanguage.Strategy {
 	public class _gSprdRsi_BB_SE : SignalObject 
     {
@@ -18,16 +20,39 @@ namespace PowerLanguage.Strategy {
         private IOrderPriced m_rsiBbCrossSE_Prc;
         private IOrderMarket m_rsiBbCrossSE_Mkt;
 
+        private System.Text.StringBuilder csv;  // for debug only
+
 		public _gSprdRsi_BB_SE(object _ctx):base(_ctx)
         {
+            // XLE
             leg1 = 1;
             leg2 = -0.333;
             leg3 = -0.5;
             len_rsi = 10;
-            numdevsup = 2;
-            numdevsdn = 2;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
             len_bb = 15;
             confirmbars = 1;
+
+            //// SPY
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+
+            //// CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
         }
 
         public ISeries<Double> price1 { get; set; }
@@ -43,9 +68,9 @@ namespace PowerLanguage.Strategy {
         [Input]
         public Int32 len_rsi { get; set; }
         [Input]
-        public int numdevsup { get; set; }
+        public double numdevsup { get; set; }
         [Input]
-        public int numdevsdn { get; set; }
+        public double numdevsdn { get; set; }
         [Input]
         public Int32 len_bb { get; set; }
         [Input]
@@ -68,7 +93,8 @@ namespace PowerLanguage.Strategy {
 
             m_counter = new VariableObject<int>(this);
             StartTime = "9:30";
-            EndTime = "16:00";
+            EndTime = "15:58";
+            csv = new StringBuilder();
         }
 		protected override void StartCalc() 
         {

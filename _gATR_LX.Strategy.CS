@@ -15,6 +15,7 @@ namespace PowerLanguage.Strategy {
 
 		public _gATR_LX(object _ctx):base(_ctx)
         {
+            ////XLE
             leg1 = 1.0;
             leg2 = -0.333;
             leg3 = -0.5;
@@ -23,9 +24,35 @@ namespace PowerLanguage.Strategy {
             bigPt1 = 1000;
             bigPt2 = 500;
             bigPt3 = 1000;
-            slippage = 20;
+            slippage = 0;
             exitType = 1;
+
+            //// SPY  
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //AtrLength = 15;
+            //NumAtrs = 2;
+            //bigPt1 = 500;
+            //bigPt2 = 1000;
+            //bigPt3 = 1000;
+            //slippage = 0;
+            //exitType = 2;
+
+            //// CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //AtrLength = 15;
+            //NumAtrs = 2;
+            //bigPt1 = 1000;
+            //bigPt2 = 1000;
+            //bigPt3 = 500;
+            //slippage = 0;
+            //exitType = 2;     
         }
+        
+
 		
         private IOrderMarket m_atrLX_Mkt;
 
@@ -63,7 +90,7 @@ namespace PowerLanguage.Strategy {
                 (new SOrderParameters(Contracts.Default, "ATR", 
                     EOrderAction.Sell, OrderExit.FromAll));
             StartTime = "9:30";
-            EndTime = "16:00";
+            EndTime = "15:58";
 		}
 		protected override void StartCalc() 
         {
@@ -77,6 +104,7 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.slippage = slippage;
+            m_sprdPnl.calltype = "strat";
 
             m_atr.leg1 = leg1;
             m_atr.leg2 = leg2;

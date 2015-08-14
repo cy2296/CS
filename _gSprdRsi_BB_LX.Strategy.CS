@@ -25,15 +25,45 @@ namespace PowerLanguage.Strategy {
             leg2 = -0.333;
             leg3 = -0.5;
             len_rsi = 10;
-            numdevsup = 2;
-            numdevsdn = 2;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
             len_bb = 15;
             confirmbars = 1;
             exitType = 1;
             bigPt1 = 1000;
             bigPt2 = 500;
             bigPt3 = 1000;
-            slippage = 20;
+            slippage = 0;
+
+            //// SPY
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //exitType = 2;
+            //bigPt1 = 500;
+            //bigPt2 = 1000;
+            //bigPt3 = 1000;
+            //slippage = 0;
+
+            //// CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //exitType = 2;
+            //bigPt1 = 1000;
+            //bigPt2 = 1000;
+            //bigPt3 = 500;
+            //slippage = 0;
         }
         public ISeries<Double> price1 { get; set; }
         public ISeries<Double> price2 { get; set; }
@@ -48,9 +78,9 @@ namespace PowerLanguage.Strategy {
         [Input]
         public Int32 len_rsi { get; set; }
         [Input]
-        public int numdevsup { get; set; }
+        public double numdevsup { get; set; }
         [Input]
-        public int numdevsdn { get; set; }
+        public double numdevsdn { get; set; }
         [Input]
         public Int32 len_bb { get; set; }
         [Input]
@@ -85,7 +115,7 @@ namespace PowerLanguage.Strategy {
             m_counter = new VariableObject<int>(this);
             m_mp = new VariableSeries<int>(this);
             StartTime = "9:30";
-            EndTime = "16:00";
+            EndTime = "15:58";
         }
 
 		protected override void StartCalc() 
@@ -130,6 +160,7 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.slippage = slippage;
+            m_sprdPnl.calltype = "strat";
 		}
 		protected override void CalcBar()
         {
@@ -146,7 +177,7 @@ namespace PowerLanguage.Strategy {
                 {
                     if (Bars.CurrentBar > (len_bb + len_rsi)
                         && m_counter.Value == confirmbars
-                        && m_sprdPnl[0] > 0)
+                        && m_sprdPnl[0] >= 0)
                     {
                         m_rsiBbCrossLX_Mkt.Send();
                     }
@@ -162,7 +193,7 @@ namespace PowerLanguage.Strategy {
                 {
                     if (Bars.CurrentBar > (len_bb + len_rsi)
                       && m_counter.Value == confirmbars
-                      && m_sprdPnl[0] < 0)
+                      && m_sprdPnl[0] <= 0)
                     {
                         m_rsiBbCrossLX_Mkt.Send();
                     }              
@@ -175,20 +206,20 @@ namespace PowerLanguage.Strategy {
         {
             DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
                 System.Globalization.CultureInfo.InvariantCulture);
- 
+
             return dt.TimeOfDay;
         }
- 
+
         // The TimeToTrade() method returns 'true' if the current bar
         // time falls within the trading hours range, or else returns 'false'.
         private bool TimeToTrade()
         {
             TimeSpan barTime = Bars.TimeValue.TimeOfDay;
- 
+
             // If the range is on the same day, both expressions must be true
             if (startTime < endTime)
                 return (barTime >= startTime) && (barTime <= endTime);
- 
+
             // Otherwise the range crosses midnight, and only one of
             // the expressions need to be true
             return (barTime > startTime) || (barTime < endTime);

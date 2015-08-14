@@ -4,6 +4,10 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
 namespace PowerLanguage.Strategy 
 {
 	public class _gATR_SX : SignalObject 
@@ -16,8 +20,11 @@ namespace PowerLanguage.Strategy
         private double spreadBigPtVal;
 
 
+        private System.Text.StringBuilder csv;  // for debug only
+   
 		public _gATR_SX(object _ctx):base(_ctx)
         {
+            ////XLE
             leg1 = 1.0;
             leg2 = -0.333;
             leg3 = -0.5;
@@ -26,8 +33,32 @@ namespace PowerLanguage.Strategy
             bigPt1 = 1000;
             bigPt2 = 500;
             bigPt3 = 1000;
-            slippage = 20;
+            slippage = 0;
             exitType = 1;
+
+            // SPY  
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //AtrLength = 15;
+            //NumAtrs = 2;
+            //bigPt1 = 500;
+            //bigPt2 = 1000;
+            //bigPt3 = 1000;
+            //slippage = 0;
+            //exitType = 2;
+
+            // CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //AtrLength = 15;
+            //NumAtrs = 2;
+            //bigPt1 = 1000;
+            //bigPt2 = 1000;
+            //bigPt3 = 500;
+            //slippage = 0;
+            //exitType = 2;    
         }
 
         private IOrderMarket m_atrSX_Mkt;
@@ -78,7 +109,9 @@ namespace PowerLanguage.Strategy
                 (new SOrderParameters(Contracts.Default, "ATR",
                     EOrderAction.BuyToCover, OrderExit.FromAll));
             StartTime = "9:30";
-            EndTime = "16:00";
+            EndTime = "15:58";
+
+            csv = new StringBuilder();
 		}
 		protected override void StartCalc() 
         {
@@ -92,6 +125,7 @@ namespace PowerLanguage.Strategy
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.slippage = slippage;
+            m_sprdPnl.calltype = "strat";
 
             m_atrFC.leg1 = leg1;
             m_atrFC.leg2 = leg2;
@@ -104,27 +138,39 @@ namespace PowerLanguage.Strategy
             m_pos.Value = StrategyInfo.MarketPosition;
             if (m_pos.Value < 0)
             {
-                //var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
-                m_atr.Value = Math.Abs(m_atrFC[0] * NumAtrs * Math.Abs(m_pos.Value / leg1) * spreadBigPtVal);
+                var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
+                m_atr.Value = Math.Abs(m_atrFC[0] * NumAtrs * dollarRatio);
 
-                //if (exitType == 1)    // stop exit
-                //{
-                //    if (m_sprdPnl[0] < 0 && Math.Abs(m_sprdPnl[0]) >= m_atr.Value)
-                //        m_atrSX_Mkt.Send();
-                //}
-                //if (exitType == 2)    // profit exit
-                //{
-                //    if (m_sprdPnl[0] > 0 && Math.Abs(m_sprdPnl[0]) >= m_atr.Value)
-                //        m_atrSX_Mkt.Send();
-                //}
+                if (exitType == 1)    // stop exit
+                {
+                    if (m_sprdPnl[0] < 0 && Math.Abs(m_sprdPnl[0]) >= m_atr.Value)
+                        m_atrSX_Mkt.Send();
+                }
+                if (exitType == 2)    // profit exit
+                {
+                    if (m_sprdPnl[0] > 0 && Math.Abs(m_sprdPnl[0]) >= m_atr.Value)
+                        m_atrSX_Mkt.Send();
+                }
                 if (!TimeToTrade())
                     m_atrSX_Mkt.Send();
-                /// test
-                var a = Bars.CurrentBar;
-                var b = Math.Abs(m_sprdPnl[0]);
-                var c = m_atr.Value;
-                if (Math.Abs(m_sprdPnl[0]) >= m_atr.Value)
-                    m_atrSX_Mkt.Send();
+                
+                //if (Bars.CurrentBar < 5000)
+                //{
+                //    var x = Bars.TimeValue.Date;
+                //    var a = Bars.TimeValue.TimeOfDay;
+                //    var b = Bars.CurrentBar;
+                //    var c = Bars.Close[0] * leg1 + BarsOfData(2).Close[0] * leg2 + BarsOfData(3).Close[0] * leg3;
+                //    var z = m_pos[1];
+                //    var y = StrategyInfo.MarketPosition;
+                //    var d = m_sprdPnl[0];
+                //    var e = m_atr.Value;
+                //    var f = (Math.Abs(m_sprdPnl[0]) >= m_atr.Value) ? 1 : 0;
+
+                //    var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}{9}",
+                //    x, a, b, c, z, y, d, e, f, System.Environment.NewLine);
+                //    csv.Append(newLine);
+                //    System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
+                //}
             }
 		}
         private TimeSpan ConvertToTime(string timeToConvert)

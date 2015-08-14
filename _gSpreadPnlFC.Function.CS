@@ -22,6 +22,7 @@ namespace PowerLanguage
             public double bigPt2 { get; set; }
             public double bigPt3 { get; set; }
             public double slippage { get; set; }
+            public string calltype { get; set; }
 
             // variable for _gSpreadFC
             public double leg1 { get; set; }
@@ -59,6 +60,7 @@ namespace PowerLanguage
 			{
                 m_pos.Value = StrategyInfo.MarketPosition;
 
+
                 if (m_pos.Value == 0)
                 {
                     if (m_pos[1] == 0)  // no position
@@ -66,90 +68,89 @@ namespace PowerLanguage
                     else // just close a position
                     {
                         var dollarRatio = Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
+                        var posFactor = Math.Abs(m_pos[1] / leg1);
                         if (m_pos[1] > 0)
                         {
-                            //m_pnl.Value = (m_spreadClosFC[0] - m_entryPrice.Value)
-                            //    * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal - slippage;
-                            m_pnl.Value = m_pnl[1]
+                            if (calltype == "indic")
+                                m_pnl.Value = m_pnl[1]
                                 + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio
-                                - slippage;
+                                - 2 * slippage * posFactor;
+                            if (calltype == "strat")
+                                m_pnl.Value = 0;
+
                         }
                         if (m_pos[1] < 0)   // just close short pos
                         {
-                            //m_pnl.Value = (m_entryPrice.Value - m_spreadClosFC[0])
-                            //    * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal - slippage;
-                            m_pnl.Value = m_pnl[1]
+                            if (calltype == "indic")
+                                m_pnl.Value = m_pnl[1]
                                 + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio
-                                - slippage;
+                                - 2 * slippage * posFactor;
+                            if (calltype == "strat")
+                                m_pnl.Value = 0;
                         }
                     }
                 }
                 else  // has position
                 {
                     var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
+                    var posFactor = Math.Abs(m_pos.Value / leg1);
                     if (m_pos[1] == 0)   // new open position
                     {
-                        m_pnl.Value = -1 * slippage;
-                        m_entryPrice.Value = m_spreadClosFC[0];
+                        if (calltype == "indic")
+                        {
+                            m_pnl.Value = -2 * slippage * posFactor;
+                            m_entryPrice.Value = m_spreadClosFC[0];
+                        }
+                        if (calltype == "strat")
+                        {
+                            if (m_pos.Value > 0)
+                                m_pnl.Value = (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio - 2 * slippage * posFactor;
+                            if (m_pos.Value < 0)
+                                m_pnl.Value = (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio - 2 * slippage * posFactor;
+                        }
                     }
                     if (m_pos.Value > 0 && m_pos[1] > 0)    // existing long
                     {
-                        //m_entryPrice.Value = m_entryPrice[1];
-                        //m_pnl.Value = (m_spreadClosFC[0] - m_entryPrice.Value) * dollarRatio;
-                        var a = m_pnl[1];
-                        var b = m_spreadClosFC[0];
-                        var c = m_spreadClosFC[1];
-                        var d = dollarRatio;
-                            m_pnl.Value = m_pnl[1]
+                        m_pnl.Value = m_pnl[1]
                                     + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio;
                     }
                     if (m_pos.Value < 0 && m_pos[1] < 0)    // existing short
                     {
-                        //m_entryPrice.Value = m_entryPrice[1];
-                        //m_pnl.Value = (m_entryPrice.Value - m_spreadClosFC[0]) * dollarRatio;
                         m_pnl.Value = m_pnl[1]
                                     + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio;
                     }
                     if (m_pos.Value > 0 && m_pos[1] < 0)    // short reverse to long
                     {
-                        m_entryPrice.Value = m_entryPrice[0];
-                        //m_pnl.Value = (m_entryPrice.Value - m_spreadClosFC[0]) * dollarRatio - 2 * slippage;
-                        m_pnl.Value = m_pnl[1]
+                        if (calltype == "indic")
+                        {
+                            m_pnl.Value = m_pnl[1]
                                     + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio
-                                    - slippage;
+                                    - 2 * slippage * posFactor;
+                        }
+                        if (calltype == "strat")
+                        { 
+                            m_pnl.Value = m_pnl[1]
+                                        + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio
+                                        - 2 * slippage * posFactor;    
+                        }
                     }
                     if (m_pos.Value < 0 && m_pos[1] > 0)    // long reverse to short
                     {
-                        m_entryPrice.Value = m_entryPrice[0];
-                        //m_pnl.Value = (m_spreadClosFC[0] - m_entryPrice.Value) * dollarRatio - 2 * slippage;
-                        m_pnl.Value = m_pnl[1]
-                                + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio
-                                - slippage;                    
+                        if (calltype == "indic")
+                        {
+                            m_pnl.Value = m_pnl[1]
+                                    + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio
+                                    - 2 * slippage * posFactor;
+                        }
+                        if (calltype == "strat")
+                        {
+                            m_pnl.Value = m_pnl[1]
+                                        + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio
+                                        - 2 * slippage * posFactor;
+                        }
                     }
                 }
                 return m_pnl.Value;
-                //if (m_pos.Value != 0)
-                //{
-                //    if (m_pos[1] == 0)           // new pos
-                //    {
-                //        m_pnl.Value = -1 * slippage;
-                //        m_entryPrice.Value = m_spreadClosFC[0];
-                //    }
-                //    else if (m_pos.Value > 0)    // long pos
-                //        m_pnl.Value = m_pnl[1] + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio;
-                //    else                        // short pos    
-                //        m_pnl.Value = m_pnl[1] + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio;
-                //}
-                //else    // no position
-                //{
-                //    if (m_pos[1] == 0)
-                //        m_pnl.Value = 0;
-                //    else if (m_pos[1] > 0)  // just close long position
-                //        m_pnl.Value = m_pnl[1] + (m_spreadClosFC[0] - m_spreadClosFC[1]) * dollarRatio - slippage;
-                //    else                      // just close short position
-                //        m_pnl.Value = m_pnl[1] + (m_spreadClosFC[1] - m_spreadClosFC[0]) * dollarRatio - slippage;
-                //}
-                
 			}
 		}
 	}
