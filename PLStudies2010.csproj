@@ -346,7 +346,6 @@
     <Compile Include="_gEnergyComboIndex.Indicator.CS" />
     <Compile Include="_gSpreadRsiUpBB.Function.CS" />
     <Compile Include="_gSpreadFC.Function.CS" />
-    <Compile Include="_gSpreadRSI.Indicator.CS" />
     <Compile Include="_gRsiBBand.Indicator.CS" />
     <Compile Include="_gSpread.Indicator.CS" />
     <Compile Include="_gSpreadRSI.Function.CS" />
@@ -367,6 +366,8 @@
     <Compile Include="_gSpreadPnl_ATR.Indicator.CS" />
     <Compile Include="_gTest2.Indicator.CS" />
     <Compile Include="_gTest3.Indicator.CS" />
+    <Compile Include="_gTestStrat1.Strategy.CS" />
+    <Compile Include="_gTestFC1.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

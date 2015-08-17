@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using PowerLanguage.Function;
 
+
 namespace PowerLanguage.Indicator{
 	public class _gSpreadRsiBB : IndicatorObject 
     {
@@ -11,10 +12,8 @@ namespace PowerLanguage.Indicator{
         private AverageFC m_averagefc1;   // for BBand
         //private XAverage m_averagefc1;
         private VariableSeries<Double> m_spread_rsi;
-
         private VariableSeries<Double> m_lowerband;
         private VariableSeries<Double> m_upperband;
-
 
         public _gSpreadRsiBB(object _ctx)
             : base(_ctx)
@@ -22,8 +21,8 @@ namespace PowerLanguage.Indicator{
             spread_leg1 = 1;
             spread_leg2 = -0.333;
             spread_leg3 = -0.5;
-            numdevsdn = 2;
-            numdevsup = 2;
+            numdevsdn = 1.95;
+            numdevsup = 1.95;
             len_BBand = 15;
             len_RSI = 10;        
         }
@@ -69,6 +68,7 @@ namespace PowerLanguage.Indicator{
             plot3 =
                 AddPlot(new PlotAttributes("LowerBand", 0, Color.Blue,
                                            Color.Empty, 0, 0, true));
+            
 
         }
 		protected override void StartCalc() 
@@ -100,6 +100,9 @@ namespace PowerLanguage.Indicator{
             plot1.Set(0, m_spread_rsi.Value);
             plot2.Set(0, m_upperband.Value);
             plot3.Set(0, m_lowerband.Value);
+
+
+
 		}
 	}
 }

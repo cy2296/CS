@@ -23,34 +23,34 @@ namespace PowerLanguage.Strategy {
 
 		public _gSprdRsi_BB_SX(object _ctx):base(_ctx)
         {
-            leg1 = 1;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            len_rsi = 10;
-            numdevsup = 1.95;
-            numdevsdn = 1.95;
-            len_bb = 15;
-            confirmbars = 1;
-            exitType = 1;
-            bigPt1 = 1000;
-            bigPt2 = 500;
-            bigPt3 = 1000;
-            slippage = 0;
-
-            //// SPY
-            //leg1 = 0.333;
-            //leg2 = -1;
-            //leg3 = 0.5;
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
             //len_rsi = 10;
             //numdevsup = 1.95;
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-            //exitType = 2;
-            //bigPt1 = 500;
-            //bigPt2 = 1000;
+            //exitType = 1;
+            //bigPt1 = 1000;
+            //bigPt2 = 500;
             //bigPt3 = 1000;
             //slippage = 0;
+
+            // SPY
+            leg1 = 0.333;
+            leg2 = -1;
+            leg3 = 0.5;
+            len_rsi = 10;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
+            len_bb = 15;
+            confirmbars = 1;
+            exitType = 2;
+            bigPt1 = 500;
+            bigPt2 = 1000;
+            bigPt3 = 1000;
+            slippage = 0;
 
             //// CL
             //leg1 = 0.5;
@@ -78,6 +78,19 @@ namespace PowerLanguage.Strategy {
         [Input]
         public double leg3 { get; set; }
         [Input]
+        public string StartTime { get; set; }
+        [Input]
+        public string EndTime { get; set; }
+        [Input]
+        public double bigPt1 { get; set; }
+        [Input]
+        public double bigPt2 { get; set; }
+        [Input]
+        public double bigPt3 { get; set; }
+        [Input]
+        public double slippage { get; set; }
+        
+        [Input]
         public Int32 len_rsi { get; set; }
         [Input]
         public double numdevsup { get; set; }
@@ -87,20 +100,10 @@ namespace PowerLanguage.Strategy {
         public Int32 len_bb { get; set; }
         [Input]
         public int confirmbars { get; set; }
-        [Input]
-        public string StartTime { get; set; }
-        [Input]
-        public string EndTime { get; set; }
+
         [Input]
         public int exitType { get; set; }
-        [Input]
-        public double bigPt1 { get; set; }
-        [Input]
-        public double bigPt2 { get; set; }
-        [Input]
-        public double bigPt3 { get; set; }
-        [Input]
-        public double slippage { get; set; }
+
 
 		protected override void Create() 
         {

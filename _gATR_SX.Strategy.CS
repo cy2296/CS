@@ -25,30 +25,30 @@ namespace PowerLanguage.Strategy
 		public _gATR_SX(object _ctx):base(_ctx)
         {
             ////XLE
-            leg1 = 1.0;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            AtrLength = 15;
-            NumAtrs = 2;
-            bigPt1 = 1000;
-            bigPt2 = 500;
-            bigPt3 = 1000;
-            slippage = 0;
-            exitType = 1;
-
-            // SPY  
-            //leg1 = 0.333;
-            //leg2 = -1;
-            //leg3 = 0.5;
+            //leg1 = 1.0;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
             //AtrLength = 15;
             //NumAtrs = 2;
-            //bigPt1 = 500;
-            //bigPt2 = 1000;
+            //bigPt1 = 1000;
+            //bigPt2 = 500;
             //bigPt3 = 1000;
             //slippage = 0;
-            //exitType = 2;
+            //exitType = 1;
 
-            // CL
+            // SPY  
+            leg1 = 0.333;
+            leg2 = -1;
+            leg3 = 0.5;
+            AtrLength = 15;
+            NumAtrs = 2;
+            bigPt1 = 500;
+            bigPt2 = 1000;
+            bigPt3 = 1000;
+            slippage = 0;
+            exitType = 2;
+
+            //CL
             //leg1 = 0.5;
             //leg2 = -1;
             //leg3 = 0.333;
@@ -70,6 +70,10 @@ namespace PowerLanguage.Strategy
         [Input]
         public double leg3 { get; set; }
         [Input]
+        public string StartTime { get; set; }
+        [Input]
+        public string EndTime { get; set; }
+        [Input]
         public int AtrLength { get; set; }
         [Input]
         public int NumAtrs { get; set; }
@@ -81,10 +85,7 @@ namespace PowerLanguage.Strategy
         public double bigPt3 { get; set; }
         [Input]
         public double slippage { get; set; }
-        [Input]
-        public string StartTime { get; set; }
-        [Input]
-        public string EndTime { get; set; }
+
         [Input]
         public int exitType { get; set; }
 

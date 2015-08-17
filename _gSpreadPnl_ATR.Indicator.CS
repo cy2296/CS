@@ -31,7 +31,7 @@ namespace PowerLanguage.Indicator{
             bigPt1 = 1000;
             bigPt2 = 500;
             bigPt3 = 1000;
-            slippage = 20;
+            slippage = 0;
             type = 1;
         }
 
