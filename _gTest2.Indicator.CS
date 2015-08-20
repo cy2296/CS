@@ -43,16 +43,16 @@ namespace PowerLanguage.Indicator{
             csv = new StringBuilder();
 		}
 		protected override void StartCalc() {
-            m_rsi1.length = len_RSI;
-            m_rsi1.price1 = Bars.Close;
-            m_rsi1.price2 = BarsOfData(2).Close;
-            if (spread_leg3 != 0)
-                m_rsi1.price3 = BarsOfData(3).Close;
-            else
-                m_rsi1.price3 = Bars.Close;
-            m_rsi1.leg1 = spread_leg1;
-            m_rsi1.leg2 = spread_leg2;
-            m_rsi1.leg3 = spread_leg3;
+            //m_rsi1.length = len_RSI;
+            //m_rsi1.price1 = Bars.Close;
+            //m_rsi1.price2 = BarsOfData(2).Close;
+            //if (spread_leg3 != 0)
+            //    m_rsi1.price3 = BarsOfData(3).Close;
+            //else
+            //    m_rsi1.price3 = Bars.Close;
+            //m_rsi1.leg1 = spread_leg1;
+            //m_rsi1.leg2 = spread_leg2;
+            //m_rsi1.leg3 = spread_leg3;
 		}
 		protected override void CalcBar()
         {

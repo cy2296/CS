@@ -5,11 +5,10 @@ using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
 namespace PowerLanguage.Strategy {
-	public class _gSprdRsi_BB_LE : SignalObject 
+	public class gSprd_RSI_BB_LE : SignalObject 
     {
         private VariableSeries<int> m_mp;   // position info
         private TimeSpan startTime, endTime;
-
 
         private _gSpreadRSI m_spreadRsiFC;
         private _gSpreadRsiDnBB m_spreadRsiDnBbFC;
@@ -19,7 +18,7 @@ namespace PowerLanguage.Strategy {
         private IOrderPriced m_rsiBbCrossLE_Prc;
         private IOrderMarket m_rsiBbCrossLE_Mkt;
 
-		public _gSprdRsi_BB_LE(object _ctx):base(_ctx)
+		public gSprd_RSI_BB_LE(object _ctx):base(_ctx)
         {
             // XLE
             leg1 = 1;
@@ -41,7 +40,7 @@ namespace PowerLanguage.Strategy {
             //len_bb = 15;
             //confirmbars = 1;
 
-            // CL
+            //// CL
             //leg1 = 0.5;
             //leg2 = -1;
             //leg3 = 0.333;
@@ -49,13 +48,8 @@ namespace PowerLanguage.Strategy {
             //numdevsup = 1.95;
             //numdevsdn = 1.95;
             //len_bb = 15;
-            //confirmbars = 1;
+            //confirmbars = 1;       
         }
-
-        public ISeries<Double> price1 { get; set; }
-        public ISeries<Double> price2 { get; set; }
-        public ISeries<Double> price3 { get; set; }
-
         [Input]
         public double leg1 { get; set; }
         [Input]
@@ -78,9 +72,8 @@ namespace PowerLanguage.Strategy {
         [Input]
         public int confirmbars { get; set; }
 
-
 		protected override void Create() 
-        {
+		{
             m_mp = new VariableSeries<int>(this);
             m_spreadRsiFC = new _gSpreadRSI(this);
             m_spreadRsiDnBbFC = new _gSpreadRsiDnBB(this);
@@ -94,7 +87,7 @@ namespace PowerLanguage.Strategy {
             m_counter = new VariableObject<int>(this);
             StartTime = "9:30";
             EndTime = "15:58";
-		}
+        }
 		protected override void StartCalc() 
         {
             startTime = ConvertToTime(StartTime);
@@ -135,33 +128,22 @@ namespace PowerLanguage.Strategy {
                 && m_mp.Value <= 0
                 && TimeToTrade())
             {
-                m_rsiBbCrossLE_Prc.Send(Bars.Close[0]);
-                //m_rsiBbCrossLE_Mkt.Send();
+                //m_rsiBbCrossLE_Prc.Send(Bars.Close[0]);
+                m_rsiBbCrossLE_Mkt.Send();
             }
 		}
-
-
         private TimeSpan ConvertToTime(string timeToConvert)
         {
             DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
                 System.Globalization.CultureInfo.InvariantCulture);
- 
             return dt.TimeOfDay;
         }
- 
-        // The TimeToTrade() method returns 'true' if the current bar
-        // time falls within the trading hours range, or else returns 'false'.
         private bool TimeToTrade()
         {
             TimeSpan barTime = Bars.TimeValue.TimeOfDay;
- 
-            // If the range is on the same day, both expressions must be true
             if (startTime < endTime)
                 return (barTime >= startTime) && (barTime <= endTime);
- 
-            // Otherwise the range crosses midnight, and only one of
-            // the expressions need to be true
             return (barTime > startTime) || (barTime < endTime);
         }
-    }
+	}
 }

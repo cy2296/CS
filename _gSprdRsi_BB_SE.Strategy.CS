@@ -86,9 +86,8 @@ namespace PowerLanguage.Strategy {
             m_mp = new VariableSeries<int>(this);
             m_spreadRsiFC = new _gSpreadRSI(this);
             m_spreadRsiUpBbFC = new _gSpreadRsiUpBB(this);
-            //m_rsiBbCrossSE_Prc = OrderCreator.Limit
-            //    (new SOrderParameters(Contracts.Default, "short", EOrderAction.SellShort));
-
+            m_rsiBbCrossSE_Prc = OrderCreator.Limit
+                (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
             m_rsiBbCrossSE_Mkt = OrderCreator.MarketThisBar
                 (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
 
@@ -103,7 +102,7 @@ namespace PowerLanguage.Strategy {
             endTime = ConvertToTime(EndTime);
 
             m_spreadRsiFC.price1 = Bars.Close;
-            m_spreadRsiFC.price2 = BarsOfData(2).Close;
+            m_spreadRsiFC.price2 = (leg2 != 0) ? BarsOfData(2).Close : Bars.Close;
             m_spreadRsiFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
             m_spreadRsiFC.leg1 = leg1;
             m_spreadRsiFC.leg2 = leg2;
@@ -111,7 +110,7 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiFC.length = len_rsi;
 
             m_spreadRsiUpBbFC.price1 = Bars.Close;
-            m_spreadRsiUpBbFC.price2 = BarsOfData(2).Close;
+            m_spreadRsiUpBbFC.price2 = (leg2 != 0) ? BarsOfData(2).Close : Bars.Close;
             m_spreadRsiUpBbFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
             m_spreadRsiUpBbFC.leg1 = leg1;
             m_spreadRsiUpBbFC.leg2 = leg2;
@@ -124,8 +123,6 @@ namespace PowerLanguage.Strategy {
 		protected override void CalcBar()
         {
             m_mp.Value = StrategyInfo.MarketPosition;
-            //if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]) &&
-            //    PublicFunctions.DoubleGreater(m_spreadRsiFC[1], m_spreadRsiUpBbFC[1]))
             if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]))
             {
                 ++m_counter.Value;
@@ -139,10 +136,12 @@ namespace PowerLanguage.Strategy {
                 && m_mp[0] >= 0
                 && TimeToTrade())
             {
-                //m_rsiBbCrossSE_Prc.Send(Bars.Close[0]);
-                m_rsiBbCrossSE_Mkt.Send();
+                m_rsiBbCrossSE_Prc.Send(Bars.Close[0]);
+                //m_rsiBbCrossSE_Mkt.Send();
             }
 		}
+
+
         private TimeSpan ConvertToTime(string timeToConvert)
         {
             DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",

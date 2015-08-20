@@ -16,39 +16,39 @@ namespace PowerLanguage.Strategy {
         private VariableObject<Int32> m_counter;
         private _gSpreadPnlFC m_sprdPnl;
 
-        private IOrderPriced m_rsiBbCrossLX_Prc;
+        private IOrderPriced m_rsiBbCrossLX_stop;
         private IOrderMarket m_rsiBbCrossLX_Mkt;
 
 		public _gSprdRsi_BB_LX(object _ctx):base(_ctx)
         {
-            //leg1 = 1;
-            //leg2 = -0.333;
-            //leg3 = -0.5;
-            //len_rsi = 10;
-            //numdevsup = 1.95;
-            //numdevsdn = 1.95;
-            //len_bb = 15;
-            //confirmbars = 1;
-            //exitType = 1;
-            //bigPt1 = 1000;
-            //bigPt2 = 500;
-            //bigPt3 = 1000;
-            //slippage = 0;
-
-            // SPY
-            leg1 = 0.333;
-            leg2 = -1;
-            leg3 = 0.5;
+            leg1 = 1;
+            leg2 = -0.333;
+            leg3 = -0.5;
             len_rsi = 10;
             numdevsup = 1.95;
             numdevsdn = 1.95;
             len_bb = 15;
             confirmbars = 1;
-            exitType = 2;
-            bigPt1 = 500;
-            bigPt2 = 1000;
+            exitType = 1;
+            bigPt1 = 1000;
+            bigPt2 = 500;
             bigPt3 = 1000;
             slippage = 0;
+
+            //// SPY
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //exitType = 2;
+            //bigPt1 = 500;
+            //bigPt2 = 1000;
+            //bigPt3 = 1000;
+            //slippage = 0;
 
             // CL
             //leg1 = 0.5;
@@ -111,7 +111,7 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiFC = new _gSpreadRSI(this);
             m_spreadRsiUpBbFC = new _gSpreadRsiUpBB(this);
             m_spreadRsiDnBbFC = new _gSpreadRsiDnBB(this);
-            m_rsiBbCrossLX_Prc = OrderCreator.Limit
+            m_rsiBbCrossLX_stop = OrderCreator.Stop
                             (new SOrderParameters(Contracts.Default, "LX", 
                              EOrderAction.Sell, OrderExit.FromAll));
             m_rsiBbCrossLX_Mkt = OrderCreator.MarketThisBar
@@ -129,7 +129,7 @@ namespace PowerLanguage.Strategy {
             endTime = ConvertToTime(EndTime);
 
             m_spreadRsiFC.price1 = Bars.Close;
-            m_spreadRsiFC.price2 = BarsOfData(2).Close;
+            m_spreadRsiFC.price2 = (leg2 != 0) ? BarsOfData(2).Close : Bars.Close;
             m_spreadRsiFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
             m_spreadRsiFC.leg1 = leg1;
             m_spreadRsiFC.leg2 = leg2;
@@ -137,7 +137,7 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiFC.length = len_rsi;
 
             m_spreadRsiUpBbFC.price1 = Bars.Close;
-            m_spreadRsiUpBbFC.price2 = BarsOfData(2).Close;
+            m_spreadRsiUpBbFC.price2 = (leg2 != 0) ? BarsOfData(2).Close : Bars.Close;
             m_spreadRsiUpBbFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
             m_spreadRsiUpBbFC.leg1 = leg1;
             m_spreadRsiUpBbFC.leg2 = leg2;
@@ -148,7 +148,7 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiUpBbFC.len_bb = len_bb;
 
             m_spreadRsiDnBbFC.price1 = Bars.Close;
-            m_spreadRsiDnBbFC.price2 = BarsOfData(2).Close;
+            m_spreadRsiDnBbFC.price2 = (leg2 != 0) ? BarsOfData(2).Close : Bars.Close;
             m_spreadRsiDnBbFC.price3 = (leg3 != 0) ? BarsOfData(3).Close : Bars.Close;
             m_spreadRsiDnBbFC.leg1 = leg1;
             m_spreadRsiDnBbFC.leg2 = leg2;
@@ -161,9 +161,9 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.bigPt1 = bigPt1;
             m_sprdPnl.bigPt2 = bigPt2;
             m_sprdPnl.bigPt3 = bigPt3;
-            m_sprdPnl.leg1 = leg1;
-            m_sprdPnl.leg2 = leg2;
-            m_sprdPnl.leg3 = leg3;
+            m_sprdPnl.pos1 = leg1;
+            m_sprdPnl.pos2 = leg2;
+            m_sprdPnl.pos3 = leg3;
             m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "strat";
 		}
@@ -184,7 +184,8 @@ namespace PowerLanguage.Strategy {
                         && m_counter.Value == confirmbars
                         && m_sprdPnl[0] >= 0)
                     {
-                        m_rsiBbCrossLX_Mkt.Send();
+                        //m_rsiBbCrossLX_Mkt.Send();
+                        m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
                     }
                 }
             }
@@ -200,12 +201,14 @@ namespace PowerLanguage.Strategy {
                       && m_counter.Value == confirmbars
                       && m_sprdPnl[0] <= 0)
                     {
-                        m_rsiBbCrossLX_Mkt.Send();
+                       // m_rsiBbCrossLX_Mkt.Send();
+                        m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
                     }              
                 }
             }
             if (!TimeToTrade() && m_mp.Value > 0)
-                m_rsiBbCrossLX_Mkt.Send();
+                //m_rsiBbCrossLX_Mkt.Send();
+                m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
 		}
         private TimeSpan ConvertToTime(string timeToConvert)
         {

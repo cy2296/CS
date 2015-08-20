@@ -368,6 +368,17 @@
     <Compile Include="_gTest3.Indicator.CS" />
     <Compile Include="_gTestStrat1.Strategy.CS" />
     <Compile Include="_gTestFC1.Function.CS" />
+    <Compile Include="gSprd_RSI_BB_LE.Strategy.CS" />
+    <Compile Include="gSprd_RSI_BB_LX.Strategy.CS" />
+    <Compile Include="gSprd_RSI_BB_SE.Strategy.CS" />
+    <Compile Include="gSprd_RSI_BB_SX.Strategy.CS" />
+    <Compile Include="gSprd_ATR_LX.Strategy.CS" />
+    <Compile Include="gSprd_ATR_SX.Strategy.CS" />
+    <Compile Include="Test_TradeManager_4.Strategy.CS" />
+    <Compile Include="_gTest_TradeManager1.Strategy.CS" />
+    <Compile Include="_gMov_Avg_2_Lines.Indicator.CS" />
+    <Compile Include="_gRSI.Indicator.CS" />
+    <Compile Include="_gGetSpread.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

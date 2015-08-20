@@ -4,8 +4,9 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
-namespace PowerLanguage.Strategy {
-	public class _gSprdRsi_BB_SX : SignalObject 
+namespace PowerLanguage.Strategy
+{
+	public class gSprd_RSI_BB_SX : SignalObject 
     {
         private VariableSeries<int> m_mp;   // position info
         private TimeSpan startTime, endTime;
@@ -14,14 +15,14 @@ namespace PowerLanguage.Strategy {
         private _gSpreadRsiUpBB m_spreadRsiUpBbFC;
 
         private _gSpreadRsiDnBB m_spreadRsiDnBbFC;
-        
+
         private VariableObject<Int32> m_counter;
         private _gSpreadPnlFC m_sprdPnl;
 
         private IOrderPriced m_rsiBbCrossSX_stop;
         private IOrderMarket m_rsiBbCrossSX_Mkt;
 
-		public _gSprdRsi_BB_SX(object _ctx):base(_ctx)
+		public gSprd_RSI_BB_SX(object _ctx):base(_ctx)
         {
             leg1 = 1;
             leg2 = -0.333;
@@ -32,9 +33,12 @@ namespace PowerLanguage.Strategy {
             len_bb = 15;
             confirmbars = 1;
             exitType = 1;
-            bigPt1 = 1000;
-            bigPt2 = 500;
+            bigPt1 = 1;
+            bigPt2 = 1;
             bigPt3 = 1000;
+            pos1 = 2000;
+            pos2 = -667;
+            pos3 = -1;
             slippage = 0;
 
             //// SPY
@@ -46,13 +50,16 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-            //exitType = 2;
-            //bigPt1 = 500;
-            //bigPt2 = 1000;
+            //exitType = 1;
+            //bigPt1 = 1;
+            //bigPt2 = 1;
             //bigPt3 = 1000;
+            //pos1 = 667;
+            //pos2 = -2000;
+            //pos3 = 1;
             //slippage = 0;
 
-            //// CL
+            ////// CL
             //leg1 = 0.5;
             //leg2 = -1;
             //leg3 = 0.333;
@@ -61,16 +68,15 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-            //exitType = 2;
+            //exitType = 1;
             //bigPt1 = 1000;
-            //bigPt2 = 1000;
-            //bigPt3 = 500;
-            //slippage = 0;
+            //bigPt2 = 1;
+            //bigPt3 = 1;
+            //pos1 = 1;
+            //pos2 = -2000;
+            //pos3 = 667;
+            //slippage = 0;        
         }
-        public ISeries<Double> price1 { get; set; }
-        public ISeries<Double> price2 { get; set; }
-        public ISeries<Double> price3 { get; set; }
-
         [Input]
         public double leg1 { get; set; }
         [Input]
@@ -88,8 +94,15 @@ namespace PowerLanguage.Strategy {
         [Input]
         public double bigPt3 { get; set; }
         [Input]
+        public double pos1 { get; set; }
+        [Input]
+        public double pos2 { get; set; }
+        [Input]
+        public double pos3 { get; set; }
+        [Input]
         public double slippage { get; set; }
-        
+        [Input]
+        public int exitType { get; set; }
         [Input]
         public Int32 len_rsi { get; set; }
         [Input]
@@ -101,8 +114,6 @@ namespace PowerLanguage.Strategy {
         [Input]
         public int confirmbars { get; set; }
 
-        [Input]
-        public int exitType { get; set; }
 
 
 		protected override void Create() 
@@ -110,7 +121,7 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl = new _gSpreadPnlFC(this);
             m_mp = new VariableSeries<int>(this);
             m_spreadRsiFC = new _gSpreadRSI(this);
-            
+
             m_spreadRsiUpBbFC = new _gSpreadRsiUpBB(this);
             m_spreadRsiDnBbFC = new _gSpreadRsiDnBB(this);
 
@@ -162,9 +173,12 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.bigPt1 = bigPt1;
             m_sprdPnl.bigPt2 = bigPt2;
             m_sprdPnl.bigPt3 = bigPt3;
-            m_sprdPnl.pos1 = leg1;
-            m_sprdPnl.pos2 = leg2;
-            m_sprdPnl.pos3 = leg3;
+            m_sprdPnl.leg1 = leg1;
+            m_sprdPnl.leg2 = leg2;
+            m_sprdPnl.leg3 = leg3;
+            m_sprdPnl.pos1 = pos1;
+            m_sprdPnl.pos2 = pos2;
+            m_sprdPnl.pos3 = pos3;
             m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "strat";
 		}
@@ -185,8 +199,8 @@ namespace PowerLanguage.Strategy {
                         && m_counter.Value == confirmbars
                         && m_sprdPnl[0] >= 0)
                     {
-                        //m_rsiBbCrossSX_Mkt.Send();
-                        m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
+                        m_rsiBbCrossSX_Mkt.Send();
+                        //m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
                     }
                 }
             }
@@ -203,36 +217,27 @@ namespace PowerLanguage.Strategy {
                         && m_counter.Value == confirmbars
                         && m_sprdPnl[0] <= 0)
                     {
-                        //m_rsiBbCrossSX_Mkt.Send();
-                        m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
+                        m_rsiBbCrossSX_Mkt.Send();
+                        //m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
                     }
                 }
             }
             if (!TimeToTrade())
-                //m_rsiBbCrossSX_Mkt.Send();
-                m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
+                m_rsiBbCrossSX_Mkt.Send();
+                //m_rsiBbCrossSX_stop.Send(Bars.Close[0]);
 		}
         private TimeSpan ConvertToTime(string timeToConvert)
         {
             DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
                 System.Globalization.CultureInfo.InvariantCulture);
- 
             return dt.TimeOfDay;
         }
- 
-        // The TimeToTrade() method returns 'true' if the current bar
-        // time falls within the trading hours range, or else returns 'false'.
         private bool TimeToTrade()
         {
             TimeSpan barTime = Bars.TimeValue.TimeOfDay;
- 
-            // If the range is on the same day, both expressions must be true
             if (startTime < endTime)
                 return (barTime >= startTime) && (barTime <= endTime);
- 
-            // Otherwise the range crosses midnight, and only one of
-            // the expressions need to be true
             return (barTime > startTime) || (barTime < endTime);
         }
-    }
+	}
 }

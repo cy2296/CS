@@ -28,9 +28,12 @@ namespace PowerLanguage.Indicator{
             leg3 = -0.5;
             atrlen = 15;
             atrnum = 2;
-            bigPt1 = 1000;
-            bigPt2 = 500;
+            bigPt1 = 1;
+            bigPt2 = 1;
             bigPt3 = 1000;
+            pos1 = 2000;
+            pos2 = -333;
+            pos3 = -1;
             slippage = 0;
             type = 1;
         }
@@ -54,6 +57,12 @@ namespace PowerLanguage.Indicator{
         public double bigPt2 { get; set; }
         [Input]
         public double bigPt3 { get; set; }
+        [Input]
+        public double pos1 { get; set; }
+        [Input]
+        public double pos2 { get; set; }
+        [Input]
+        public double pos3 { get; set; }
         [Input]
         public double slippage { get; set; }
         [Input]
@@ -79,18 +88,21 @@ namespace PowerLanguage.Indicator{
             m_sprdPnl.leg1 = leg1;
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
+            m_sprdPnl.pos1 = pos1;
+            m_sprdPnl.pos2 = pos2;
+            m_sprdPnl.pos3 = pos3;
             m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "indic";
             m_atrFC.leg1 = leg1;
             m_atrFC.leg2 = leg2;
             m_atrFC.leg3 = leg3;
             m_atrFC.atrlen = atrlen;
-            spreadBigPtVal = Math.Abs(bigPt1 * leg1 + bigPt2 * leg2 + bigPt3 * leg3);
+            spreadBigPtVal = Math.Abs(bigPt1 * pos1 + bigPt2 * pos2 + bigPt3 * pos3);
 		}
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
-            var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
+            //var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
 			plot1.Set(m_sprdPnl[0]);
 
             if (type == 1)  // on lossing exit 
@@ -98,7 +110,7 @@ namespace PowerLanguage.Indicator{
                 if (m_pos.Value == 0)
                 {
                     if (m_pos[1] != 0)
-                        m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
+                        m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                     else
                         m_atr.Value = 0;
                     //m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(6 / leg1) * spreadBigPtVal;
@@ -106,7 +118,7 @@ namespace PowerLanguage.Indicator{
                 else  // m_pos.Value != 0
                 {
                     //if (m_sprdPnl[0] < 0)
-                        m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(m_pos[0] / leg1) * spreadBigPtVal;
+                    m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                     //else
                     //    m_atr.Value = 0;
                 }
@@ -117,7 +129,7 @@ namespace PowerLanguage.Indicator{
                 if (m_pos.Value == 0)
                 {
                     if (m_pos[1] != 0)
-                        m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[1] / leg1) * spreadBigPtVal;
+                        m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                     else
                         m_atr.Value = 0;
                         //m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(6 / leg1) * spreadBigPtVal;
@@ -125,7 +137,7 @@ namespace PowerLanguage.Indicator{
                 else  // m_pos.Value != 0
                 {
                     //if (m_sprdPnl[0] < 0)
-                    m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(m_pos[0] / leg1) * spreadBigPtVal;
+                    m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                     //else
                     //    m_atr.Value = 0;
                 }
