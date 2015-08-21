@@ -13,6 +13,9 @@ namespace PowerLanguage.Strategy {
         private _gATR m_atr;
         private double spreadBigPtVal;
 
+        private IOrderMarket m_atrLX_Mkt;
+        private IOrderPriced m_atrLX_stop;
+
 		public _gATR_LX(object _ctx):base(_ctx)
         {
             ////XLE
@@ -51,12 +54,6 @@ namespace PowerLanguage.Strategy {
             //slippage = 0;
             //exitType = 2;     
         }
-        
-
-		
-        private IOrderMarket m_atrLX_Mkt;
-        private IOrderPriced m_atrLX_stop;
-
         [Input]
         public double leg1 { get; set; }
         [Input]

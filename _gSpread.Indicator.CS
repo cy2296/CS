@@ -60,26 +60,13 @@ namespace PowerLanguage.Indicator{
 		{
             assign(m_spreadOpenFC, Bars.Open, BarsOfData(2).Open, (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
             assign(m_spreadClosFC, Bars.Close, BarsOfData(2).Close, (leg3 == 0) ? Bars.Close : BarsOfData(3).Close);
-            //m_spreadOpenFC.inst1 = Bars.Open;
-            //m_spreadOpenFC.inst2 = BarsOfData(2).Open;
-            //m_spreadOpenFC.inst3 = (leg3 == 0) ? Bars.Open : BarsOfData(3).Open;
-            //m_spreadOpenFC.leg1 = leg1;
-            //m_spreadOpenFC.leg2 = leg2;
-            //m_spreadOpenFC.leg3 = leg3;
-
-            //m_spreadClosFC.inst1 = Bars.Close;
-            //m_spreadClosFC.inst2 = BarsOfData(2).Close;
-            //m_spreadClosFC.inst3 = (leg3 == 0) ? Bars.Close : BarsOfData(3).Close;
-            //m_spreadClosFC.leg1 = leg1;
-            //m_spreadClosFC.leg2 = leg2;
-            //m_spreadClosFC.leg3 = leg3;
 		}
 		protected override void CalcBar()
 		{
             //m_spreadOpen.Value = m_spreadOpenFC[0];
             //m_spreadClose.Value = m_spreadClosFC[0];
-            var open = Math.Round(m_spreadOpenFC[0],6);
-            var close = Math.Round(m_spreadClosFC[0],6);
+            var open = Math.Round(m_spreadOpenFC[0],2);
+            var close = Math.Round(m_spreadClosFC[0],2);
             if (close >= open)
             {
                 plot1.Set(open, Color.LawnGreen);

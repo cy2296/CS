@@ -14,8 +14,6 @@ namespace PowerLanguage
 		{
             private System.Text.StringBuilder csv;  // for debug only
 
-
-
             private VariableSeries<int> m_pos;
             private double m_currHigh;
             private double m_currLow;
@@ -56,23 +54,25 @@ namespace PowerLanguage
                         // no position or just close one.
                         if (m_pos[1] == 0)
                             m_stairway.Value = c[0];
-                        else 
-                            m_stairway.Value = m_stairway[1];
+                        if (m_pos[1] > 0)
+                            m_stairway.Value = m_currLow;
+                        if (m_pos[1] < 0)
+                            m_stairway.Value = m_currHigh;
                     }
                     if (m_pos.Value > 0)
                     {
-                        if (m_pos[1] == 0) // just open long position
+                        if (m_pos[1] <= 0) // just open long position, or reverse short to long
                         {
                             m_currHigh = Math.Max(m_high[1], m_high[0]);
                             m_currLow = Math.Min(m_low[1], m_low[0]);
                             m_stairway.Value = m_currLow;
                         }
-                        else // existing long
+                        if (m_pos[1] > 0) // existing long
                         {
                             if (c[0] <= m_currHigh)
                             {
                                 m_currHigh = Math.Max(m_currHigh, m_high[0]);
-                                m_stairway.Value = m_stairway[1];
+                                m_stairway.Value = m_currLow; //m_stairway[1];
                             }
                             else  // update new m_stairway
                             {
@@ -85,7 +85,7 @@ namespace PowerLanguage
                     }
                     if (m_pos.Value < 0)
                     {
-                        if (m_pos[1] == 0) // just open long position
+                        if (m_pos[1] >= 0) // just open short position or reversse long to short 
                         {
                             m_currHigh = Math.Max(m_high[1], m_high[0]);
                             m_currLow = Math.Min(m_low[1], m_low[0]);
@@ -96,7 +96,7 @@ namespace PowerLanguage
                             if (c[0] >= m_currLow)
                             {
                                 m_currLow = Math.Min(m_currLow, m_low[0]);
-                                m_stairway.Value = m_stairway[1];
+                                m_stairway.Value = m_currHigh; //m_stairway[1];
                             }
                             else
                             {
@@ -127,9 +127,10 @@ namespace PowerLanguage
                     var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}{10}",
                     x, a, b, z, g, p, d, e, f, j, System.Environment.NewLine);
                     csv.Append(newLine);
-                    System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
+                    //System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
+                    System.IO.File.WriteAllText("C:/data/debug.csv", csv.ToString());
                 }
-                return m_stairway.Value;
+                return Math.Round(m_stairway.Value, 4);
                 //return h[0];
                 
             }
