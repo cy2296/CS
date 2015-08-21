@@ -12,6 +12,8 @@ namespace PowerLanguage
             private VariableSeries<int> m_pos;
             private double m_currHigh;
             private double m_currLow;
+            private double m_initDiff;
+            private double m_initStair;
             private VariableSeries<Double> m_stairs;
 
             private VariableSeries<Double> m_high;
@@ -24,6 +26,7 @@ namespace PowerLanguage
             public ISeries<Double> h { get; set; }    // for spread : Max(open, close)
             public ISeries<Double> l { get; set; }    // for spread : Min(open, close)
             public ISeries<Double> c { get; set; }    // closes
+            public Double initStop { get; set; }   // 
             public String calltype { get; set; }   // "strat" or "indic"
 
 			protected override void Create()
@@ -69,13 +72,19 @@ namespace PowerLanguage
                         if (calltype == "indic")
                         {
                             m_currHigh = Math.Max(m_high[1], m_high[0]);
-                            m_currLow = Math.Min(m_low[1], m_low[0]);
+                            m_initStair = Math.Min(m_low[1], m_low[0]);
+                            var initStopPrice = c[0] - initStop;
+                            m_currLow = Math.Min(m_initStair, initStopPrice);
+                            m_initDiff = (initStopPrice < m_initStair) ? (m_initStair - initStopPrice) : 0;
                             m_stairs.Value = m_currLow;
                         }
                         if (calltype == "strat")
                         {
                             m_currHigh = Math.Max(m_high[1], m_high[2]);
-                            m_currLow = Math.Min(m_low[1], m_low[2]);
+                            m_initStair = Math.Min(m_low[1], m_low[2]);
+                            var initStopPrice = c[1] - initStop;
+                            m_currLow = Math.Min(m_initStair, initStopPrice);
+                            m_initDiff = (initStopPrice < m_initStair) ? (m_initStair - initStopPrice) : 0;
 
                             if (c[0] <= m_currHigh)
                             {
@@ -86,7 +95,13 @@ namespace PowerLanguage
                             {
                                 m_currHigh = Math.Max(m_currHigh, m_high[0]);
                                 double low = Math.Min(m_low[1], m_low[0]);
-                                m_currLow = Math.Max(low, m_currLow);
+                                if (low > m_currLow)
+                                {
+                                    if (Math.Abs(low - m_initStair) >= m_initDiff)
+                                        m_currLow = low;   // don't consider initStop gap
+                                    else
+                                        m_currLow = low - m_initDiff;
+                                }
                                 m_stairs.Value = m_currLow;
                             }                              
                         }
@@ -102,25 +117,37 @@ namespace PowerLanguage
                         {
                             m_currHigh = Math.Max(m_currHigh, m_high[0]);
                             double low = Math.Min(m_low[1], m_low[0]);
-                            m_currLow = Math.Max(low, m_currLow);
+                            if (low > m_currLow)
+                            {
+                                if (Math.Abs(low - m_initStair) >= m_initDiff)
+                                    m_currLow = low;   // don't consider initStop gap
+                                else
+                                    m_currLow = low - m_initDiff;
+                            }
                             m_stairs.Value = m_currLow;
                         }
                     }
                 }
                 if (m_pos.Value < 0)
                 {
-                    if (m_pos[1] >= 0) // just open long position, or reversse long to short 
+                    if (m_pos[1] >= 0) // just open short position, or reversse long to short 
                     {
                         if (calltype == "indic")
                         {
-                            m_currHigh = Math.Max(m_high[1], m_high[0]);
                             m_currLow = Math.Min(m_low[1], m_low[0]);
+                            m_initStair = Math.Max(m_high[1], m_high[0]);
+                            var initStopPrice = c[0] + initStop;
+                            m_currHigh = Math.Max(m_initStair, initStopPrice);
+                            m_initDiff = (initStopPrice > m_initStair) ? (initStopPrice - m_initStair) : 0;
                             m_stairs.Value = m_currHigh;
                         }
                         if (calltype == "strat")
                         {
-                            m_currHigh = Math.Max(m_high[1], m_high[2]);
                             m_currLow = Math.Min(m_low[1], m_low[2]);
+                            m_initStair = Math.Max(m_high[1], m_high[2]);
+                            var initStopPrice = c[1] + initStop;
+                            m_currHigh = Math.Max(m_initStair, initStopPrice);
+                            m_initDiff = (initStopPrice > m_initStair) ? (initStopPrice - m_initStair) : 0;
 
                             if (c[0] >= m_currLow)
                             {
@@ -131,7 +158,13 @@ namespace PowerLanguage
                             {
                                 m_currLow = Math.Min(m_currLow, m_low[0]);
                                 double high = Math.Max(m_high[1], m_high[0]);
-                                m_currHigh = Math.Min(high, m_currHigh);
+                                if (high < m_currHigh)
+                                {
+                                    if (Math.Abs(high - m_initStair) >= m_initDiff)
+                                        m_currHigh = high;
+                                    else
+                                        m_currHigh = high - m_initDiff;
+                                }
                                 m_stairs.Value = m_currHigh;
                             }
                         }
@@ -147,7 +180,13 @@ namespace PowerLanguage
                         {
                             m_currLow = Math.Min(m_currLow, m_low[0]);
                             double high = Math.Max(m_high[1], m_high[0]);
-                            m_currHigh = Math.Min(high, m_currHigh);
+                            if (high < m_currHigh)
+                            {
+                                if (Math.Abs(high - m_initStair) >= m_initDiff)
+                                    m_currHigh = high;
+                                else
+                                    m_currHigh = high - m_initDiff;
+                            }
                             m_stairs.Value = m_currHigh;
                         }
                     }

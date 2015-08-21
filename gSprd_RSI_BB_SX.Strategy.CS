@@ -24,24 +24,24 @@ namespace PowerLanguage.Strategy
 
 		public gSprd_RSI_BB_SX(object _ctx):base(_ctx)
         {
-            leg1 = 1;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            len_rsi = 10;
-            numdevsup = 1.95;
-            numdevsdn = 1.95;
-            len_bb = 15;
-            confirmbars = 1;
-            exitType = 1;
-            bigPt1 = 1;
-            bigPt2 = 1;
-            bigPt3 = 1000;
-            pos1 = 2000;
-            pos2 = -667;
-            pos3 = -1;
-            slippage = 0;
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //exitType = 1;
+            //bigPt1 = 1;
+            //bigPt2 = 1;
+            //bigPt3 = 1000;
+            //pos1 = 2000;
+            //pos2 = -667;
+            //pos3 = -1;
+            //slippage = 0;
 
-            //// SPY
+            // SPY
             //leg1 = 0.333;
             //leg2 = -1;
             //leg3 = 0.5;
@@ -59,23 +59,23 @@ namespace PowerLanguage.Strategy
             //pos3 = 1;
             //slippage = 0;
 
-            ////// CL
-            //leg1 = 0.5;
-            //leg2 = -1;
-            //leg3 = 0.333;
-            //len_rsi = 10;
-            //numdevsup = 1.95;
-            //numdevsdn = 1.95;
-            //len_bb = 15;
-            //confirmbars = 1;
-            //exitType = 1;
-            //bigPt1 = 1000;
-            //bigPt2 = 1;
-            //bigPt3 = 1;
-            //pos1 = 1;
-            //pos2 = -2000;
-            //pos3 = 667;
-            //slippage = 0;        
+            //// CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            len_rsi = 10;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
+            len_bb = 15;
+            confirmbars = 1;
+            exitType = 1;
+            bigPt1 = 1000;
+            bigPt2 = 1;
+            bigPt3 = 1;
+            pos1 = 1;
+            pos2 = -2000;
+            pos3 = 667;
+            slippage = 0;        
         }
         [Input]
         public double leg1 { get; set; }

@@ -14,8 +14,12 @@ namespace PowerLanguage.Strategy {
 
         private _gSpreadRSI m_spreadRsiFC;
         private _gSpreadRsiUpBB m_spreadRsiUpBbFC;
-
         private VariableObject<Int32> m_counter;
+
+        private XAverage m_averagefc1;
+        private XAverage m_averagefc2;
+        private VariableSeries<Double> m_spread;
+
 
         private IOrderPriced m_rsiBbCrossSE_Prc;
         private IOrderMarket m_rsiBbCrossSE_Mkt;
@@ -24,7 +28,7 @@ namespace PowerLanguage.Strategy {
 
 		public _gSprdRsi_BB_SE(object _ctx):base(_ctx)
         {
-            // XLE
+            //// XLE
             //leg1 = 1;
             //leg2 = -0.333;
             //leg3 = -0.5;
@@ -33,26 +37,32 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
+            //fastlength = 20;  
+            //slowlength = 50;
 
-            // SPY
-            leg1 = 0.333;
-            leg2 = -1;
-            leg3 = 0.5;
-            len_rsi = 10;
-            numdevsup = 1.95;
-            numdevsdn = 1.95;
-            len_bb = 15;
-            confirmbars = 1;
-
-            //// CL
-            //leg1 = 0.5;
+            //// SPY
+            //leg1 = 0.333;
             //leg2 = -1;
-            //leg3 = 0.333;
+            //leg3 = 0.5;
             //len_rsi = 10;
             //numdevsup = 1.95;
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
+            //fastlength = 20;  
+            //slowlength = 50;
+
+            // CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            len_rsi = 10;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
+            len_bb = 15;
+            confirmbars = 1;
+            fastlength = 20;  
+            slowlength = 50;
         }
 
         public ISeries<Double> price1 { get; set; }
@@ -80,6 +90,11 @@ namespace PowerLanguage.Strategy {
         [Input]
         public int confirmbars { get; set; }
 
+        [Input]
+        public int fastlength { get; set; }
+        [Input]
+        public int slowlength { get; set; }
+
 		
 		protected override void Create()
         {
@@ -91,9 +106,15 @@ namespace PowerLanguage.Strategy {
             m_rsiBbCrossSE_Mkt = OrderCreator.MarketThisBar
                 (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
 
+            m_averagefc1 = new XAverage(this);
+            m_averagefc2 = new XAverage(this);
+
             m_counter = new VariableObject<int>(this);
+
+            m_spread = new VariableSeries<double>(this);
+
             StartTime = "9:30";
-            EndTime = "15:58";
+            EndTime = "15:30";
             csv = new StringBuilder();
         }
 		protected override void StartCalc() 
@@ -119,10 +140,18 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiUpBbFC.numdevsdn = numdevsdn;
             m_spreadRsiUpBbFC.numdevsup = numdevsup;
             m_spreadRsiUpBbFC.len_bb = len_bb;
+
+            m_averagefc1.Price = m_spread;
+            m_averagefc1.Length = fastlength;
+            m_averagefc2.Price = m_spread;
+            m_averagefc2.Length = slowlength;
 		}
 		protected override void CalcBar()
         {
             m_mp.Value = StrategyInfo.MarketPosition;
+            m_spread.Value = Bars.Close[0] * leg1
+            + ((leg2 != 0) ? BarsOfData(2).Close[0] : Bars.Close[0]) * leg2
+            + ((leg3 != 0) ? BarsOfData(3).Close[0] : Bars.Close[0]) * leg3;
             if (PublicFunctions.DoubleLess(m_spreadRsiFC[0], m_spreadRsiUpBbFC[0]))
             {
                 ++m_counter.Value;
@@ -132,12 +161,13 @@ namespace PowerLanguage.Strategy {
                 m_counter.Value = 0;
             }
             if (Bars.CurrentBar > (len_bb + len_rsi)
+                && m_averagefc1[0] < m_averagefc2[0]
                 && m_counter.Value == confirmbars
-                && m_mp[0] >= 0
+                && m_mp[0] == 0
                 && TimeToTrade())
             {
-                m_rsiBbCrossSE_Prc.Send(Bars.Close[0]);
-                //m_rsiBbCrossSE_Mkt.Send();
+                //m_rsiBbCrossSE_Prc.Send(Bars.Close[0]);
+                m_rsiBbCrossSE_Mkt.Send();
             }
 		}
 

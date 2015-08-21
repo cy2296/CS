@@ -25,20 +25,20 @@ namespace PowerLanguage.Strategy
 
 		public gSprd_ATR_SX(object _ctx):base(_ctx)
         {
-            //XLE
-            leg1 = 1.0;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            AtrLength = 15;
-            NumAtrs = 2;
-            bigPt1 = 1;
-            bigPt2 = 1;
-            bigPt3 = 1000;
-            pos1 = 2000;
-            pos2 = -667;
-            pos3 = -1;
-            slippage = 0;
-            exitType = 1;
+            ////XLE
+            //leg1 = 1.0;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //AtrLength = 15;
+            //NumAtrs = 2;
+            //bigPt1 = 1;
+            //bigPt2 = 1;
+            //bigPt3 = 1000;
+            //pos1 = 2000;
+            //pos2 = -667;
+            //pos3 = -1;
+            //slippage = 0;
+            //exitType = 1;
 
             ////// SPY  
             //leg1 = 0.333;
@@ -55,20 +55,20 @@ namespace PowerLanguage.Strategy
             //slippage = 0;
             //exitType = 1;
 
-            ////CL
-            //leg1 = 0.5;
-            //leg2 = -1;
-            //leg3 = 0.333;
-            //AtrLength = 15;
-            //NumAtrs = 2;
-            //bigPt1 = 1000;
-            //bigPt2 = 1;
-            //bigPt3 = 1;
-            //pos1 = 1;
-            //pos2 = -2000;
-            //pos3 = 667;
-            //slippage = 0;
-            //exitType = 1;         
+            //CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            AtrLength = 15;
+            NumAtrs = 2;
+            bigPt1 = 1000;
+            bigPt2 = 1;
+            bigPt3 = 1;
+            pos1 = 1;
+            pos2 = -2000;
+            pos3 = 667;
+            slippage = 0;
+            exitType = 1;         
         }
         [Input]
         public double leg1 { get; set; }
