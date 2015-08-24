@@ -117,7 +117,7 @@ namespace PowerLanguage.Strategy
             
             if (m_averagefc1[0] > m_averagefc2[0]
                 && m_counter1.Value == confirmbars
-                && m_mp[0] == 0
+                && m_mp[0] <= 0
                 && TimeToTrade())
             {
                 m_rsiCross50_LE_Mkt.Send();
@@ -130,7 +130,7 @@ namespace PowerLanguage.Strategy
 
             if (m_averagefc1[0] < m_averagefc2[0]
                 && m_counter2.Value == confirmbars
-                && m_mp[0] == 0
+                && m_mp[0] >= 0
                 && TimeToTrade())
             {
                 m_rsiCross50_SE_Mkt.Send();

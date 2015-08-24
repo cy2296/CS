@@ -13,6 +13,7 @@ namespace PowerLanguage.Strategy
         private VariableSeries<Double> m_spreadOpen;
         private VariableSeries<Double> m_spreadClos;
         private TimeSpan startTime, endTime;
+        private int m_count;
 
         private IOrderMarket m_stairLX_Mkt;
 
@@ -22,19 +23,22 @@ namespace PowerLanguage.Strategy
             leg1 = 1.0;
             leg2 = -0.333;
             leg3 = -0.5;
-            initStop = 0.05;
+            initStop = 0;
+            confirmbars = 8;
   
             ////// SPY  
             //leg1 = 0.333;
             //leg2 = -1;
             //leg3 = 0.5;
-            //initStop = 0.05;
+            //initStop = 0;
+            //confirmbars = 8;
 
             // CL
             //leg1 = 0.5;
             //leg2 = -1;
             //leg3 = 0.333;
-            //initStop = 0.05;
+            //initStop = 0;
+            //confirmbars = 8;
         }
 
         [Input]
@@ -45,6 +49,8 @@ namespace PowerLanguage.Strategy
         public double leg3 { get; set; }
         [Input]
         public double initStop { get; set; }
+        [Input]
+        public int confirmbars { get; set; }
         [Input]
         public string StartTime { get; set; }
         [Input]
@@ -57,13 +63,14 @@ namespace PowerLanguage.Strategy
             m_spreadOpen = new VariableSeries<double>(this);
             m_spreadClos = new VariableSeries<double>(this);
             m_stairLX_Mkt = OrderCreator.MarketThisBar
-                (new SOrderParameters(Contracts.Default, "LX", 
+                (new SOrderParameters(Contracts.Default, "Stair", 
                     EOrderAction.Sell, OrderExit.FromAll));
             StartTime = "9:30";
             EndTime = "15:50";
 		}
 		protected override void StartCalc()
         {
+            m_count = 0;
             startTime = ConvertToTime(StartTime);
             endTime = ConvertToTime(EndTime);
             m_stairs.o = (leg2 == 0 && leg3 == 0) ? Bars.Open : m_spreadOpen;
@@ -83,8 +90,23 @@ namespace PowerLanguage.Strategy
                 + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
                 + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
 
-            if (m_pos[0] > 0 && m_spreadClos[0] < m_stairs[0])
-                m_stairLX_Mkt.Send();
+            if (m_pos[0] > 0)
+            {
+                if (m_pos[0] == 0)
+                    m_count = 1;
+                else
+                {
+                    ++m_count;
+                    if (m_spreadClos[0] < m_stairs[0] && m_count >= confirmbars)
+                    {
+                        m_count = 0;
+                        m_stairLX_Mkt.Send();
+                    }
+                }
+            }
+
+            //if (m_pos[0] > 0 && m_spreadClos[0] < m_stairs[0])
+            //    m_stairLX_Mkt.Send();
             if (!TimeToTrade())
                 m_stairLX_Mkt.Send();
 		}

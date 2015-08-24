@@ -20,13 +20,21 @@ namespace PowerLanguage.Strategy
     object ctx;
     private IOrderMarket buy_order;
 
-    private String MBTProfileName = "MB Trading";
-    private String MBTAccount = "35031736";
-    private String MBTSymbol = "/ESU2";
 
-    private String OECProfileName = "Open E Cry";
-    private String OECAccount = "DEMO342738";
+    private String MBTProfileName = "Interactive Brokers";
+    private String MBTAccount = "DU197962";
+    private String MBTSymbol = "/ESU2";
+    //private String MBTProfileName = "MB Trading";
+    //private String MBTAccount = "35031736";
+    //private String MBTSymbol = "/ESU2";
+
+    private String OECProfileName = "Interactive Brokers";
+    private String OECAccount = "DU197962";
     private String OECSymbol = "ESM5";
+
+    //private String OECProfileName = "Open E Cry";
+    //private String OECAccount = "DEMO342738";
+    //private String OECSymbol = "ESM5";
 
     bool MBTIsLastTradePositive;
     bool OECIsLastTradePositive;
@@ -65,8 +73,8 @@ namespace PowerLanguage.Strategy
     {
       Output.WriteLine("------>  Positions_Changed");
       foreach (Position p in _items)
-			{
-				m_OpenPositionManager.Change( p.Profile, p.BrokerSymbol, p.Value, p.OpenPL, p.AvgPrice );
+	  {
+	    m_OpenPositionManager.Change( p.Profile, p.BrokerSymbol, p.Value, p.OpenPL, p.AvgPrice );
       }
     }
 
@@ -75,7 +83,7 @@ namespace PowerLanguage.Strategy
       Output.WriteLine("------>  Positions_Added");
       foreach (Position p in _items)
       {
-				m_OpenPositionManager.Add( p.Profile, p.BrokerSymbol, p.Value, p.OpenPL, p.AvgPrice );
+		m_OpenPositionManager.Add( p.Profile, p.BrokerSymbol, p.Value, p.OpenPL, p.AvgPrice );
       }
     }
 
@@ -270,6 +278,7 @@ namespace PowerLanguage.Strategy
       OrderParams p = new OrderParams();
       p.action = ATCenterProxy.interop.MTPA_OrdrActn.eMTPA_OA_Buy;
       p.category = ATCenterProxy.interop.MTPA_OrdrCtgry.eMTPA_OC_Market;
+
       p.tif = ATCenterProxy.interop.MTPA_OrdrTimeInForce.eMTPA_TIF_DAY;
       p.limit_price = 0;
       p.stop_price = 0;
@@ -282,7 +291,7 @@ namespace PowerLanguage.Strategy
   {
     public int Quantity;
     public double OpenPL;
-		public double FilledPrice;
+    public double FilledPrice;
   }
 
   public class OpenPositionManager
@@ -298,7 +307,7 @@ namespace PowerLanguage.Strategy
       m__Positions = new Dictionary<String, PositionInfo>();
     }
 
-		public void Add( String Profile, String Symbol, int value, double OpenPL, double AvgPrice )
+	public void Add( String Profile, String Symbol, int value, double OpenPL, double AvgPrice )
     {
       String key = GetKey(Profile, Symbol);
 
@@ -309,11 +318,10 @@ namespace PowerLanguage.Strategy
           OutPut.WriteLine("Error, Key \"{0}\" already Exist", key);
           m__Positions.Remove(key);
         }
-
         PositionInfo p = new PositionInfo();
         p.OpenPL = OpenPL;
         p.Quantity = value;
-				p.FilledPrice = AvgPrice;
+		p.FilledPrice = AvgPrice;
         m__Positions.Add(key, p);
       }
     }
