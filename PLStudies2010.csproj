@@ -387,6 +387,9 @@
     <Compile Include="_gTrailingStop.Strategy.CS" />
     <Compile Include="_gSpread_Stairs.Indicator.CS" />
     <Compile Include="_gRSI_50_E.Strategy.CS" />
+    <Compile Include="GlobalsDemoTrendPower.Indicator.CS" />
+    <Compile Include="GlobalsDemoTrendPower.Strategy.CS" />
+    <Compile Include="Globals.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

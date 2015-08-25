@@ -19,25 +19,25 @@ namespace PowerLanguage.Strategy {
 		public _gStairs_SX(object _ctx):base(_ctx)
         {
             ////XLE
-            leg1 = 1.0;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            initStop = 0;
-            confirmbars = 8;
+            //leg1 = 1.0;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //initStop = 0;
+            //confirmbars = 8;
 
-            //// SPY  
+            // SPY  
             //leg1 = 0.333;
             //leg2 = -1;
             //leg3 = 0.5;
-            //initStop = 0;
+            //initStop = 0.05;
             //confirmbars = 8;
 
-            //// CL
-            //leg1 = 0.5;
-            //leg2 = -1;
-            //leg3 = 0.333;
-            //initStop = 0;
-            //confirmbars = 8;
+            // CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            initStop = 0.05;
+            confirmbars = 8;
         }
         [Input]
         public double leg1 { get; set; }

@@ -46,7 +46,7 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-            //fastlength = 20;  
+            //fastlength = 20;
             //slowlength = 50;
 
             // CL
