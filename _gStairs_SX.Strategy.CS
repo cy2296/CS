@@ -89,7 +89,7 @@ namespace PowerLanguage.Strategy {
                 + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
             if (m_pos[0] < 0)
             {
-                if (m_pos[0] == 0)
+                if (m_pos[1] == 0)
                     m_count = 1;
                 else
                 {

@@ -62,8 +62,8 @@ namespace PowerLanguage.Strategy {
             {
                // chartID = Environment.ChartWindowHWND.ToString();
 
-                //positionGlobalName = "pos" + chartID;
-                positionGlobalName = "pos";
+                positionGlobalName = "pos" + chartID;
+                //positionGlobalName = "pos";
                 if (SaveGlobalProperties)
                 {
                     Globals.NamedInteger.AddOrUpdate(positionGlobalName, 0, (k, v) => 0);

@@ -17,3 +17,4 @@ C:\ProgramData\TS Support\MultiCharts .NET64\StudyServer\Techniques\CS\bin\Debug
 C:\ProgramData\TS Support\MultiCharts .NET64\StudyServer\Techniques\CS\bin\Debug\PLBuiltInFunctions.xml
 C:\ProgramData\TS Support\MultiCharts .NET64\StudyServer\Techniques\CS\obj\Debug\PLStudies2010.dll
 C:\ProgramData\TS Support\MultiCharts .NET64\StudyServer\Techniques\CS\obj\Debug\PLStudies2010.pdb
+C:\ProgramData\TS Support\MultiCharts .NET64\StudyServer\Techniques\CS\obj\Debug\PLStudies2010.csprojResolveAssemblyReference.cache

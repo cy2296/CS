@@ -379,7 +379,7 @@
     <Compile Include="_gMov_Avg_2_Lines.Indicator.CS" />
     <Compile Include="_gRSI.Indicator.CS" />
     <Compile Include="_gGetSpread.Function.CS" />
-    <Compile Include="_gStairwayExitFC.Function.CS" />
+    <Compile Include="_gFixStop_X.Strategy.CS" />
     <Compile Include="_gStairs_LX.Strategy.CS" />
     <Compile Include="_gStairs_SX.Strategy.CS" />
     <Compile Include="_gSpeed.Indicator.CS" />
@@ -390,6 +390,12 @@
     <Compile Include="GlobalsDemoTrendPower.Indicator.CS" />
     <Compile Include="GlobalsDemoTrendPower.Strategy.CS" />
     <Compile Include="Globals.Function.CS" />
+    <Compile Include="gSprd_ATR_X.Strategy.CS" />
+    <Compile Include="_gStairs_X.Strategy.CS" />
+    <Compile Include="_gMarketClose_X.Strategy.CS" />
+    <Compile Include="_gStairsFC2.Function.CS" />
+    <Compile Include="_gLinear_Reg_Curve.Indicator.CS" />
+    <Compile Include="_gRegression_E.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

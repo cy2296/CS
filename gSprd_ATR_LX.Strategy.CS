@@ -32,7 +32,7 @@ namespace PowerLanguage.Strategy
             //pos2 = -667;
             //pos3 = -1;
             //slippage = 0;
-            //exitType = 1;
+            ////exitType = 1;
 
             //// SPY  
             //leg1 = 0.333;
@@ -47,7 +47,7 @@ namespace PowerLanguage.Strategy
             //pos2 = -2000;
             //pos3 = 1;
             //slippage = 0;
-            //exitType = 1;
+            ////exitType = 1;
 
             //// CL
             leg1 = 0.5;
@@ -62,7 +62,7 @@ namespace PowerLanguage.Strategy
             pos2 = -2000;
             pos3 = 667;
             slippage = 0;
-            exitType = 1;               
+            //exitType = 1;               
         }
 
         [Input]
@@ -89,8 +89,8 @@ namespace PowerLanguage.Strategy
         public double pos3 { get; set; }
         [Input]
         public double slippage { get; set; }
-        [Input]
-        public int exitType { get; set; }
+        //[Input]
+        //public int exitType { get; set; }
         [Input]
         public int AtrLength { get; set; }
         [Input]
@@ -114,16 +114,16 @@ namespace PowerLanguage.Strategy
             startTime = ConvertToTime(StartTime);
             endTime = ConvertToTime(EndTime);
 
-            m_sprdPnl.bigPt1 = bigPt1;
-            m_sprdPnl.bigPt2 = bigPt2;
-            m_sprdPnl.bigPt3 = bigPt3;
+            //m_sprdPnl.bigPt1 = bigPt1;
+            //m_sprdPnl.bigPt2 = bigPt2;
+            //m_sprdPnl.bigPt3 = bigPt3;
             m_sprdPnl.leg1 = leg1;
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
-            m_sprdPnl.pos1 = pos1;
-            m_sprdPnl.pos2 = pos2;
-            m_sprdPnl.pos3 = pos3;
-            m_sprdPnl.slippage = slippage;
+            //m_sprdPnl.pos1 = pos1;
+            //m_sprdPnl.pos2 = pos2;
+            //m_sprdPnl.pos3 = pos3;
+            //m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "strat";
 
             m_atrFC.leg1 = leg1;
@@ -138,20 +138,21 @@ namespace PowerLanguage.Strategy
 
             if (m_pos.Value > 0)
             {
-                //var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
-                var atrstop = (m_atrFC[0] * NumAtrs + 2 * slippage) * spreadBigPtVal; 
-                if (exitType == 1)    // stop exit
+                //var atrstop = (m_atrFC[0] * NumAtrs + 2 * slippage) * spreadBigPtVal;
+                var atrstop = m_atrFC[0] * NumAtrs;
+ 
+                //if (exitType == 1)    // stop exit
                 {
                     if (m_sprdPnl[0] < 0 && Math.Abs(m_sprdPnl[0]) >= atrstop)
                         m_atrLX_Mkt.Send();
                         //m_atrLX_stop.Send(Bars.Close[0]);
                 }
-                if (exitType == 2)    // profit exit
-                {
-                    if (m_sprdPnl[0] > 0 && Math.Abs(m_sprdPnl[0]) >= atrstop)
-                        m_atrLX_Mkt.Send();
-                        //m_atrLX_stop.Send(Bars.Close[0]);
-                }
+                //if (exitType == 2)    // profit exit
+                //{
+                //    if (m_sprdPnl[0] > 0 && Math.Abs(m_sprdPnl[0]) >= atrstop)
+                //        m_atrLX_Mkt.Send();
+                //        //m_atrLX_stop.Send(Bars.Close[0]);
+                //}
                 //if (!TimeToTrade())
                 //    m_atrLX_Mkt.Send();
                     //m_atrLX_stop.Send(Bars.Close[0]);

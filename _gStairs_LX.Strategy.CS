@@ -92,7 +92,7 @@ namespace PowerLanguage.Strategy
 
             if (m_pos[0] > 0)
             {
-                if (m_pos[0] == 0)
+                if (m_pos[1] == 0)
                     m_count = 1;
                 else
                 {

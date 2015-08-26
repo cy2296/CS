@@ -21,19 +21,22 @@ namespace PowerLanguage.Strategy {
 
 		public _gSprdRsi_BB_LX(object _ctx):base(_ctx)
         {
-            leg1 = 1;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            len_rsi = 10;
-            numdevsup = 1.95;
-            numdevsdn = 1.95;
-            len_bb = 15;
-            confirmbars = 1;
-            exitType = 1;
-            bigPt1 = 1000;
-            bigPt2 = 500;
-            bigPt3 = 1000;
-            slippage = 0;
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //exitType = 1;
+            //bigPt1 = 1;
+            //bigPt2 = 1;
+            //bigPt3 = 1000;
+            //pos1 = 2000;
+            //pos2 = -667;
+            //pos3 = -1;
+            //slippage = 0;
 
             //// SPY
             //leg1 = 0.333;
@@ -44,31 +47,33 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-            //exitType = 2;
-            //bigPt1 = 500;
-            //bigPt2 = 1000;
+            //exitType = 1;
+            //bigPt1 = 1;
+            //bigPt2 = 1;
             //bigPt3 = 1000;
+            //pos1 = 667;
+            //pos2 = -2000;
+            //pos3 = 1;
             //slippage = 0;
 
-            // CL
-            //leg1 = 0.5;
-            //leg2 = -1;
-            //leg3 = 0.333;
-            //len_rsi = 10;
-            //numdevsup = 1.95;
-            //numdevsdn = 1.95;
-            //len_bb = 15;
-            //confirmbars = 1;
-            //exitType = 2;
-            //bigPt1 = 1000;
-            //bigPt2 = 1000;
-            //bigPt3 = 500;
-            //slippage = 0;
+            //// CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            len_rsi = 10;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
+            len_bb = 15;
+            confirmbars = 1;
+            exitType = 1;
+            bigPt1 = 1000;
+            bigPt2 = 1;
+            bigPt3 = 1;
+            pos1 = 1;
+            pos2 = -2000;
+            pos3 = 667;
+            slippage = 0;     
         }
-        public ISeries<Double> price1 { get; set; }
-        public ISeries<Double> price2 { get; set; }
-        public ISeries<Double> price3 { get; set; }
-
         [Input]
         public double leg1 { get; set; }
         [Input]
@@ -86,8 +91,15 @@ namespace PowerLanguage.Strategy {
         [Input]
         public double bigPt3 { get; set; }
         [Input]
+        public double pos1 { get; set; }
+        [Input]
+        public double pos2 { get; set; }
+        [Input]
+        public double pos3 { get; set; }
+        [Input]
         public double slippage { get; set; }
-
+        [Input]
+        public int exitType { get; set; }
         [Input]
         public Int32 len_rsi { get; set; }
         [Input]
@@ -99,20 +111,14 @@ namespace PowerLanguage.Strategy {
         [Input]
         public int confirmbars { get; set; }
 
-        [Input]
-        public int exitType { get; set; }
-
-
-
-
-		protected override void Create() 
+        protected override void Create()
         {
             m_sprdPnl = new _gSpreadPnlFC(this);
             m_spreadRsiFC = new _gSpreadRSI(this);
             m_spreadRsiUpBbFC = new _gSpreadRsiUpBB(this);
             m_spreadRsiDnBbFC = new _gSpreadRsiDnBB(this);
             m_rsiBbCrossLX_stop = OrderCreator.Stop
-                            (new SOrderParameters(Contracts.Default, "LX", 
+                            (new SOrderParameters(Contracts.Default, "LX",
                              EOrderAction.Sell, OrderExit.FromAll));
             m_rsiBbCrossLX_Mkt = OrderCreator.MarketThisBar
                        (new SOrderParameters(Contracts.Default, "LX",
@@ -122,8 +128,7 @@ namespace PowerLanguage.Strategy {
             StartTime = "9:30";
             EndTime = "15:58";
         }
-
-		protected override void StartCalc() 
+        protected override void StartCalc()
         {
             startTime = ConvertToTime(StartTime);
             endTime = ConvertToTime(EndTime);
@@ -158,16 +163,19 @@ namespace PowerLanguage.Strategy {
             m_spreadRsiDnBbFC.numdevsup = numdevsup;
             m_spreadRsiDnBbFC.len_bb = len_bb;
 
-            m_sprdPnl.bigPt1 = bigPt1;
-            m_sprdPnl.bigPt2 = bigPt2;
-            m_sprdPnl.bigPt3 = bigPt3;
-            m_sprdPnl.pos1 = leg1;
-            m_sprdPnl.pos2 = leg2;
-            m_sprdPnl.pos3 = leg3;
-            m_sprdPnl.slippage = slippage;
+            //m_sprdPnl.bigPt1 = bigPt1;
+            //m_sprdPnl.bigPt2 = bigPt2;
+            //m_sprdPnl.bigPt3 = bigPt3;
+            m_sprdPnl.leg1 = leg1;
+            m_sprdPnl.leg2 = leg2;
+            m_sprdPnl.leg3 = leg3;
+            //m_sprdPnl.pos1 = pos1;
+            //m_sprdPnl.pos2 = pos2;
+            //m_sprdPnl.pos3 = pos3;
+            //m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "strat";
-		}
-		protected override void CalcBar()
+        }
+        protected override void CalcBar()
         {
             m_mp.Value = StrategyInfo.MarketPosition;
 
@@ -184,8 +192,8 @@ namespace PowerLanguage.Strategy {
                         && m_counter.Value == confirmbars
                         && m_sprdPnl[0] >= 0)
                     {
-                        //m_rsiBbCrossLX_Mkt.Send();
-                        m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
+                        m_rsiBbCrossLX_Mkt.Send();
+                        //m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
                     }
                 }
             }
@@ -201,35 +209,26 @@ namespace PowerLanguage.Strategy {
                       && m_counter.Value == confirmbars
                       && m_sprdPnl[0] <= 0)
                     {
-                       // m_rsiBbCrossLX_Mkt.Send();
-                        m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
-                    }              
+                        m_rsiBbCrossLX_Mkt.Send();
+                        //m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
+                    }
                 }
             }
             if (!TimeToTrade() && m_mp.Value > 0)
-                //m_rsiBbCrossLX_Mkt.Send();
-                m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
-		}
+                m_rsiBbCrossLX_Mkt.Send();
+            //m_rsiBbCrossLX_stop.Send(Bars.Close[0]);
+        }
         private TimeSpan ConvertToTime(string timeToConvert)
         {
             DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
                 System.Globalization.CultureInfo.InvariantCulture);
-
             return dt.TimeOfDay;
         }
-
-        // The TimeToTrade() method returns 'true' if the current bar
-        // time falls within the trading hours range, or else returns 'false'.
         private bool TimeToTrade()
         {
             TimeSpan barTime = Bars.TimeValue.TimeOfDay;
-
-            // If the range is on the same day, both expressions must be true
             if (startTime < endTime)
                 return (barTime >= startTime) && (barTime <= endTime);
-
-            // Otherwise the range crosses midnight, and only one of
-            // the expressions need to be true
             return (barTime > startTime) || (barTime < endTime);
         }
     }

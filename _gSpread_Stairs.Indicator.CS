@@ -16,6 +16,8 @@ namespace PowerLanguage.Indicator
         private VariableSeries<int> m_pos;
         private _gTestFC1 m_stairway;
 
+        private LinearRegValue m_linearregvalue1;
+        private VariableSeries<Double> m_linreg;
 
         // plot candlesticks
         private IPlotObject plot1;
@@ -25,20 +27,28 @@ namespace PowerLanguage.Indicator
         // plot stairs
         private IPlotObject plot5;
         private IPlotObject plot6;
+        //
+        private IPlotObject Plot7;
 
 		public _gSpread_Stairs(object _ctx):base(_ctx)
         {
             leg1 = 1.0;
             leg2 = -0.333;
-            leg3 = -0.5; 
+            leg3 = -0.5;
+            reg_length = 20;
+            displace = 0;
         }
         [Input]
         public double leg1 { get; set; }
         [Input]
         public double leg2 { get; set; }
         [Input]
-
         public double leg3 { get; set; }
+        [Input]
+        public int reg_length { get; set; }
+        [Input]
+        public int displace { get; set; }
+
 
         void assign(_gSpreadFC sprdFunc, ISeries<Double> inst1,
             ISeries<Double> inst2, ISeries<Double> inst3)
@@ -62,6 +72,9 @@ namespace PowerLanguage.Indicator
             m_pos = new VariableSeries<int>(this);
             m_stairway = new _gTestFC1(this);
 
+            m_linearregvalue1 = new LinearRegValue(this);
+            m_linreg = new VariableSeries<Double>(this);
+
             plot1 = AddPlot(new PlotAttributes("Open", EPlotShapes.LeftTick, Color.Red));
             plot2 = AddPlot(new PlotAttributes("High", EPlotShapes.BarHigh, Color.Red));
             plot3 = AddPlot(new PlotAttributes("Low", EPlotShapes.BarLow, Color.Red));
@@ -69,6 +82,8 @@ namespace PowerLanguage.Indicator
 
             plot5 = AddPlot(new PlotAttributes("Low", EPlotShapes.LeftTick, Color.Red));
             plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
+
+            Plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
 		}
 		protected override void StartCalc() 
         {
@@ -80,6 +95,10 @@ namespace PowerLanguage.Indicator
             m_stairway.l = (leg2 == 0 && leg3 == 0) ? Bars.Low : m_spreadClose;
             m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClose;
             m_stairway.calltype = "indic";
+
+            m_linearregvalue1.price = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClose; 
+            m_linearregvalue1.length = reg_length;
+            m_linearregvalue1.tgtbar = 0;
 		}
 		protected override void CalcBar()
         {
@@ -124,6 +143,8 @@ namespace PowerLanguage.Indicator
                 //plot3.Set(m_stairway[0], Color.Aqua);
                 //plot4.Set(m_stairway[0], Color.Aqua);
             }
+            m_linreg.Value = m_linearregvalue1[0];
+            Plot7.Set(displace, m_linreg.Value);
 		}
 	}
 }

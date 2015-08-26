@@ -26,7 +26,7 @@ namespace PowerLanguage.Strategy {
 		protected override void StartCalc()
         {
             UpdateWatchingPos();
-            positionGlobalName = "pos";
+            positionGlobalName = "pos" + "984796";
 		}
 		protected override void CalcBar()
         {

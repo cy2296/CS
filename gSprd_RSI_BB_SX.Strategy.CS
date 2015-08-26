@@ -170,16 +170,16 @@ namespace PowerLanguage.Strategy
             m_spreadRsiDnBbFC.numdevsup = numdevsup;
             m_spreadRsiDnBbFC.len_bb = len_bb;
 
-            m_sprdPnl.bigPt1 = bigPt1;
-            m_sprdPnl.bigPt2 = bigPt2;
-            m_sprdPnl.bigPt3 = bigPt3;
+            //m_sprdPnl.bigPt1 = bigPt1;
+            //m_sprdPnl.bigPt2 = bigPt2;
+            //m_sprdPnl.bigPt3 = bigPt3;
             m_sprdPnl.leg1 = leg1;
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
-            m_sprdPnl.pos1 = pos1;
-            m_sprdPnl.pos2 = pos2;
-            m_sprdPnl.pos3 = pos3;
-            m_sprdPnl.slippage = slippage;
+            //m_sprdPnl.pos1 = pos1;
+            //m_sprdPnl.pos2 = pos2;
+            //m_sprdPnl.pos3 = pos3;
+            //m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "strat";
 		}
 		protected override void CalcBar()

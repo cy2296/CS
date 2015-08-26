@@ -35,7 +35,7 @@ namespace PowerLanguage.Indicator{
             pos2 = -333;
             pos3 = -1;
             slippage = 0;
-            type = 1;
+            //type = 1;
         }
 
 		private IPlotObject plot1;
@@ -65,8 +65,8 @@ namespace PowerLanguage.Indicator{
         public double pos3 { get; set; }
         [Input]
         public double slippage { get; set; }
-        [Input]
-        public int type { get; set; }    // 1: on loosing, 2: on winning 
+        //[Input]
+        //public int type { get; set; }    // 1: on loosing, 2: on winning 
  
         protected override void Create() 
         {
@@ -82,16 +82,16 @@ namespace PowerLanguage.Indicator{
 		}
 		protected override void StartCalc() 
         {
-            m_sprdPnl.bigPt1 = bigPt1;
-            m_sprdPnl.bigPt2 = bigPt2;
-            m_sprdPnl.bigPt3 = bigPt3;
+            //m_sprdPnl.bigPt1 = bigPt1;
+            //m_sprdPnl.bigPt2 = bigPt2;
+            //m_sprdPnl.bigPt3 = bigPt3;
             m_sprdPnl.leg1 = leg1;
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
-            m_sprdPnl.pos1 = pos1;
-            m_sprdPnl.pos2 = pos2;
-            m_sprdPnl.pos3 = pos3;
-            m_sprdPnl.slippage = slippage;
+            //m_sprdPnl.pos1 = pos1;
+            //m_sprdPnl.pos2 = pos2;
+            //m_sprdPnl.pos3 = pos3;
+            //m_sprdPnl.slippage = slippage;
             m_sprdPnl.calltype = "indic";
             m_atrFC.leg1 = leg1;
             m_atrFC.leg2 = leg2;
@@ -102,47 +102,42 @@ namespace PowerLanguage.Indicator{
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
-            //var dollarRatio = Math.Abs(m_pos.Value / leg1) * spreadBigPtVal;
-			plot1.Set(m_sprdPnl[0]);
+            plot1.Set(m_sprdPnl[0] * spreadBigPtVal);
 
-            if (type == 1)  // on lossing exit 
+            //if (type == 1)  // on lossing exit 
             {
                 if (m_pos.Value == 0)
                 {
                     if (m_pos[1] != 0)
-                        m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
+                        m_atr.Value = -1 * m_atrFC[0] * atrnum * spreadBigPtVal;
+                        //m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                     else
                         m_atr.Value = 0;
-                    //m_atr.Value = -1 * m_atrFC[0] * atrnum * Math.Abs(6 / leg1) * spreadBigPtVal;
                 }
                 else  // m_pos.Value != 0
                 {
-                    //if (m_sprdPnl[0] < 0)
-                    m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
-                    //else
-                    //    m_atr.Value = 0;
+                    m_atr.Value = -1 * m_atrFC[0] * atrnum * spreadBigPtVal;
+                    //m_atr.Value = -1 * (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
                 }
                 plot2.Set(m_atr.Value);
             }
-            if (type == 2)  // on winning exit 
-            {
-                if (m_pos.Value == 0)
-                {
-                    if (m_pos[1] != 0)
-                        m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
-                    else
-                        m_atr.Value = 0;
-                        //m_atr.Value = m_atrFC[0] * atrnum * Math.Abs(6 / leg1) * spreadBigPtVal;
-                }
-                else  // m_pos.Value != 0
-                {
-                    //if (m_sprdPnl[0] < 0)
-                    m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
-                    //else
-                    //    m_atr.Value = 0;
-                }
-                plot2.Set(m_atr.Value);
-            }
+            //if (type == 2)  // on winning exit 
+            //{
+            //    if (m_pos.Value == 0)
+            //    {
+            //        if (m_pos[1] != 0)
+            //            m_atr.Value = m_atrFC[0] * atrnum * spreadBigPtVal;
+            //            //m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
+            //        else
+            //            m_atr.Value = 0;
+            //    }
+            //    else  // m_pos.Value != 0
+            //    {
+            //        m_atr.Value = m_atrFC[0] * atrnum * spreadBigPtVal;
+            //        //m_atr.Value = (m_atrFC[0] * atrnum + 2 * slippage) * spreadBigPtVal;
+            //    }
+            //    plot2.Set(m_atr.Value);
+            //}
 
 
 

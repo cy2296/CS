@@ -24,14 +24,14 @@ namespace PowerLanguage.Strategy
 
         public _gRSI_50_E(object _ctx):base(_ctx)
         {
-            // XLE
-            leg1 = 1;
-            leg2 = -0.333;
-            leg3 = -0.5;
-            len_rsi = 5;
-            confirmbars = 1;
-            fastlength = 20;
-            slowlength = 50;
+            //// XLE
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //len_rsi = 5;
+            //confirmbars = 1;
+            //fastlength = 20;
+            //slowlength = 50;
 
             //// SPY
             //leg1 = 0.333;
@@ -39,17 +39,17 @@ namespace PowerLanguage.Strategy
             //leg3 = 0.5;
             //len_rsi = 5;
             //confirmbars = 1;
-            //fastlength = 20;  
-            //slowlength = 50;
-
-            //// CL
-            //leg1 = 0.5;
-            //leg2 = -1;
-            //leg3 = 0.333;
-            //len_rsi = 5;
-            //confirmbars = 1;
             //fastlength = 20;
             //slowlength = 50;
+
+            // CL
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            len_rsi = 5;
+            confirmbars = 1;
+            fastlength = 20;
+            slowlength = 50;
         }
         [Input]
         public double leg1 { get; set; }
@@ -110,7 +110,8 @@ namespace PowerLanguage.Strategy
                 + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
                 + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
 
-            if (PublicFunctions.DoubleGreater(m_rsi[0], 50))
+            //if (PublicFunctions.DoubleGreater(m_rsi[0], 50))
+            if (PublicFunctions.DoubleLess(m_rsi[0], 50))
                 ++m_counter1.Value;
             else
                 m_counter1.Value = 0;
@@ -123,7 +124,8 @@ namespace PowerLanguage.Strategy
                 m_rsiCross50_LE_Mkt.Send();
             }
 
-            if (PublicFunctions.DoubleLess(m_rsi[0], 50))
+            //if (PublicFunctions.DoubleLess(m_rsi[0], 50))
+            if (PublicFunctions.DoubleGreater(m_rsi[0], 50))
                 ++m_counter2.Value;
             else
                 m_counter2.Value = 0;

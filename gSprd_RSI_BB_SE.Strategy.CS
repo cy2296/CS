@@ -20,16 +20,17 @@ namespace PowerLanguage.Strategy {
 
 		public gSprd_RSI_BB_SE(object _ctx):base(_ctx)
         {
-            //// XLE
-            //leg1 = 1;
-            //leg2 = -0.333;
-            //leg3 = -0.5;
-            //len_rsi = 10;
-            //numdevsup = 1.95;
-            //numdevsdn = 1.95;
-            //len_bb = 15;
-            //confirmbars = 1;
-
+            
+            // XLE
+            leg1 = 1;
+            leg2 = -0.333;
+            leg3 = -0.5;
+            len_rsi = 10;
+            numdevsup = 1.95;
+            numdevsdn = 1.95;
+            len_bb = 15;
+            confirmbars = 1;
+            
             //// SPY
             //leg1 = 0.333;
             //leg2 = -1;
@@ -39,16 +40,16 @@ namespace PowerLanguage.Strategy {
             //numdevsdn = 1.95;
             //len_bb = 15;
             //confirmbars = 1;
-
-            //// CL
-            leg1 = 0.5;
-            leg2 = -1;
-            leg3 = 0.333;
-            len_rsi = 10;
-            numdevsup = 1.95;
-            numdevsdn = 1.95;
-            len_bb = 15;
-            confirmbars = 1;
+            
+            ////// CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //len_rsi = 10;
+            //numdevsup = 1.95;
+            //numdevsdn = 1.95;
+            //len_bb = 15;
+            //confirmbars = 1;
         }
         [Input]
         public double leg1 { get; set; }
