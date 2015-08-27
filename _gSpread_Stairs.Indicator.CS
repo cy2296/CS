@@ -9,15 +9,14 @@ namespace PowerLanguage.Indicator
     {
         private _gSpreadFC m_spreadOpenFC;
         private _gSpreadFC m_spreadClosFC;
-
-        private VariableSeries<Double> m_spreadOpen;
-        private VariableSeries<Double> m_spreadClose;
+        private VariableSeries<Double> m_averagePrice;
 
         private VariableSeries<int> m_pos;
         private _gTestFC1 m_stairway;
 
         private LinearRegValue m_linearregvalue1;
         private VariableSeries<Double> m_linreg;
+        private XAverage m_linregEma;    
 
         // plot candlesticks
         private IPlotObject plot1;
@@ -27,8 +26,9 @@ namespace PowerLanguage.Indicator
         // plot stairs
         private IPlotObject plot5;
         private IPlotObject plot6;
-        //
-        private IPlotObject Plot7;
+        // regression line
+        private IPlotObject plot7;
+        private IPlotObject plot8;
 
 		public _gSpread_Stairs(object _ctx):base(_ctx)
         {
@@ -37,6 +37,7 @@ namespace PowerLanguage.Indicator
             leg3 = -0.5;
             reg_length = 20;
             displace = 0;
+            emalength = 4;
         }
         [Input]
         public double leg1 { get; set; }
@@ -48,6 +49,8 @@ namespace PowerLanguage.Indicator
         public int reg_length { get; set; }
         [Input]
         public int displace { get; set; }
+        [Input]
+        public int emalength { get; set; }
 
 
         void assign(_gSpreadFC sprdFunc, ISeries<Double> inst1,
@@ -65,15 +68,14 @@ namespace PowerLanguage.Indicator
         {
             m_spreadOpenFC = new _gSpreadFC(this);
             m_spreadClosFC = new _gSpreadFC(this);
-
-            m_spreadOpen = new VariableSeries<Double>(this);
-            m_spreadClose = new VariableSeries<Double>(this);
+            m_averagePrice = new VariableSeries<Double>(this);
 
             m_pos = new VariableSeries<int>(this);
             m_stairway = new _gTestFC1(this);
 
             m_linearregvalue1 = new LinearRegValue(this);
             m_linreg = new VariableSeries<Double>(this);
+            m_linregEma = new XAverage(this);
 
             plot1 = AddPlot(new PlotAttributes("Open", EPlotShapes.LeftTick, Color.Red));
             plot2 = AddPlot(new PlotAttributes("High", EPlotShapes.BarHigh, Color.Red));
@@ -83,36 +85,42 @@ namespace PowerLanguage.Indicator
             plot5 = AddPlot(new PlotAttributes("Low", EPlotShapes.LeftTick, Color.Red));
             plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
 
-            Plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
+            plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
+            plot8 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Purple));
 		}
 		protected override void StartCalc() 
         {
-            assign(m_spreadOpenFC, Bars.Open, BarsOfData(2).Open, (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
-            assign(m_spreadClosFC, Bars.Close, BarsOfData(2).Close, (leg3 == 0) ? Bars.Close : BarsOfData(3).Close);
+            assign(m_spreadOpenFC, Bars.Open, 
+                (leg2 == 0) ? Bars.Open : BarsOfData(2).Open, 
+                (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
+            assign(m_spreadClosFC, Bars.Close, 
+                (leg2 == 0) ? Bars.Close : BarsOfData(2).Close, 
+                (leg3 == 0) ? Bars.Close : BarsOfData(3).Close);
 
-            m_stairway.o = (leg2 == 0 && leg3 == 0) ? Bars.Open : m_spreadOpen;
-            m_stairway.h = (leg2 == 0 && leg3 == 0) ? Bars.High : m_spreadOpen;
-            m_stairway.l = (leg2 == 0 && leg3 == 0) ? Bars.Low : m_spreadClose;
-            m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClose;
+            m_stairway.o = (leg2 == 0 && leg3 == 0) ? Bars.Open : m_spreadOpenFC;
+            m_stairway.h = (leg2 == 0 && leg3 == 0) ? Bars.High : m_spreadOpenFC;
+            m_stairway.l = (leg2 == 0 && leg3 == 0) ? Bars.Low : m_spreadClosFC;
+            m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClosFC;
             m_stairway.calltype = "indic";
 
-            m_linearregvalue1.price = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClose; 
+            m_linearregvalue1.price = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_averagePrice; 
             m_linearregvalue1.length = reg_length;
             m_linearregvalue1.tgtbar = 0;
+
+            m_linregEma.Price = m_linreg;
+            m_linregEma.Length = emalength;
 		}
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
 
-            m_spreadOpen.Value = Bars.Open[0] * leg1
-                + ((leg2 != 0) ? BarsOfData(2).Open[0] * leg2 : 0)
-                + ((leg3 != 0) ? BarsOfData(3).Open[0] * leg3 : 0);
-            m_spreadClose.Value = Bars.Close[0] * leg1
-                + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
-                + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
+            if (leg2 == 0 && leg3 == 0)
+                m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
+            else
+                m_averagePrice.Value = 0.5 * (m_spreadOpenFC[0] + m_spreadClosFC[0]);
 
-            var open = Math.Round(m_spreadOpen.Value, 4);
-            var close = Math.Round(m_spreadClose.Value, 4);
+            var open = Math.Round(m_spreadOpenFC[0], 4);
+            var close = Math.Round(m_spreadClosFC[0], 4);
 
             if (close >= open)
             {
@@ -128,23 +136,21 @@ namespace PowerLanguage.Indicator
                 plot3.Set(close, Color.Red);
                 plot4.Set(close, Color.Red);
             }
+            // plot stairs
+            //if (m_pos[0] == 0 && m_pos[1] == 0)
+            //{
+            //    plot5.Set(m_stairway[0], Color.Black);
+            //    plot6.Set(m_stairway[0], Color.Black);
+            //}
+            //else
+            //{
+            //    plot5.Set(m_stairway[0], Color.Aqua);
+            //    plot6.Set(m_stairway[0], Color.Aqua);
+            //}
 
-            if (m_pos[0] == 0 && m_pos[1] == 0)
-            {
-                plot5.Set(m_stairway[0], Color.Black);
-                plot6.Set(m_stairway[0], Color.Black);
-                //plot3.Set(m_stairway[0], Color.Black);
-                //plot4.Set(m_stairway[0], Color.Black);
-            }
-            else
-            {
-                plot5.Set(m_stairway[0], Color.Aqua);
-                plot6.Set(m_stairway[0], Color.Aqua);
-                //plot3.Set(m_stairway[0], Color.Aqua);
-                //plot4.Set(m_stairway[0], Color.Aqua);
-            }
             m_linreg.Value = m_linearregvalue1[0];
-            Plot7.Set(displace, m_linreg.Value);
+            plot7.Set(displace, m_linreg.Value);
+            plot8.Set(m_linregEma[0]);
 		}
 	}
 }

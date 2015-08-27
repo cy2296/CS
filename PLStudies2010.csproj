@@ -396,6 +396,8 @@
     <Compile Include="_gStairsFC2.Function.CS" />
     <Compile Include="_gLinear_Reg_Curve.Indicator.CS" />
     <Compile Include="_gRegression_E.Strategy.CS" />
+    <Compile Include="_TimeToTrade.Function.CS" />
+    <Compile Include="_gRegression_EMA_Diff.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
