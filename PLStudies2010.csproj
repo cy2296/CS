@@ -398,6 +398,14 @@
     <Compile Include="_gRegression_E.Strategy.CS" />
     <Compile Include="_TimeToTrade.Function.CS" />
     <Compile Include="_gRegression_EMA_Diff.Indicator.CS" />
+    <Compile Include="_gScalping_E_X.Strategy.CS" />
+    <Compile Include="_gBarLow.Function.CS" />
+    <Compile Include="_gReverse.Strategy.CS" />
+    <Compile Include="_gBarHigh.Function.CS" />
+    <Compile Include="_gBarAvg.Function.CS" />
+    <Compile Include="_gBarClose.Function.CS" />
+    <Compile Include="_gBarOpen.Function.CS" />
+    <Compile Include="_gStopReverse.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
