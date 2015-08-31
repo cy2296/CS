@@ -4,9 +4,8 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
-namespace PowerLanguage.Strategy 
-{
-	public class _gRegression_E : SignalObject
+namespace PowerLanguage.Strategy {
+	public class gRegression_E : SignalObject
     {
         private TimeSpan startTime, endTime;
         private VariableSeries<int> m_mp;   // position info
@@ -27,7 +26,7 @@ namespace PowerLanguage.Strategy
 
         private _gSpreadPnlFC m_sprdPnl;
 
-		public _gRegression_E(object _ctx):base(_ctx)
+        public gRegression_E(object _ctx):base(_ctx)
         {
             //leg1 = 1.0;
             //leg2 = -0.333;
@@ -54,7 +53,7 @@ namespace PowerLanguage.Strategy
             lowBand = 0;
             reglength = 20;
             emalength = 4;
-            avgLen = 5;
+            avgLen = 5; 
         }
         [Input]
         public double leg1 { get; set; }
@@ -77,7 +76,7 @@ namespace PowerLanguage.Strategy
         [Input]
         public string EndTime { get; set; }
 
-		protected override void Create() 
+        protected override void Create()
         {
             StartTime = "9:30";
             EndTime = "15:30";
@@ -99,7 +98,7 @@ namespace PowerLanguage.Strategy
                     (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
             m_sprdPnl = new _gSpreadPnlFC(this);
 		}
-		protected override void StartCalc() 
+        protected override void StartCalc()
         {
             startTime = ConvertToTime(StartTime);
             endTime = ConvertToTime(EndTime);
@@ -114,9 +113,8 @@ namespace PowerLanguage.Strategy
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.calltype = "strat";
-        }
-		protected override void CalcBar()
-        {
+		}
+		protected override void CalcBar(){
             m_mp.Value = StrategyInfo.MarketPosition;
             if (leg2 == 0 && leg3 == 0)
                 m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
@@ -139,7 +137,7 @@ namespace PowerLanguage.Strategy
             dnTrend = (getCount(m_gapDecreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] < m_twoLineGap[1]);
 
             if (m_mp[0] >= 0
-                && (upTrend && m_twoLineGap[0] > 0.03)
+                && (upTrend && m_twoLineGap[0] > 0.02)
                 //&& m_twoLineGap[0] < lowBand
                 && TimeToTrade())
             {

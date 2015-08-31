@@ -4,6 +4,10 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
 namespace PowerLanguage.Strategy 
 {
 	public class _gScalping_E_X : SignalObject 
@@ -31,13 +35,31 @@ namespace PowerLanguage.Strategy
         private IOrderMarket m_scalping_SE_Mkt;
         private IOrderMarket m_scalping_SX_Mkt;
 
+        private System.Text.StringBuilder csv;  // for debug only
+
         public _gScalping_E_X(object _ctx):base(_ctx)
         {
-            leg1 = 1;
-            leg2 = 0;
-            leg3 = 0;
-            UpRatio = 1;
-            DnRatio = 1;
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //UpRatio = 0.2;
+            //DnRatio = 0.2;
+            //fastLen = 5;
+            //slowLen = 15;
+
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //UpRatio = 0.2;
+            //DnRatio = 0.2;
+            //fastLen = 5;
+            //slowLen = 15;
+
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
+            UpRatio = 0.2;
+            DnRatio = 0.2;
             fastLen = 5;
             slowLen = 15;
         }
@@ -84,6 +106,7 @@ namespace PowerLanguage.Strategy
             m_scalping_SX_Mkt = OrderCreator.MarketThisBar
                 (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
 
+            csv = new StringBuilder();
 		}
 		protected override void StartCalc() 
         {
@@ -117,16 +140,47 @@ namespace PowerLanguage.Strategy
             // going down 
             m_cond1.Value = (m_lowest1[0] <= m_lowest2[0]);
             // up bar criteria
-            m_cond2.Value = (m_high[0] - m_low[0] > m_avg[0] * UpRatio / 100);
-            m_cond3.Value = (m_close[0] > m_open[0] 
-                && (m_close[0] - m_open[0] > m_avg[0] * DnRatio / 100));
+            m_cond2.Value = (m_high[0] - m_low[0] > Math.Abs(m_avg[0] * UpRatio / 100));
+            m_cond3.Value = (m_close[0] > m_open[0]
+                && (m_close[0] - m_open[0] > Math.Abs(m_avg[0] * DnRatio / 100)));
             // going up 
             m_cond4.Value = (m_highest1[0] >= m_highest2[0]);
-            
+
             // down bar criteria
-            m_cond5.Value = (m_high[0] - m_low[0] > m_avg[0] * DnRatio / 100);  // ???? 
-            m_cond6.Value = (m_close[0] < m_open[0] 
-                && (m_open[0] - m_close[0] > m_avg[0] * DnRatio / 100));
+            m_cond5.Value = (m_high[0] - m_low[0] > Math.Abs(m_avg[0] * DnRatio / 100));  // ???? 
+            m_cond6.Value = (m_close[0] < m_open[0]
+                && (m_open[0] - m_close[0] > Math.Abs(m_avg[0] * DnRatio / 100)));
+
+
+            if (Bars.CurrentBar < 500)
+            {
+                var x = Bars.TimeValue.Date;
+                var y = Bars.TimeValue.TimeOfDay;
+                var z = Bars.CurrentBar;
+
+                var k = m_avg[0];
+                var a = m_open[0];
+                var b = m_high[0];
+                var c = m_low[0];
+                var d = m_close[0];
+                var e = m_highest1[0];
+                var f = m_highest2[0];
+                var g = m_lowest1[0];
+                var h = m_lowest2[0];
+
+                var c1 = m_cond1[0];
+                var c2 = m_cond2[0];
+                var c3 = m_cond3[0];
+                var c4 = m_cond4[0];
+                var c5 = m_cond5[0];
+                var c6 = m_cond6[0];
+
+                var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}{18}",
+                x, y, z, k, a, b, c, d, e, f, g, h, c1, c2, c3, c4, c5, c6, System.Environment.NewLine);
+                csv.Append(newLine);
+                System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
+            }
+
 
             // going down and meet an up bar
             if (m_mp[0] == 0 && m_cond1[1] && m_cond2[1] && m_cond3[1])

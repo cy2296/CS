@@ -17,9 +17,23 @@ namespace PowerLanguage.Strategy
 
 		public _gReverse(object _ctx):base(_ctx)
         {
-            leg1 = 1;
-            leg2 = 0;
-            leg3 = 0;
+            //leg1 = 1;
+            //leg2 = -0.333;
+            //leg3 = -0.5;
+            //StartTime = "9:30";
+            //EndTime = "15:30";
+            //revLimit = 3;
+
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //StartTime = "9:30";
+            //EndTime = "15:30";
+            //revLimit = 3;
+
+            leg1 = 0.5;
+            leg2 = -1;
+            leg3 = 0.333;
             StartTime = "9:30";
             EndTime = "15:30";
             revLimit = 3;
@@ -62,14 +76,16 @@ namespace PowerLanguage.Strategy
             m_pos.Value = StrategyInfo.MarketPosition;
             if (m_pos[1] > 0 && m_pos[0] == 0 
                 && m_sprdPnl[1] < 0
-                && m_revCount < revLimit)
+                && m_revCount < revLimit
+                && TimeToTrade())
             {
                 ++m_revCount;
                 m_stopReverse_SE_Mkt.Send();
             }
             if (m_pos[1] < 0 && m_pos[0] == 0 
                 && m_sprdPnl[1] < 0
-                && m_revCount < revLimit)
+                && m_revCount < revLimit
+                && TimeToTrade())
             {
                 ++m_revCount;
                 m_stopReverse_LE_Mkt.Send();
