@@ -152,34 +152,34 @@ namespace PowerLanguage.Strategy
                 && (m_open[0] - m_close[0] > Math.Abs(m_avg[0] * DnRatio / 100)));
 
 
-            if (Bars.CurrentBar < 500)
-            {
-                var x = Bars.TimeValue.Date;
-                var y = Bars.TimeValue.TimeOfDay;
-                var z = Bars.CurrentBar;
+            //if (Bars.CurrentBar < 500)
+            //{
+            //    var x = Bars.TimeValue.Date;
+            //    var y = Bars.TimeValue.TimeOfDay;
+            //    var z = Bars.CurrentBar;
 
-                var k = m_avg[0];
-                var a = m_open[0];
-                var b = m_high[0];
-                var c = m_low[0];
-                var d = m_close[0];
-                var e = m_highest1[0];
-                var f = m_highest2[0];
-                var g = m_lowest1[0];
-                var h = m_lowest2[0];
+            //    var k = m_avg[0];
+            //    var a = m_open[0];
+            //    var b = m_high[0];
+            //    var c = m_low[0];
+            //    var d = m_close[0];
+            //    var e = m_highest1[0];
+            //    var f = m_highest2[0];
+            //    var g = m_lowest1[0];
+            //    var h = m_lowest2[0];
 
-                var c1 = m_cond1[0];
-                var c2 = m_cond2[0];
-                var c3 = m_cond3[0];
-                var c4 = m_cond4[0];
-                var c5 = m_cond5[0];
-                var c6 = m_cond6[0];
+            //    var c1 = m_cond1[0];
+            //    var c2 = m_cond2[0];
+            //    var c3 = m_cond3[0];
+            //    var c4 = m_cond4[0];
+            //    var c5 = m_cond5[0];
+            //    var c6 = m_cond6[0];
 
-                var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}{18}",
-                x, y, z, k, a, b, c, d, e, f, g, h, c1, c2, c3, c4, c5, c6, System.Environment.NewLine);
-                csv.Append(newLine);
-                System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
-            }
+            //    var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}{18}",
+            //    x, y, z, k, a, b, c, d, e, f, g, h, c1, c2, c3, c4, c5, c6, System.Environment.NewLine);
+            //    csv.Append(newLine);
+            //    System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
+            //}
 
 
             // going down and meet an up bar

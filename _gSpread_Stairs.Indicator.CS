@@ -9,7 +9,7 @@ namespace PowerLanguage.Indicator
     {
         private _gSpreadFC m_spreadOpenFC;
         private _gSpreadFC m_spreadClosFC;
-        private VariableSeries<Double> m_averagePrice;
+        private _gBarAvg m_avgprice;
 
         private VariableSeries<int> m_pos;
         private _gTestFC1 m_stairway;
@@ -68,7 +68,7 @@ namespace PowerLanguage.Indicator
         {
             m_spreadOpenFC = new _gSpreadFC(this);
             m_spreadClosFC = new _gSpreadFC(this);
-            m_averagePrice = new VariableSeries<Double>(this);
+            m_avgprice = new _gBarAvg(this);
 
             m_pos = new VariableSeries<int>(this);
             m_stairway = new _gTestFC1(this);
@@ -90,6 +90,9 @@ namespace PowerLanguage.Indicator
 		}
 		protected override void StartCalc() 
         {
+            m_avgprice.leg1 = leg1;
+            m_avgprice.leg2 = leg2;
+            m_avgprice.leg3 = leg3;
             assign(m_spreadOpenFC, Bars.Open, 
                 (leg2 == 0) ? Bars.Open : BarsOfData(2).Open, 
                 (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
@@ -103,7 +106,7 @@ namespace PowerLanguage.Indicator
             m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClosFC;
             m_stairway.calltype = "indic";
 
-            m_linearregvalue1.price = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_averagePrice; 
+            m_linearregvalue1.price = m_avgprice; 
             m_linearregvalue1.length = reg_length;
             m_linearregvalue1.tgtbar = 0;
 
@@ -113,11 +116,6 @@ namespace PowerLanguage.Indicator
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
-
-            if (leg2 == 0 && leg3 == 0)
-                m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
-            else
-                m_averagePrice.Value = 0.5 * (m_spreadOpenFC[0] + m_spreadClosFC[0]);
 
             var open = Math.Round(m_spreadOpenFC[0], 4);
             var close = Math.Round(m_spreadClosFC[0], 4);

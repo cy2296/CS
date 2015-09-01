@@ -139,7 +139,7 @@ namespace PowerLanguage.Strategy
             dnTrend = (getCount(m_gapDecreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] < m_twoLineGap[1]);
 
             if (m_mp[0] >= 0
-                && (upTrend && m_twoLineGap[0] > 0.03)
+                && (upTrend && m_twoLineGap[0] > 0.02)
                 //&& m_twoLineGap[0] < lowBand
                 && TimeToTrade())
             {
