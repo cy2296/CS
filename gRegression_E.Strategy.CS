@@ -18,7 +18,6 @@ namespace PowerLanguage.Strategy {
         private VariableSeries<int> m_gapDecreasing;   // (gap[0] < gap[1]) ? 1 : 0
         private bool upTrend;
         private bool dnTrend;
-
         private IOrderMarket m_regression_LE_Mkt;
         private IOrderMarket m_regression_SE_Mkt;
         private IOrderMarket m_regression_LX_Mkt;
@@ -31,8 +30,8 @@ namespace PowerLanguage.Strategy {
             //leg1 = 1.0;
             //leg2 = -0.333;
             //leg3 = -0.5;
-            //highBand = 0;
-            //lowBand = 0;
+            //highBand = 0.02;
+            //lowBand = 0.03;
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5;
@@ -40,8 +39,8 @@ namespace PowerLanguage.Strategy {
             //leg1 = 0.333;
             //leg2 = -1;
             //leg3 = 0.5;
-            //highBand = 0;
-            //lowBand = 0;
+            //highBand = 0.03;
+            //lowBand = 0.02;
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5;
@@ -49,8 +48,8 @@ namespace PowerLanguage.Strategy {
             leg1 = 0.5;
             leg2 = -1;
             leg3 = 0.333;
-            highBand = 0;
-            lowBand = 0;
+            highBand = 0.03;
+            lowBand = 0.02;
             reglength = 20;
             emalength = 4;
             avgLen = 5; 
@@ -114,52 +113,56 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.calltype = "strat";
 		}
-		protected override void CalcBar(){
-            m_mp.Value = StrategyInfo.MarketPosition;
-            if (leg2 == 0 && leg3 == 0)
-                m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
-            else
+		protected override void CalcBar()
+        {
+            if (MarketsAreOpened())
             {
-                double open = Bars.Open[0] * leg1
-                            + ((leg2 != 0) ? BarsOfData(2).Open[0] * leg2 : 0)
-                            + ((leg3 != 0) ? BarsOfData(3).Open[0] * leg3 : 0);
-                double close = Bars.Close[0] * leg1
-                            + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
-                            + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
-                m_averagePrice.Value = 0.5 * (open + close);
-            }
-            m_linreg.Value = m_linearregvalue1[0];
-            m_twoLineGap.Value = m_linearregvalue1[0] - m_linregEma[0];
-            m_gapIncreasing.Value = (m_twoLineGap[0] > m_twoLineGap[1]) ? 1 : 0;
-            m_gapDecreasing.Value = (m_twoLineGap[0] < m_twoLineGap[1]) ? 1 : 0;
+                m_mp.Value = StrategyInfo.MarketPosition;
+                if (leg2 == 0 && leg3 == 0)
+                    m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
+                else
+                {
+                    double open = Bars.Open[0] * leg1
+                                + ((leg2 != 0) ? BarsOfData(2).Open[0] * leg2 : 0)
+                                + ((leg3 != 0) ? BarsOfData(3).Open[0] * leg3 : 0);
+                    double close = Bars.Close[0] * leg1
+                                + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
+                                + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
+                    m_averagePrice.Value = 0.5 * (open + close);
+                }
+                m_linreg.Value = m_linearregvalue1[0];
+                m_twoLineGap.Value = m_linearregvalue1[0] - m_linregEma[0];
+                m_gapIncreasing.Value = (m_twoLineGap[0] > m_twoLineGap[1]) ? 1 : 0;
+                m_gapDecreasing.Value = (m_twoLineGap[0] < m_twoLineGap[1]) ? 1 : 0;
 
-            upTrend = (getCount(m_gapIncreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] > m_twoLineGap[1]);
-            dnTrend = (getCount(m_gapDecreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] < m_twoLineGap[1]);
+                upTrend = (getCount(m_gapIncreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] > m_twoLineGap[1]);
+                dnTrend = (getCount(m_gapDecreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] < m_twoLineGap[1]);
 
-            if (m_mp[0] >= 0
-                && (upTrend && m_twoLineGap[0] > 0.02)
-                //&& m_twoLineGap[0] < lowBand
-                && TimeToTrade())
-            {
-                //m_regression_LE_Mkt.Send();
-                m_regression_SE_Mkt.Send();
-            }
-            if (m_mp[0] <= 0
-                && (dnTrend && m_twoLineGap[0] < -0.03)
-                //&& m_twoLineGap[0] > highBand
-                && TimeToTrade())
-            {
-                //m_regression_SE_Mkt.Send();
-                m_regression_LE_Mkt.Send();
-            }
+                if (m_mp[0] >= 0
+                    && (upTrend && m_twoLineGap[0] > Math.Abs(highBand))
+                    //&& m_twoLineGap[0] < lowBand
+                    && TimeToTrade())
+                {
+                    //m_regression_LE_Mkt.Send();
+                    m_regression_SE_Mkt.Send();
+                }
+                if (m_mp[0] <= 0
+                    && (dnTrend && m_twoLineGap[0] < -Math.Abs(lowBand))
+                    //&& m_twoLineGap[0] > highBand
+                    && TimeToTrade())
+                {
+                    //m_regression_SE_Mkt.Send();
+                    m_regression_LE_Mkt.Send();
+                }
 
-            //if (m_sprdPnl[0] >= 0.2|| m_sprdPnl[0] <= -0.2)
-            //{
-            //    if (m_mp[0] > 0)
-            //        m_regression_LX_Mkt.Send();
-            //    if (m_mp[0] < 0)
-            //        m_regression_SX_Mkt.Send();
-            //}
+                //if (m_sprdPnl[0] >= 0.2|| m_sprdPnl[0] <= -0.2)
+                //{
+                //    if (m_mp[0] > 0)
+                //        m_regression_LX_Mkt.Send();
+                //    if (m_mp[0] < 0)
+                //        m_regression_SX_Mkt.Send();
+                //}
+            }
 		}
         private int getCount(VariableSeries<int> count, int length)
         {
@@ -181,6 +184,23 @@ namespace PowerLanguage.Strategy {
             if (startTime < endTime)
                 return (barTime >= startTime) && (barTime <= endTime);
             return (barTime > startTime) || (barTime < endTime);
+        }
+        private bool MarketsAreOpened()
+        {
+            if ((leg2 == 0 && leg3 == 0) ||
+                (leg2 != 0 && leg3 == 0
+                 && Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay) ||
+                (leg2 != 0 && leg3 != 0
+                 && Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                 && Bars.TimeValue.Date == BarsOfData(3).TimeValue.Date
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(3).TimeValue.TimeOfDay))
+            {
+                return true;
+            }
+            else
+                return false;
         }
 	}
 }

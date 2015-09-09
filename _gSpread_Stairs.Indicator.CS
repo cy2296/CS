@@ -7,12 +7,17 @@ namespace PowerLanguage.Indicator
 {
 	public class _gSpread_Stairs : IndicatorObject 
     {
-        private _gSpreadFC m_spreadOpenFC;
-        private _gSpreadFC m_spreadClosFC;
-        private _gBarAvg m_avgprice;
+        //private _gSpreadFC m_spreadOpenFC;
+        //private _gSpreadFC m_spreadClosFC;
+
+        private VariableSeries<Double> m_open;
+        private VariableSeries<Double> m_close;
+        private VariableSeries<Double> m_average;
+
+        //private _gBarAvg m_avgprice;
 
         private VariableSeries<int> m_pos;
-        private _gTestFC1 m_stairway;
+       // private _gTestFC1 m_stairway;
 
         private LinearRegValue m_linearregvalue1;
         private VariableSeries<Double> m_linreg;
@@ -30,6 +35,7 @@ namespace PowerLanguage.Indicator
         private IPlotObject plot7;
         private IPlotObject plot8;
 
+        private IPlotObject plot9;
 		public _gSpread_Stairs(object _ctx):base(_ctx)
         {
             leg1 = 1.0;
@@ -66,12 +72,17 @@ namespace PowerLanguage.Indicator
 
 		protected override void Create() 
         {
-            m_spreadOpenFC = new _gSpreadFC(this);
-            m_spreadClosFC = new _gSpreadFC(this);
-            m_avgprice = new _gBarAvg(this);
+            //m_spreadOpenFC = new _gSpreadFC(this);
+            //m_spreadClosFC = new _gSpreadFC(this);
+
+            m_open = new VariableSeries<double>(this);
+            m_close = new VariableSeries<double>(this);
+            m_average = new VariableSeries<double>(this);
+            
+            //m_avgprice = new _gBarAvg(this);
 
             m_pos = new VariableSeries<int>(this);
-            m_stairway = new _gTestFC1(this);
+            //m_stairway = new _gTestFC1(this);
 
             m_linearregvalue1 = new LinearRegValue(this);
             m_linreg = new VariableSeries<Double>(this);
@@ -86,69 +97,159 @@ namespace PowerLanguage.Indicator
             plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
 
             plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
-            plot8 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Purple));
+            plot8 = AddPlot(new PlotAttributes("LinRegEMA", EPlotShapes.Line, Color.Purple));
+            plot9 = AddPlot(new PlotAttributes("avg", EPlotShapes.Line, Color.Yellow));
 		}
 		protected override void StartCalc() 
         {
-            m_avgprice.leg1 = leg1;
-            m_avgprice.leg2 = leg2;
-            m_avgprice.leg3 = leg3;
-            assign(m_spreadOpenFC, Bars.Open, 
-                (leg2 == 0) ? Bars.Open : BarsOfData(2).Open, 
-                (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
-            assign(m_spreadClosFC, Bars.Close, 
-                (leg2 == 0) ? Bars.Close : BarsOfData(2).Close, 
-                (leg3 == 0) ? Bars.Close : BarsOfData(3).Close);
+            //m_avgprice.leg1 = leg1;
+            //m_avgprice.leg2 = leg2;
+            //m_avgprice.leg3 = leg3;
+            //assign(m_spreadOpenFC, Bars.Open, 
+            //    (leg2 == 0) ? Bars.Open : BarsOfData(2).Open, 
+            //    (leg3 == 0) ? Bars.Open : BarsOfData(3).Open);
+            //assign(m_spreadClosFC, Bars.Close, 
+            //    (leg2 == 0) ? Bars.Close : BarsOfData(2).Close, 
+            //    (leg3 == 0) ? Bars.Close : BarsOfData(3).Close);
 
-            m_stairway.o = (leg2 == 0 && leg3 == 0) ? Bars.Open : m_spreadOpenFC;
-            m_stairway.h = (leg2 == 0 && leg3 == 0) ? Bars.High : m_spreadOpenFC;
-            m_stairway.l = (leg2 == 0 && leg3 == 0) ? Bars.Low : m_spreadClosFC;
-            m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClosFC;
-            m_stairway.calltype = "indic";
+            //m_stairway.o = (leg2 == 0 && leg3 == 0) ? Bars.Open : m_spreadOpenFC;
+            //m_stairway.h = (leg2 == 0 && leg3 == 0) ? Bars.High : m_spreadOpenFC;
+            //m_stairway.l = (leg2 == 0 && leg3 == 0) ? Bars.Low : m_spreadClosFC;
+            //m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClosFC;
+            //m_stairway.calltype = "indic";
 
-            m_linearregvalue1.price = m_avgprice; 
+            m_linearregvalue1.price = m_average; 
             m_linearregvalue1.length = reg_length;
             m_linearregvalue1.tgtbar = 0;
 
             m_linregEma.Price = m_linreg;
             m_linregEma.Length = emalength;
 		}
-		protected override void CalcBar()
-        {
-            m_pos.Value = StrategyInfo.MarketPosition;
 
-            var open = Math.Round(m_spreadOpenFC[0], 4);
-            var close = Math.Round(m_spreadClosFC[0], 4);
-
-            if (close >= open)
+        private bool MarketsAreOpened()
+        { 
+            if ((leg2 == 0 && leg3 == 0) || 
+                (leg2 != 0 && leg3 == 0
+                 && Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay) || 
+                (leg2 != 0 && leg3 != 0
+                 && Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                 && Bars.TimeValue.Date == BarsOfData(3).TimeValue.Date
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay
+                 && Bars.TimeValue.TimeOfDay == BarsOfData(3).TimeValue.TimeOfDay))
             {
-                plot1.Set(open, Color.LawnGreen);
-                plot2.Set(close, Color.LawnGreen);
-                plot3.Set(open, Color.LawnGreen);
-                plot4.Set(close, Color.LawnGreen);
+                return true;
             }
             else
-            {
-                plot1.Set(open, Color.Red);
-                plot2.Set(open, Color.Red);
-                plot3.Set(close, Color.Red);
-                plot4.Set(close, Color.Red);
-            }
-            // plot stairs
-            //if (m_pos[0] == 0 && m_pos[1] == 0)
-            //{
-            //    plot5.Set(m_stairway[0], Color.Black);
-            //    plot6.Set(m_stairway[0], Color.Black);
-            //}
-            //else
-            //{
-            //    plot5.Set(m_stairway[0], Color.Aqua);
-            //    plot6.Set(m_stairway[0], Color.Aqua);
-            //}
+                return false;
+        
+        }
 
-            m_linreg.Value = m_linearregvalue1[0];
-            plot7.Set(displace, m_linreg.Value);
-            plot8.Set(m_linregEma[0]);
+        private void setOpen()
+        {
+            if (leg2 == 0 && leg3 == 0)
+            {
+                m_open.Value = Bars.Open[0] * leg1;
+            }
+            if (leg2 != 0 && leg3 == 0)
+            {
+                if (Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay)
+                {
+                    m_open.Value = Bars.Open[0] * leg1 + BarsOfData(2).Open[0] * leg2;
+                }
+            }
+            if (leg2 != 0 && leg3 != 0)
+            {
+                if (Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                    && Bars.TimeValue.Date == BarsOfData(3).TimeValue.Date
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(3).TimeValue.TimeOfDay)
+                {
+                    m_open.Value = Bars.Open[0] * leg1
+                        + BarsOfData(2).Open[0] * leg2
+                        + BarsOfData(3).Open[0] * leg3;
+                }
+            }
+        }
+        private void setClose()
+        {
+            if (leg2 == 0 && leg3 == 0)
+            {
+                m_close.Value = Bars.Close[0] * leg1;
+            }
+            if (leg2 != 0 && leg3 == 0)
+            {
+                if (Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay)
+                {
+                    m_close.Value = Bars.Close[0] * leg1 + BarsOfData(2).Close[0] * leg2;
+                }
+            }
+            if (leg2 != 0 && leg3 != 0)
+            {
+                if (Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date
+                    && Bars.TimeValue.Date == BarsOfData(3).TimeValue.Date
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(2).TimeValue.TimeOfDay
+                    && Bars.TimeValue.TimeOfDay == BarsOfData(3).TimeValue.TimeOfDay)
+                {
+                    m_close.Value = Bars.Close[0] * leg1
+                        + BarsOfData(2).Close[0] * leg2
+                        + BarsOfData(3).Close[0] * leg3;
+                }
+            }
+        }
+
+		protected override void CalcBar()
+        {
+            if (MarketsAreOpened())
+            {
+                m_pos.Value = StrategyInfo.MarketPosition;
+                setOpen();
+                setClose();
+                m_average.Value = 0.5 * m_open[0] + 0.5 * m_close[0];
+
+                var open = Math.Round(m_open[0], 4);
+                var close = Math.Round(m_close[0], 4);
+
+                if (close >= open)
+                {
+                    plot1.Set(open, Color.LawnGreen);
+                    plot2.Set(close, Color.LawnGreen);
+                    plot3.Set(open, Color.LawnGreen);
+                    plot4.Set(close, Color.LawnGreen);
+                }
+                else
+                {
+                    plot1.Set(open, Color.Red);
+                    plot2.Set(open, Color.Red);
+                    plot3.Set(close, Color.Red);
+                    plot4.Set(close, Color.Red);
+                }
+                // plot stairs
+                //if (m_pos[0] == 0 && m_pos[1] == 0)
+                //{
+                //    plot5.Set(m_stairway[0], Color.Black);
+                //    plot6.Set(m_stairway[0], Color.Black);
+                //}
+                //else
+                //{
+                //    plot5.Set(m_stairway[0], Color.Aqua);
+                //    plot6.Set(m_stairway[0], Color.Aqua);
+                //}
+
+                m_linreg.Value = m_linearregvalue1[0];
+                plot7.Set(displace, m_linreg.Value);
+                plot8.Set(m_linregEma[0]);
+
+                plot9.Set(m_average[0]);
+            }
 		}
+
+
+
+
 	}
+
+
 }

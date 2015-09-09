@@ -181,24 +181,25 @@ namespace PowerLanguage.Strategy
             //    System.IO.File.WriteAllText("H:/eSignalData/debug.csv", csv.ToString());
             //}
 
+            int x = 1;
 
             // going down and meet an up bar
-            if (m_mp[0] == 0 && m_cond1[1] && m_cond2[1] && m_cond3[1])
+            if (m_mp[0] == 0 && m_cond1[x] && m_cond2[x] && m_cond3[x])
                 //m_scalping_LE_Mkt.Send();
                 m_scalping_SE_Mkt.Send();
             
             // going down and meet a down bar 
-            if (m_mp[0] < 0 && m_cond1[1] && m_cond5[1] && m_cond6[1])
+            if (m_mp[0] < 0 && m_cond1[x] && m_cond5[x] && m_cond6[x])
                 m_scalping_SX_Mkt.Send();
                 //m_scalping_LE_Mkt.Send();
 
             // going up and meet a up bar
-            if (m_mp[0] > 0 && m_cond4[1] && m_cond2[1] && m_cond3[1])
+            if (m_mp[0] > 0 && m_cond4[x] && m_cond2[x] && m_cond3[x])
                 m_scalping_LX_Mkt.Send();
                 //m_scalping_SE_Mkt.Send();
 
             // going up and meet a down bar
-            if (m_mp[0] == 0 && m_cond4[1] && m_cond5[1] && m_cond6[1])
+            if (m_mp[0] == 0 && m_cond4[x] && m_cond5[x] && m_cond6[x])
                 //m_scalping_SE_Mkt.Send();
                 m_scalping_LE_Mkt.Send();
                 //m_scalping_LX_Mkt.Send();

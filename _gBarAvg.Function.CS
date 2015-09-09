@@ -38,6 +38,7 @@ namespace PowerLanguage
                     Math.Max(open, close);
                 double low = (leg2 == 0 && leg3 == 0) ? Bars.Low[0] * leg1 :
                     Math.Min(open, close);
+                
                 return 0.25 * (open + high + low + close);
 			}
 		}

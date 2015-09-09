@@ -265,20 +265,6 @@ namespace PowerLanguage.Strategy
             //            m_regression2_SX_Mkt.Send();
             //    }
             //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
         private int getCount(VariableSeries<int> count, int length)
         {
