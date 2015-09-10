@@ -176,22 +176,22 @@ namespace PowerLanguage.Strategy
                 m_dnCount = 0;
 
 
-            if (m_mp[0] >= 0
-                && (m_upTrend[0] && m_twoLineGap[0] > 0.02)
-                //&& m_twoLineGap[0] < lowBand
-                && TimeToTrade())
-            {
-                //m_regression_LE_Mkt.Send();
-                m_regression2_SE_Mkt.Send();
-            }
-            if (m_mp[0] <= 0
-                && (m_dnTrend[0] && m_twoLineGap[0] < -0.03)
-                //&& m_twoLineGap[0] > highBand
-                && TimeToTrade())
-            {
-                //m_regression_SE_Mkt.Send();
-                m_regression2_LE_Mkt.Send();
-            }
+            //if (m_mp[0] >= 0
+            //    && (m_upTrend[0] && m_twoLineGap[0] > 0.02)
+            //    //&& m_twoLineGap[0] < lowBand
+            //    && TimeToTrade())
+            //{
+            //    //m_regression_LE_Mkt.Send();
+            //    m_regression2_SE_Mkt.Send();
+            //}
+            //if (m_mp[0] <= 0
+            //    && (m_dnTrend[0] && m_twoLineGap[0] < -0.03)
+            //    //&& m_twoLineGap[0] > highBand
+            //    && TimeToTrade())
+            //{
+            //    //m_regression_SE_Mkt.Send();
+            //    m_regression2_LE_Mkt.Send();
+            //}
 
             // find short opportunities
             if (m_twoLineGap[0] > 0 && Math.Abs(m_twoLineGap[0]) > Math.Abs(highBand))
@@ -212,7 +212,8 @@ namespace PowerLanguage.Strategy
                     }
                 }
                 if (m_mp[0] >= 0 && m_upCount >= highLimit && m_upTrend[0] == false && m_upTrend[1] == true)
-                    m_regression2_LX_Mkt.Send();
+                    m_regression2_SE_Mkt.Send();
+                    //m_regression2_LX_Mkt.Send();
             }
             // find long opportunities
             if (m_twoLineGap[0] < 0 && Math.Abs(m_twoLineGap[0]) > Math.Abs(lowBand))
@@ -233,7 +234,8 @@ namespace PowerLanguage.Strategy
                     }
                 }
                 if (m_mp[0] <= 0 && m_dnCount >= lowLimit && m_dnTrend[0] == false && m_dnTrend[1] == true)
-                    m_regression2_SX_Mkt.Send();
+                    m_regression2_LE_Mkt.Send();
+                   // m_regression2_SX_Mkt.Send();
             }
             //if (m_mp[0] > 0)
             //{

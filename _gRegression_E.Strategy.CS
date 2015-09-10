@@ -33,12 +33,16 @@ namespace PowerLanguage.Strategy
 
         private _gSpreadPnlFC m_sprdPnl;
 
+        // Risk functions
+        private _gRisk_StopForPos m_stopPos;
+
+
 		public _gRegression_E(object _ctx):base(_ctx)
         {
             leg1 = 1.0;
             leg2 = -0.333;
             leg3 = -0.5;
-            highBand = 0.02;
+            highBand = 0.03;
             lowBand = 0.03;
             reglength = 20;
             emalength = 4;
@@ -48,7 +52,7 @@ namespace PowerLanguage.Strategy
             //leg2 = -1;
             //leg3 = 0.5;
             //highBand = 0.03;
-            //lowBand = 0.02;
+            //lowBand = 0.03;
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5;
@@ -57,7 +61,7 @@ namespace PowerLanguage.Strategy
             //leg2 = -1;
             //leg3 = 0.333;
             //highBand = 0.03;
-            //lowBand = 0.02;
+            //lowBand = 0.03;
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5; 
@@ -82,7 +86,6 @@ namespace PowerLanguage.Strategy
         public string StartTime { get; set; }
         [Input]
         public string EndTime { get; set; }
-
         [Input]
         public int length { get; set; }
 
@@ -114,6 +117,9 @@ namespace PowerLanguage.Strategy
 
             m_gap = new VariableSeries<double>(this);
             m_gapAvg = new AverageFC(this);
+
+
+            m_stopPos = new _gRisk_StopForPos(this);
 		}
 		protected override void StartCalc() 
         {
@@ -137,6 +143,9 @@ namespace PowerLanguage.Strategy
 
             m_gapAvg.price = m_gap;
             m_gapAvg.length = length;
+
+            m_stopPos.pnl = m_sprdPnl;
+            m_stopPos.stop = 0.25;
         }
 		protected override void CalcBar()
         {
@@ -185,6 +194,18 @@ namespace PowerLanguage.Strategy
                     //m_regression_SE_Mkt.Send();
                     m_regression_LE_Mkt.Send();
                 }
+
+                //if (m_stopPos[0] == 1)
+                //{
+                //    if (m_mp[0] > 0) 
+                //        m_regression_LX_Mkt.Send();
+                //    if (m_mp[0] < 0)
+                //        m_regression_SX_Mkt.Send();
+                //}
+
+
+
+                
                 //if (m_mp[0] == 0
                 //    && m_twoLineGap[0] < 0   // down trend
                 //    && m_close[0] > m_linregEma[0]

@@ -411,6 +411,10 @@
     <Compile Include="_gTwoSigma_Pnl.Indicator.CS" />
     <Compile Include="_gLinearReg.Function.CS" />
     <Compile Include="_gLinearRegValue.Function.CS" />
+    <Compile Include="_gRisk_StopForDay.Function.CS" />
+    <Compile Include="_gRisk_StopForPos.Function.CS" />
+    <Compile Include="_gRisk_StopForLogic_1.Function.CS" />
+    <Compile Include="_gRisk_StopForLogic_2.Function.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

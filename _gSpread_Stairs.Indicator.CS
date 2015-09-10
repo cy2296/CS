@@ -97,7 +97,7 @@ namespace PowerLanguage.Indicator
             plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
 
             plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
-            plot8 = AddPlot(new PlotAttributes("LinRegEMA", EPlotShapes.Line, Color.Purple));
+            plot8 = AddPlot(new PlotAttributes("LinRegEMA", EPlotShapes.Line, Color.Aqua));
             plot9 = AddPlot(new PlotAttributes("avg", EPlotShapes.Line, Color.Yellow));
 		}
 		protected override void StartCalc() 
@@ -242,7 +242,7 @@ namespace PowerLanguage.Indicator
                 plot7.Set(displace, m_linreg.Value);
                 plot8.Set(m_linregEma[0]);
 
-                plot9.Set(m_average[0]);
+                //plot9.Set(m_average[0]);
             }
 		}
 

@@ -29,7 +29,7 @@ namespace PowerLanguage.Indicator
         private IPlotObject plot3;
         private IPlotObject plot4;
         private IPlotObject plot5;
-        private IPlotObject plot6;
+        //private IPlotObject plot6;
         private System.Text.StringBuilder csv;  // for debug only
 
         public _gRegression_EMA_Diff(object _ctx):base(_ctx)
@@ -101,7 +101,7 @@ namespace PowerLanguage.Indicator
             plot3 = AddPlot(new PlotAttributes("FixLow", EPlotShapes.Line, Color.Yellow));
             plot4 = AddPlot(new PlotAttributes("SigHigh", EPlotShapes.Line, Color.Yellow));
             plot5 = AddPlot(new PlotAttributes("SigLow", EPlotShapes.Line, Color.Yellow));
-            plot6 = AddPlot(new PlotAttributes("SigLow", EPlotShapes.Line, Color.Yellow));
+            //plot6 = AddPlot(new PlotAttributes("SigLow", EPlotShapes.Line, Color.Yellow));
             csv = new StringBuilder();
 		}
 		
