@@ -4,17 +4,20 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
 namespace PowerLanguage.Strategy 
 {
 	public class _gRegression_E : SignalObject
     {
-        private TimeSpan startTime, endTime;
+        private System.Text.StringBuilder csv;  // for debug only
+        
+        private _gUtility_TimeToTrade m_timeToTrade;
         private VariableSeries<int> m_mp;   // position info
+        
         private VariableSeries<Double> m_averagePrice;  // ISeries for linear Regression Line
-        //private _gBarClose m_close;
-        private _gBarAvg m_avg;
-        private VariableSeries<Double> m_close;
-
         private LinearRegValue m_linearregvalue1;      // FunctionSimple : for regression value 
         private VariableSeries<Double> m_linreg;       // linear regression line    
         private XAverage m_linregEma;                  // FuncitonSeries : EMA of the linear regression
@@ -23,19 +26,19 @@ namespace PowerLanguage.Strategy
         private VariableSeries<int> m_gapDecreasing;   // (gap[0] < gap[1]) ? 1 : 0
         private bool upTrend;
         private bool dnTrend;
-        private IOrderMarket m_regression_LE_Mkt;
-        private IOrderMarket m_regression_SE_Mkt;
-        private IOrderMarket m_regression_LX_Mkt;
-        private IOrderMarket m_regression_SX_Mkt;
 
-        private VariableSeries<Double> m_gap;
-        private AverageFC m_gapAvg;
-
-        private _gSpreadPnlFC m_sprdPnl;
+        //private _gSpreadPnlFC m_sprdPnl;
+                      
 
         // Risk functions
-        private _gRisk_StopForPos m_stopPos;
+        private VariableSeries<Double> m_close;
+        private _gRisk_StopLongCount m_stoplongcount;
+        private _gRisk_StopShortCount m_stopshortcount;
 
+        //private _gRisk_StopForPos m_stopPos;
+
+        private IOrderMarket m_regression_LE_Mkt;
+        private IOrderMarket m_regression_SE_Mkt;
 
 		public _gRegression_E(object _ctx):base(_ctx)
         {
@@ -47,6 +50,8 @@ namespace PowerLanguage.Strategy
             reglength = 20;
             emalength = 4;
             avgLen = 5;
+            StartTime = "9:30";
+            EndTime = "15:30";
 
             //leg1 = 0.333;
             //leg2 = -1;
@@ -56,6 +61,8 @@ namespace PowerLanguage.Strategy
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5;
+            //StartTime = "9:30";
+            //EndTime = "15:30";
 
             //leg1 = 0.5;
             //leg2 = -1;
@@ -65,6 +72,8 @@ namespace PowerLanguage.Strategy
             //reglength = 20;
             //emalength = 4;
             //avgLen = 5; 
+            //StartTime = "9:30";
+            //EndTime = "15:30";
         }
         [Input]
         public double leg1 { get; set; }
@@ -91,13 +100,11 @@ namespace PowerLanguage.Strategy
 
 		protected override void Create() 
         {
-            StartTime = "9:30";
-            EndTime = "15:30";
+            // utility .. 
+            csv = new StringBuilder();
+            m_timeToTrade = new _gUtility_TimeToTrade(this);
             m_mp = new VariableSeries<int>(this);
-
-            m_close = new VariableSeries<double>(this);
-            m_avg = new _gBarAvg(this);
-
+            // regression ..
             m_averagePrice = new VariableSeries<double>(this);
             m_linearregvalue1 = new LinearRegValue(this);
             m_linreg = new VariableSeries<double>(this);
@@ -105,54 +112,54 @@ namespace PowerLanguage.Strategy
             m_twoLineGap = new VariableSeries<double>(this);
             m_gapIncreasing = new VariableSeries<int>(this);
             m_gapDecreasing = new VariableSeries<int>(this);
+            // risk ..
+            m_close = new VariableSeries<double>(this);
+            m_stoplongcount = new _gRisk_StopLongCount(this);
+            m_stopshortcount = new _gRisk_StopShortCount(this);
+
             m_regression_LE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "L", EOrderAction.Buy));
             m_regression_SE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
-            m_regression_LX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell, OrderExit.FromAll));
-            m_regression_SX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
-            m_sprdPnl = new _gSpreadPnlFC(this);
 
-            m_gap = new VariableSeries<double>(this);
-            m_gapAvg = new AverageFC(this);
-
-
-            m_stopPos = new _gRisk_StopForPos(this);
+            //m_sprdPnl = new _gSpreadPnlFC(this);
+            //m_stopPos = new _gRisk_StopForPos(this);
 		}
 		protected override void StartCalc() 
         {
-            startTime = ConvertToTime(StartTime);
-            endTime = ConvertToTime(EndTime);
-
-            m_avg.leg1 = m_avg.leg1;
-            m_avg.leg2 = m_avg.leg2;
-            m_avg.leg3 = m_avg.leg3;
+            m_timeToTrade.StartTime = StartTime;
+            m_timeToTrade.EndTime = EndTime;
 
             m_linearregvalue1.price = m_averagePrice;
             m_linearregvalue1.length = reglength;
-
             m_linregEma.Price = m_linreg;
             m_linregEma.Length = emalength;
 
-            m_sprdPnl.leg1 = leg1;
-            m_sprdPnl.leg2 = leg2;
-            m_sprdPnl.leg3 = leg3;
-            m_sprdPnl.calltype = "strat";
+            m_stoplongcount.calltype = "strat";
+            m_stoplongcount.startTime = StartTime;
+            m_stoplongcount.endTime = EndTime;
+            m_stoplongcount.price = m_close;
+            m_stoplongcount.stopCriteria = 0.25;
+            m_stopshortcount.calltype = "strat";
+            m_stopshortcount.startTime = StartTime;
+            m_stopshortcount.endTime = EndTime;
+            m_stopshortcount.price = m_close;
+            m_stopshortcount.stopCriteria = 0.25;
 
-            m_gapAvg.price = m_gap;
-            m_gapAvg.length = length;
+            //m_sprdPnl.leg1 = leg1;
+            //m_sprdPnl.leg2 = leg2;
+            //m_sprdPnl.leg3 = leg3;
+            //m_sprdPnl.calltype = "strat";
 
-            m_stopPos.pnl = m_sprdPnl;
-            m_stopPos.stop = 0.25;
+            //m_stopPos.pnl = m_sprdPnl;
+            //m_stopPos.stop = 0.25;
         }
 		protected override void CalcBar()
         {
             if (MarketsAreOpened())
             {
                 m_mp.Value = StrategyInfo.MarketPosition;
-                //m_averagePrice.Value = m_avg[0];
+
                 if (leg2 == 0 && leg3 == 0)
                     m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
                 else
@@ -169,41 +176,57 @@ namespace PowerLanguage.Strategy
                 m_twoLineGap.Value = m_linearregvalue1[0] - m_linregEma[0];
                 m_gapIncreasing.Value = (m_twoLineGap[0] > m_twoLineGap[1]) ? 1 : 0;
                 m_gapDecreasing.Value = (m_twoLineGap[0] < m_twoLineGap[1]) ? 1 : 0;
-
                 upTrend = (getCount(m_gapIncreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] > m_twoLineGap[1]);
                 dnTrend = (getCount(m_gapDecreasing, avgLen) >= avgLen - 1 && m_twoLineGap[0] < m_twoLineGap[1]);
 
-                m_gap.Value = Math.Abs(m_twoLineGap[0]);
-                //var m_sdev = m_gap.StandardDeviationCustom(length, 1);
-
                 if (m_mp[0] >= 0
                     && upTrend
-                    && m_twoLineGap[0] > Math.Abs(highBand) //&& m_twoLineGap[1] < Math.Abs(highBand) 
+                    && m_twoLineGap[0] > Math.Abs(highBand)
+                    && m_stopshortcount[0] == 0
+                    //&& m_stopshortcount[0] + m_stoplongcount[0] < 2
+                    && m_timeToTrade[0]
                     //&& m_twoLineGap[0] < lowBand
-                    && TimeToTrade())
+                    )
                 {
-                    //m_regression_LE_Mkt.Send();
                     m_regression_SE_Mkt.Send();
                 }
                 if (m_mp[0] <= 0
                     && dnTrend
-                    && m_twoLineGap[0] < -Math.Abs(lowBand) //&& m_twoLineGap[1] > -Math.Abs(lowBand) 
+                    && m_twoLineGap[0] < -Math.Abs(lowBand)
+                    && m_stoplongcount[0] == 0
+                    //&& m_stopshortcount[0] + m_stoplongcount[0] < 2
+                    && m_timeToTrade[0]
                     //&& m_twoLineGap[0] > highBand
-                    && TimeToTrade())
+                    )
                 {
-                    //m_regression_SE_Mkt.Send();
                     m_regression_LE_Mkt.Send();
                 }
 
                 //if (m_stopPos[0] == 1)
                 //{
-                //    if (m_mp[0] > 0) 
+                //    if (m_mp[0] > 0)
                 //        m_regression_LX_Mkt.Send();
                 //    if (m_mp[0] < 0)
                 //        m_regression_SX_Mkt.Send();
                 //}
 
+                //if (Bars.CurrentBar < 2000)
+                //{
+                //    var a = Bars.TimeValue.Date;
+                //    var b = Bars.TimeValue.TimeOfDay;
+                //    var c = Bars.CurrentBar;
+                //    var d = upTrend;
+                //    var e = dnTrend;
+                //    var f = m_twoLineGap[0];
+                //    var g = m_mp[0];
+                //    var h = m_stoplongcount[0];
+                //    var i = m_stopshortcount[0];
 
+                //    var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}{9}",
+                //    a, b, c, d, e, f, g, h, i, System.Environment.NewLine);
+                //    csv.Append(newLine);
+                //    System.IO.File.WriteAllText("H:/eSignalData/debug0.csv", csv.ToString());
+                //}
 
                 
                 //if (m_mp[0] == 0
@@ -255,20 +278,6 @@ namespace PowerLanguage.Strategy
             for (int i = 0; i < length; ++i)
                 res += count[i];
             return res;
-        }
-        private TimeSpan ConvertToTime(string timeToConvert)
-        {
-            DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
-                System.Globalization.CultureInfo.InvariantCulture);
-            return dt.TimeOfDay;
-        }
-
-        private bool TimeToTrade()
-        {
-            TimeSpan barTime = Bars.TimeValue.TimeOfDay;
-            if (startTime < endTime)
-                return (barTime >= startTime) && (barTime <= endTime);
-            return (barTime > startTime) || (barTime < endTime);
         }
         private bool MarketsAreOpened()
         {

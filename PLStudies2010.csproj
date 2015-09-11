@@ -415,6 +415,12 @@
     <Compile Include="_gRisk_StopForPos.Function.CS" />
     <Compile Include="_gRisk_StopForLogic_1.Function.CS" />
     <Compile Include="_gRisk_StopForLogic_2.Function.CS" />
+    <Compile Include="_gRisk_StopLongCount.Function.CS" />
+    <Compile Include="_gRisk_StopShortCount.Function.CS" />
+    <Compile Include="_gPnlFC.Function.CS" />
+    <Compile Include="_gUtility_TimeToTrade.Function.CS" />
+    <Compile Include="_gUtility_MarketsOpened.Function.CS" />
+    <Compile Include="_gStop_Hard_X.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
