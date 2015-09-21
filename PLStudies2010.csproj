@@ -421,6 +421,14 @@
     <Compile Include="_gUtility_TimeToTrade.Function.CS" />
     <Compile Include="_gUtility_MarketsOpened.Function.CS" />
     <Compile Include="_gStop_Hard_X.Strategy.CS" />
+    <Compile Include="_gRSI_E_X.Strategy.CS" />
+    <Compile Include="_gBarTipical.Function.CS" />
+    <Compile Include="_gBarDayHigh.Function.CS" />
+    <Compile Include="_gBarDayLow.Function.CS" />
+    <Compile Include="_MK_PrevDLow.Function.CS" />
+    <Compile Include="_MK_PrevDHigh.Function.CS" />
+    <Compile Include="_PrevDHigh.Indicator.CS" />
+    <Compile Include="_PrevDLow.Indicator.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

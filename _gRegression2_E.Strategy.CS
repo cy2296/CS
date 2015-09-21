@@ -4,11 +4,17 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
 namespace PowerLanguage.Strategy 
 {
     [IOGMode(IOGMode.Enabled)]
 	public class _gRegression2_E : SignalObject 
     {
+        private System.Text.StringBuilder csv;  // for debug only
+
         private TimeSpan startTime, endTime;
         private VariableSeries<int> m_mp;
         private _gBarHigh m_high;
@@ -106,6 +112,8 @@ namespace PowerLanguage.Strategy
 
 		protected override void Create() 
         {
+            csv = new StringBuilder();
+
             StartTime = "9:30";
             EndTime = "15:30";
             m_mp = new VariableSeries<int>(this);
@@ -175,24 +183,6 @@ namespace PowerLanguage.Strategy
             if (Math.Abs(m_twoLineGap[0]) < Math.Abs(lowBand))
                 m_dnCount = 0;
 
-
-            //if (m_mp[0] >= 0
-            //    && (m_upTrend[0] && m_twoLineGap[0] > 0.02)
-            //    //&& m_twoLineGap[0] < lowBand
-            //    && TimeToTrade())
-            //{
-            //    //m_regression_LE_Mkt.Send();
-            //    m_regression2_SE_Mkt.Send();
-            //}
-            //if (m_mp[0] <= 0
-            //    && (m_dnTrend[0] && m_twoLineGap[0] < -0.03)
-            //    //&& m_twoLineGap[0] > highBand
-            //    && TimeToTrade())
-            //{
-            //    //m_regression_SE_Mkt.Send();
-            //    m_regression2_LE_Mkt.Send();
-            //}
-
             // find short opportunities
             if (m_twoLineGap[0] > 0 && Math.Abs(m_twoLineGap[0]) > Math.Abs(highBand))
             {
@@ -237,36 +227,25 @@ namespace PowerLanguage.Strategy
                     m_regression2_LE_Mkt.Send();
                    // m_regression2_SX_Mkt.Send();
             }
-            //if (m_mp[0] > 0)
+
+            //if (Bars.CurrentBar < 1000)
             //{
-            //    if (m_mp[1] == 0)
-            //    {
-            //        double stop = Math.Abs(m_close[1] * 2 * 0.01);
-            //        double inputStopPrice = m_close[1] - stop;
-            //        //m_stopLoss = Math.Max(m_lowPrice, inputStopPrice);
-            //        m_stopLoss = m_lowPrice;   // only use low point
-            //    }
-            //    else
-            //    { 
-            //        if (m_close[0] <= m_stopLoss)
-            //            m_regression2_LX_Mkt.Send();
-            //    }
+            //    var a = Bars.TimeValue.Date;
+            //    var b = Bars.TimeValue.TimeOfDay;
+            //    var c = Bars.CurrentBar;
+            //    var d = m_twoLineGap[0];
+            //    var e = m_highBand;
+            //    var f = m_upCount;
+            //    var g = m_lowBand;
+            //    var h = m_dnCount;
+
+            //    var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}{8}",
+            //    a, b, c, d, e, f, g, h, System.Environment.NewLine);
+            //    csv.Append(newLine);
+            //    System.IO.File.WriteAllText("H:/eSignalData/debug1.csv", csv.ToString());
             //}
-            //if (m_mp[0] < 0)
-            //{
-            //    if (m_mp[1] == 0)
-            //    {
-            //        double stop = Math.Abs(m_close[1] * 2 * 0.01);
-            //        double inputStopPrice = m_close[1] + stop;
-            //        //m_stopLoss = Math.Min(m_highPrice, inputStopPrice);
-            //        m_stopLoss = m_highPrice;   // only use high point               
-            //    }
-            //    else
-            //    {
-            //        if (m_close[0] >= m_stopLoss)
-            //            m_regression2_SX_Mkt.Send();
-            //    }
-            //}
+
+     
         }
         private int getCount(VariableSeries<int> count, int length)
         {

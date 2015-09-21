@@ -10,121 +10,137 @@ using System.Collections.Generic;
 namespace PowerLanguage.Indicator{
 	public class _gTest2 : IndicatorObject 
     {
-        //private TimeSpan startTime, endTime;
-        private VariableSeries<int> m_pos;
-        //private Double m_count = 0;
-        //private _gSpreadPnlFC m_sprdPnl;
-        private _gPnlFC m_pnl;
-        private _gBarClose m_close;
-
-        private VariableSeries<int> m_stopPosition;
-        private VariableSeries<Double> m_cumDayPnl;
-        private VariableSeries<int> m_stopForTheDay;
-        private bool getRealizedPnl = false;
         private System.Text.StringBuilder csv;  // for debug only
+        private VariableSeries<double> m_trend;
+        private int m_upcount = 0;
+        private int m_dncount = 0;
 
-        private _gUtility_TimeToTrade m_timeToTrade;
-        private _gRisk_StopLongCount m_stoplongcount;
-        private _gRisk_StopShortCount m_stopshortcount;
-        // Risk functions
-        private _gRisk_StopForPos m_stopPos;
+        private _gBarTipical m_average;
+        private _gBarHigh m_high;
+        private _gBarLow m_low;
+        private _gBarClose m_close;
+        private _gBarOpen m_open;
 
-		public _gTest2(object _ctx):base(_ctx)
+        private HighestFC m_highest;
+        private LowestFC m_lowest;
+        private VariableSeries<double> m_slope;
+        private int lowestPoint = 0;
+        private int highestPoint = 0;
+
+		
+        public _gTest2(object _ctx):base(_ctx)
         {
-            stopPos = 0.25;
-            stopDay = 0.5;
-            StartTime = "9:30";
-            EndTime = "15:59";
+            leg1 = 1.0;
+            leg2 = -0.333;
+            leg3 = -0.5;
+            lookback = 30;
         }
 		private IPlotObject plot1;
         private IPlotObject plot2;
         private IPlotObject plot3;
-
         [Input]
-        public double stopPos { get; set; }
+        public double leg1 { get; set; }
         [Input]
-        public double stopDay { get; set; }
+        public double leg2 { get; set; }
         [Input]
-        public string StartTime { get; set; }
+        public double leg3 { get; set; }
         [Input]
-        public string EndTime { get; set; }
+        public int lookback { get; set; }
 
 		protected override void Create() 
         {
-            m_pos = new VariableSeries<int>(this);
-            //m_sprdPnl = new _gSpreadPnlFC(this);
-            m_pnl = new _gPnlFC(this);
+            m_highest = new HighestFC(this);
+            m_lowest = new LowestFC(this);
+            m_slope = new VariableSeries<double>(this);
+
+            m_trend = new VariableSeries<double>(this);
+
+
+
+            m_average = new _gBarTipical(this);
+            m_high = new _gBarHigh(this);
+            m_low = new _gBarLow(this);
             m_close = new _gBarClose(this);
-            m_cumDayPnl = new VariableSeries<double>(this);
-            m_stopPosition = new VariableSeries<int>(this);
-            m_stopForTheDay = new VariableSeries<int>(this);
-			plot1 = AddPlot(new PlotAttributes("count", EPlotShapes.Histogram, Color.Aqua));
-            plot2 = AddPlot(new PlotAttributes("count", EPlotShapes.Line, Color.Yellow));
-            plot3 = AddPlot(new PlotAttributes("count", EPlotShapes.Line, Color.Pink));
+            m_open = new _gBarOpen(this);
+            plot1 = AddPlot(new PlotAttributes("trend", EPlotShapes.Histogram, Color.Yellow));
+            plot2 = AddPlot(new PlotAttributes("slope", EPlotShapes.Histogram, Color.Aqua));
+            plot3 = AddPlot(new PlotAttributes("Stairs", EPlotShapes.BarHigh, Color.Yellow));
             csv = new StringBuilder();
-
-            m_stopPos = new _gRisk_StopForPos(this);
-
-            m_timeToTrade = new _gUtility_TimeToTrade(this);
-            m_stoplongcount = new _gRisk_StopLongCount(this);
-            m_stopshortcount = new _gRisk_StopShortCount(this);
 		}
 		protected override void StartCalc() 
         {
-            //startTime = ConvertToTime(StartTime);
-            //endTime = ConvertToTime(EndTime);
-            //m_sprdPnl.leg1 = 1;
-            //m_sprdPnl.leg2 = -0.333;
-            //m_sprdPnl.leg3 = -0.5;
-            //m_sprdPnl.calltype = "indic";
-            m_pnl.price = m_close;
-            m_pnl.calltype = "indic";
-            m_close.leg1 = 1;
-            m_close.leg2 = -0.333;
-            m_close.leg3 = -0.5;
+            m_average.leg1 = leg1;
+            m_average.leg2 = leg2;
+            m_average.leg3 = leg3;
+            m_high.leg1 = leg1;
+            m_high.leg2 = leg2;
+            m_high.leg3 = leg3;
+            m_low.leg1 = leg1;
+            m_low.leg2 = leg2;
+            m_low.leg3 = leg3;
+            m_close.leg1 = leg1;
+            m_close.leg2 = leg2;
+            m_close.leg3 = leg3;
+            m_open.leg1 = leg1;
+            m_open.leg2 = leg2;
+            m_open.leg3 = leg3;
 
-            m_stopPos.pnl = m_pnl;
-            m_stopPos.stop = 0.25;
-
-            m_timeToTrade.StartTime = StartTime;
-            m_timeToTrade.EndTime = EndTime;
-            
-            m_stoplongcount.calltype = "indic";
-            m_stoplongcount.startTime = StartTime;
-            m_stoplongcount.endTime = EndTime;
-            m_stoplongcount.price = m_close;
-            m_stoplongcount.stopCriteria = 0.25;
-
-            m_stopshortcount.calltype = "indic";
-            m_stopshortcount.startTime = StartTime;
-            m_stopshortcount.endTime = EndTime;
-            m_stopshortcount.price = m_close;
-            m_stopshortcount.stopCriteria = 0.25;
+            m_highest.pricevalue = m_high;
+            m_highest.len = lookback;
+            m_lowest.pricevalue = m_low;
+            m_lowest.len = lookback;
 		}
         protected override void CalcBar()
         {
-            m_pos.Value = StrategyInfo.MarketPosition;
-
-
-            if (m_timeToTrade[0])
+           if (m_close[0] > m_open[0]       // up bar
+                && m_close[0] > m_high[1]
+                && m_close[0] > m_high[2]
+                )
             {
-                m_stopPosition.Value = (m_pnl[0] < -Math.Abs(stopPos)) ? 1 : 0;
-
-                if (m_pos[1] != 0 && m_pos[0] == 0
-                    || m_pos[1] > 0 && m_pos[0] < 0
-                    || m_pos[1] < 0 && m_pos[0] > 0)
-                    m_cumDayPnl.Value += m_pnl[0];
-                else
-                    m_cumDayPnl.Value = m_cumDayPnl[1];
-
-                m_stopForTheDay.Value = (m_cumDayPnl[0] < -Math.Abs(stopDay)) ? 1 : 0;
+                m_trend.Value = 1;      // first up trend
+               // plot2.Set(ComputeSlope(m_trend, 1));
+            }
+            else if (m_close[0] < m_open[0]
+                && m_close[0] < m_low[1]
+                && m_close[0] < m_low[2]
+                )
+            {
+                m_trend.Value = -1;
+               // plot2.Set(ComputeSlope(m_trend, -1));
             }
             else
-            {
-                m_stopPosition.Value = 0;
-                m_cumDayPnl.Value = 0;
-                m_stopForTheDay.Value = 0;
-            }
+                m_trend.Value = m_trend[1];
+
+            //if (m_trend[1] != m_trend[0])
+            //    plot2.Set(ComputeSlope(m_trend, m_trend[1]));
+
+            //plot1.Set(m_trend[0]);           
+
+
+            if (m_close[0] == m_lowest[0])
+                lowestPoint = 0;
+            else 
+                ++lowestPoint;
+            if (m_close[0] == m_highest[0])
+                highestPoint = 0;
+            else 
+                ++highestPoint;
+
+
+            double dis1 = Math.Abs(m_close[0] - m_lowest[0]);
+            double dis2 = Math.Abs(m_close[0] - m_highest[0]);
+            
+            double upslope = (lowestPoint != 0) ? (m_close[0] - m_lowest[0]) / lowestPoint : 0;
+            double dnslope = (highestPoint != 0) ? (m_close[0] - m_highest[0]) / highestPoint : 0;
+
+            if (dis1 <= dis2)
+                m_slope.Value = dnslope;
+            else
+                m_slope.Value = upslope;
+
+           // m_slope.Value = Math.Max(Math.Abs(upslope), Math.Abs(dnslope));
+            plot2.Set(m_slope[0]);
+
 
             //if (Bars.CurrentBar < 2000)
             //{
@@ -143,29 +159,36 @@ namespace PowerLanguage.Indicator{
             //    csv.Append(newLine);
             //    System.IO.File.WriteAllText("H:/eSignalData/debug13.csv", csv.ToString());
             //}
-
-
-
-            plot1.Set(m_stopPosition[0]);
-            plot2.Set(m_stoplongcount[0]);
-            plot3.Set(m_stopshortcount[0]);
         }
+        private double ComputeSlope(VariableSeries<double> trend, double value)
+        {
+            double count = 0;
+            double slope = 0;
+            //if (value == 1) // find up move
+            //{
+                double currhigh = m_high[1];
+                double currlow = m_low[1];
+                int x = 1;
+                while (trend[x] == value)
+                {
+                    if (x > 1)
+                    {
+                        currhigh = Math.Max(currhigh, m_high[x]);
+                        currlow = Math.Min(currlow, m_low[x]);
+                    }
+                    ++count;
+                    ++x;
+                }
+                if (count > 1)
+                    slope = (currhigh - currlow) / count;
+            //}
+            //if (value == -1)
+            //{
+                
+            //}
 
 
-
-        //private TimeSpan ConvertToTime(string timeToConvert)
-        //{
-        //    DateTime dt = DateTime.ParseExact(timeToConvert, "H:mm",
-        //        System.Globalization.CultureInfo.InvariantCulture);
-        //    return dt.TimeOfDay;
-        //}
-
-        //private bool TimeToTrade()
-        //{
-        //    TimeSpan barTime = Bars.TimeValue.TimeOfDay;
-        //    if (startTime < endTime)
-        //        return (barTime >= startTime) && (barTime <= endTime);
-        //    return (barTime > startTime) || (barTime < endTime);
-        //}
+            return slope;
+        }
 	}
 }

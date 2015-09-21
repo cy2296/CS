@@ -24,6 +24,9 @@ namespace PowerLanguage.Strategy {
         private IOrderMarket m_regression_SX_Mkt;
 
         private _gSpreadPnlFC m_sprdPnl;
+       
+        //test
+        private XAverage m_longTermAvg;
 
         public gRegression_E(object _ctx):base(_ctx)
         {
@@ -96,6 +99,9 @@ namespace PowerLanguage.Strategy {
             m_regression_SX_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
             m_sprdPnl = new _gSpreadPnlFC(this);
+
+            m_longTermAvg = new XAverage(this);
+
 		}
         protected override void StartCalc()
         {
@@ -112,6 +118,9 @@ namespace PowerLanguage.Strategy {
             m_sprdPnl.leg2 = leg2;
             m_sprdPnl.leg3 = leg3;
             m_sprdPnl.calltype = "strat";
+
+            m_longTermAvg.Price = m_averagePrice;
+            m_longTermAvg.Length = 160;
 		}
 		protected override void CalcBar()
         {
@@ -141,6 +150,7 @@ namespace PowerLanguage.Strategy {
                 if (m_mp[0] >= 0
                     && (upTrend && m_twoLineGap[0] > Math.Abs(highBand))
                     //&& m_twoLineGap[0] < lowBand
+                    //&& m_longTermAvg[0] < m_longTermAvg[1]
                     && TimeToTrade())
                 {
                     //m_regression_LE_Mkt.Send();
@@ -148,12 +158,26 @@ namespace PowerLanguage.Strategy {
                 }
                 if (m_mp[0] <= 0
                     && (dnTrend && m_twoLineGap[0] < -Math.Abs(lowBand))
+                    //&& m_longTermAvg[0] > m_longTermAvg[1]
                     //&& m_twoLineGap[0] > highBand
                     && TimeToTrade())
                 {
                     //m_regression_SE_Mkt.Send();
                     m_regression_LE_Mkt.Send();
                 }
+
+                //if (m_mp[0] >= 0
+                //    && (upTrend && m_twoLineGap[0] > Math.Abs(highBand))
+                //    && TimeToTrade())
+                //{
+                //    m_regression_LX_Mkt.Send();
+                //}
+                //if (m_mp[0] <= 0
+                //    && (dnTrend && m_twoLineGap[0] < -Math.Abs(lowBand))
+                //    && TimeToTrade())
+                //{
+                //    m_regression_SX_Mkt.Send();
+                //}
 
                 //if (m_sprdPnl[0] >= 0.2|| m_sprdPnl[0] <= -0.2)
                 //{

@@ -30,7 +30,7 @@ namespace PowerLanguage.Indicator
         private IPlotObject plot4;
         private IPlotObject plot5;
         //private IPlotObject plot6;
-        private System.Text.StringBuilder csv;  // for debug only
+       // private System.Text.StringBuilder csv;  // for debug only
 
         public _gRegression_EMA_Diff(object _ctx):base(_ctx)
         {
@@ -102,7 +102,7 @@ namespace PowerLanguage.Indicator
             plot4 = AddPlot(new PlotAttributes("SigHigh", EPlotShapes.Line, Color.Yellow));
             plot5 = AddPlot(new PlotAttributes("SigLow", EPlotShapes.Line, Color.Yellow));
             //plot6 = AddPlot(new PlotAttributes("SigLow", EPlotShapes.Line, Color.Yellow));
-            csv = new StringBuilder();
+            //csv = new StringBuilder();
 		}
 		
         protected override void StartCalc() 
@@ -157,8 +157,8 @@ namespace PowerLanguage.Indicator
                 plot3.Set(-1 * Math.Abs(lowBand));
 
                 var m_sdev = m_gap.StandardDeviationCustom(length, 1);
-                plot4.Set(m_gapAvg[0] + 2 * m_sdev);
-                plot5.Set(-m_gapAvg[0] - 2 * m_sdev);
+                //plot4.Set(m_gapAvg[0] + 2 * m_sdev);
+                //plot5.Set(-m_gapAvg[0] - 2 * m_sdev);
 
                // plot6.Set(m_average.Value);
 
