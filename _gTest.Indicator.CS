@@ -11,10 +11,10 @@ using System.Collections.Generic;
 namespace PowerLanguage.Indicator{
 	public class _gTest : IndicatorObject 
     {
-        private System.Text.StringBuilder csv;  // for debug only
+        //private System.Text.StringBuilder csv;  // for debug only
 
-        private _gBarOpen m_open;
-        private _gBarClose m_close;
+        private _MK_CurrDHigh m_currDHigh;
+        private _gBarHigh m_high;
 
 		public _gTest(object _ctx):base(_ctx)
         {
@@ -24,9 +24,9 @@ namespace PowerLanguage.Indicator{
         }
 
         private IPlotObject plot1;
-        private IPlotObject plot2;
-        private IPlotObject plot3;
-        private IPlotObject plot4;
+        //private IPlotObject plot2;
+        //private IPlotObject plot3;
+        //private IPlotObject plot4;
        
         [Input]
         public double leg1 { get; set; }
@@ -37,26 +37,27 @@ namespace PowerLanguage.Indicator{
 
         protected override void Create()
         {
-            m_open = new _gBarOpen(this);
-            m_close = new _gBarClose(this);
-            plot1 = AddPlot(new PlotAttributes("highest1", EPlotShapes.Line, Color.Yellow));
-            plot2 = AddPlot(new PlotAttributes("highest2", EPlotShapes.Line, Color.Aqua));
-            plot3 = AddPlot(new PlotAttributes("Stairs", EPlotShapes.BarHigh, Color.Yellow));
-            plot4 = AddPlot(new PlotAttributes("Stairs", EPlotShapes.BarLow, Color.Yellow));
+            m_high = new _gBarHigh(this);
+            m_currDHigh = new _MK_CurrDHigh(this);
 
-            csv = new StringBuilder();
+            plot1 = AddPlot(new PlotAttributes("highest1", EPlotShapes.Line, Color.Yellow));
+            //plot2 = AddPlot(new PlotAttributes("highest2", EPlotShapes.Line, Color.Aqua));
+            //plot3 = AddPlot(new PlotAttributes("Stairs", EPlotShapes.BarHigh, Color.Yellow));
+            //plot4 = AddPlot(new PlotAttributes("Stairs", EPlotShapes.BarLow, Color.Yellow));
+
+            //csv = new StringBuilder();
 		}
 		protected override void StartCalc() 
         {
-            m_open.leg1 = leg1;
-            m_open.leg2 = leg2;
-            m_open.leg3 = leg3;
-            m_close.leg1 = leg1;
-            m_close.leg2 = leg2;
-            m_close.leg3 = leg3;
+            m_high.leg1 = leg1;
+            m_high.leg2 = leg2;
+            m_high.leg3 = leg3;
+
+            m_currDHigh.Data = m_high;
 		}
 		protected override void CalcBar()
         {
+            plot1.Set(m_currDHigh[0]);
             ////if (Bars.StatusLine.Time == BarsOfData(2).StatusLine.Time
             ////    && BarsOfData(2).StatusLine.Time == BarsOfData(3).StatusLine.Time)
             //if (Bars.TimeValue.Date == BarsOfData(2).TimeValue.Date

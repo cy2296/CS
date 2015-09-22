@@ -8,25 +8,36 @@ namespace PowerLanguage.Strategy {
 	public class _gRSI_E_X : SignalObject 
     {
         private _gUtility_MarketsOpened m_marketopened;
+        
         private _gUtility_TimeToTrade m_timetotrade;
+        private _gUtility_TimeToTrade m_morningtime;
+
         private Function.RSI m_rsi;
         private _gPnlFC m_pnl;
 
         private VariableSeries<int> m_mp;   // position info
         private VariableSeries<Double> m_close;
-        private VariableSeries<int> m_count1;
-        private VariableSeries<int> m_count2;
+        private VariableSeries<int> m_count1;   // confirm bars for oversold
+        private VariableSeries<int> m_count2;   // confirm bars for overbought
         // for RSI BB
         private XAverage m_midband;
         private VariableSeries<Double> m_upband;
         private VariableSeries<Double> m_dnband;
+
+        // 
+        private _gBarHigh m_high;
+        private _gBarLow m_low;
+        private _MK_CurrDHigh m_dhigh;
+        private _MK_CurrDLow m_dlow;
+
+
 
         private IOrderMarket m_rsiCross_LE_Mkt;
         private IOrderMarket m_rsiCross_SE_Mkt;
         private IOrderMarket m_rsiCross_LX_Mkt;
         private IOrderMarket m_rsiCross_SX_Mkt;
 
-        private int m_countbars = 0;
+        private int m_countbars = 0;    // number of bars a position has been held
 
 		public _gRSI_E_X(object _ctx):base(_ctx)
         {
@@ -91,6 +102,7 @@ namespace PowerLanguage.Strategy {
         {
             m_marketopened = new _gUtility_MarketsOpened(this);
             m_timetotrade = new _gUtility_TimeToTrade(this);
+            m_morningtime = new _gUtility_TimeToTrade(this);
             m_rsi = new Function.RSI(this);
             m_pnl = new _gPnlFC(this);
 
@@ -104,6 +116,10 @@ namespace PowerLanguage.Strategy {
             m_upband = new VariableSeries<double>(this);
             m_dnband = new VariableSeries<double>(this);
 
+            m_high = new _gBarHigh(this);
+            m_low = new _gBarLow(this);
+            m_dhigh = new _MK_CurrDHigh(this);
+            m_dlow = new _MK_CurrDLow(this);
 
             m_rsiCross_LE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "L", EOrderAction.Buy));
@@ -123,14 +139,26 @@ namespace PowerLanguage.Strategy {
             //m_timetotrade.StartTime = startTime;
             //m_timetotrade.EndTime = endTime;
 
-            m_timetotrade.StartTime = "9:30";
-            m_timetotrade.EndTime = "16:00";
+            m_timetotrade.StartTime = "10:31";
+            m_timetotrade.EndTime = "15:30";
+            m_morningtime.StartTime = "9:30";
+            m_morningtime.EndTime = "10:30";
 
             m_rsi.price = m_close;
             m_rsi.length = len_rsi;
 
             m_midband.Price = m_rsi;
-            m_midband.Length = len_bb;
+            m_midband.Length = 180;
+
+            m_high.leg1 = leg1;
+            m_high.leg2 = leg2;
+            m_high.leg3 = leg3;
+            m_low.leg1 = leg1;
+            m_low.leg2 = leg2;
+            m_low.leg3 = leg3;
+            
+            m_dhigh.Data = m_high;
+            m_dlow.Data = m_low;
 
             m_pnl.price = m_close;
             m_pnl.calltype = "strat";
@@ -146,12 +174,19 @@ namespace PowerLanguage.Strategy {
                     + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
                     + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
 
-                var m_sdev = m_rsi.StandardDeviationCustom(len_bb, 1);
+                // RSI Bollinger Band
+                //var m_sdev = m_rsi.StandardDeviationCustom(180, 1);
                 //m_upband.Value = m_midband[0] + 2 * m_sdev;
                 //m_dnband.Value = m_midband[0] - 2 * m_sdev;
-
+                
+                // Fix Band
                 m_upband.Value = 70;
                 m_dnband.Value = 30;
+
+                //  
+                double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
+                double midhigh = 0.5 * (m_dhigh[0] + mid);
+                double midlow = 0.5 * (m_dlow[0] + mid);
 
                 if (PublicFunctions.DoubleLess(m_rsi[0], m_upband[0]))
                     ++m_count1.Value;
@@ -159,10 +194,30 @@ namespace PowerLanguage.Strategy {
                     m_count1.Value = 0;
                 if (m_count1.Value == confirmbars
                     && m_mp[0] >= 0
-                    && m_timetotrade[0])
+                    //&& m_timetotrade[0]
+                    )
                 {
-                    m_rsiCross_SE_Mkt.Send();
-                    m_countbars = 1;
+                    if (m_timetotrade[0])
+                    {
+                        if (m_close[0] >= midhigh)
+                        {
+                            m_rsiCross_SE_Mkt.Send();
+                            m_countbars = 1;
+                        }
+                        else
+                        {
+                            if (m_mp[0] > 0)
+                            {
+                                m_rsiCross_LX_Mkt.Send();
+                                m_countbars = 0;
+                            }
+                        }
+                    }
+                    if (m_morningtime[0])
+                    {
+                        m_rsiCross_SE_Mkt.Send();
+                        m_countbars = 1;
+                    }
                 }
 
                 if (PublicFunctions.DoubleGreater(m_rsi[0], m_dnband[0]))
@@ -172,33 +227,53 @@ namespace PowerLanguage.Strategy {
 
                 if (m_count2.Value == confirmbars
                     && m_mp[0] <= 0
-                    && m_timetotrade[0])
+                    //&& m_timetotrade[0]
+                    )
                 {
-                    m_rsiCross_LE_Mkt.Send();
-                    m_countbars = 1;
+                    if (m_timetotrade[0])
+                    {
+                        if (m_close[0] <= midlow)
+                        {
+                            m_rsiCross_LE_Mkt.Send();
+                            m_countbars = 1;
+                        }
+                        else
+                        {
+                            if (m_mp[0] < 0)
+                            {
+                                m_rsiCross_SX_Mkt.Send();
+                                m_countbars = 0;
+                            }
+                        }
+                    }
+                    if (m_morningtime[0])
+                    {
+                        m_rsiCross_LE_Mkt.Send();
+                        m_countbars = 1;
+                    }
                 }
             }
             if (m_mp[0] != 0)
                 ++m_countbars;
 
-            if (!m_marketopened[0] 
-                || !m_timetotrade[0]
-                || m_pnl[0] < -Math.Abs(0.5)
-                || m_pnl[0] > Math.Abs(1.0)
-                //|| (m_countbars >= 50 && m_pnl[0] < 0)
-                )
-            {
-                if (m_mp[0] > 0)
-                {
-                    m_rsiCross_LX_Mkt.Send();
-                    m_countbars = 0;
-                }
-                if (m_mp[0] < 0)
-                {
-                    m_rsiCross_SX_Mkt.Send();
-                    m_countbars = 0;
-                }
-            }
+            //if (!m_marketopened[0]
+            //    //|| !m_timetotrade[0]
+            //    || m_pnl[0] < -Math.Abs(0.5)
+            //    //|| m_pnl[0] > Math.Abs(1.0)
+            //    //|| (m_countbars >= 50 && m_pnl[0] < 0)
+            //    )
+            //{
+            //    if (m_mp[0] > 0)
+            //    {
+            //        m_rsiCross_LX_Mkt.Send();
+            //        m_countbars = 0;
+            //    }
+            //    if (m_mp[0] < 0)
+            //    {
+            //        m_rsiCross_SX_Mkt.Send();
+            //        m_countbars = 0;
+            //    }
+            //}
       
 
 		}

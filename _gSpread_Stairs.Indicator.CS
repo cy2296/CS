@@ -15,7 +15,7 @@ namespace PowerLanguage.Indicator
         private _gBarLow m_low;
         private _gBarTipical m_average;
         
-
+       
         private VariableSeries<int> m_pos;
        // private _gTestFC1 m_stairway;
 
@@ -25,8 +25,8 @@ namespace PowerLanguage.Indicator
 
         private _MK_PrevDHigh m_prevDHigh;
         private _MK_PrevDLow m_prevDLow;
-        
-
+        private _MK_CurrDHigh m_CurrDHigh;
+        private _MK_CurrDLow m_CurrDLow;
 
         // plot candlesticks
         private IPlotObject plot1;
@@ -79,6 +79,8 @@ namespace PowerLanguage.Indicator
             m_average = new _gBarTipical(this);
             m_prevDHigh = new _MK_PrevDHigh(this);
             m_prevDLow = new _MK_PrevDLow(this);
+            m_CurrDHigh = new _MK_CurrDHigh(this);
+            m_CurrDLow = new _MK_CurrDLow(this);
             m_pos = new VariableSeries<int>(this);
             //m_stairway = new _gTestFC1(this);
 
@@ -140,6 +142,8 @@ namespace PowerLanguage.Indicator
 
             m_prevDHigh.Data = m_high;
             m_prevDLow.Data = m_low;
+            m_CurrDHigh.Data = m_high;
+            m_CurrDLow.Data = m_low;
         }
 		protected override void CalcBar()
         {
@@ -197,14 +201,12 @@ namespace PowerLanguage.Indicator
                     {
                         //plot10.Set(prevDLow);
                     }
-                    double prevDMid = 0.5 * (prevDHigh + prevDLow);
+                    //double prevDMid = 0.5 * (prevDHigh + prevDLow);
                     double prevDPH = prevDLow + 1.382 * (prevDHigh - prevDLow);
                     double prevDPL = prevDHigh - 1.382 * (prevDHigh - prevDLow);
                     //plot11.Set(prevDMid);
-
-
-                    //plot12.Set(prevDPH);
-                    //plot13.Set(prevDPL);
+                    plot12.Set(m_CurrDHigh[0]);
+                    plot13.Set(m_CurrDLow[0]);
                     
                 }
                 else
