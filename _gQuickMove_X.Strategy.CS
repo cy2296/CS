@@ -16,6 +16,7 @@ namespace PowerLanguage.Strategy {
         private VariableSeries<int> m_pos;
         private _gBarClose m_close;
         private VariableSeries<double> m_slope;
+        private VariableSeries<double> m_slopeslope;
         private AverageFC m_slopeAvg;
         private _gPnlFC m_pnl;
 
@@ -62,6 +63,7 @@ namespace PowerLanguage.Strategy {
             m_pos = new VariableSeries<int>(this);
             m_close = new _gBarClose(this);
             m_slope = new VariableSeries<double>(this);
+            m_slopeslope = new VariableSeries<double>(this);
             m_slopeAvg = new AverageFC(this);
             m_pnl = new _gPnlFC(this);
             m_QuickMove_LX_Mkt = OrderCreator.MarketThisBar
@@ -77,7 +79,8 @@ namespace PowerLanguage.Strategy {
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
             m_close.leg3 = leg3;
-            m_slopeAvg.price = m_slope;
+            //m_slopeAvg.price = m_slope;
+            m_slopeAvg.price = m_slopeslope;
             m_slopeAvg.length = length;
             m_pnl.price = m_close;
             m_pnl.calltype = "strat";
@@ -85,10 +88,16 @@ namespace PowerLanguage.Strategy {
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
+
             m_slope.Value = (m_close[0] - m_close[lookback]) / lookback;
+            m_slopeslope.Value = (m_slope[0] - m_slope[lookback]) / lookback;
+
             var m_sdev = m_slope.StandardDeviationCustom(length, 1);
             var upband = m_slopeAvg[0] + 2 * m_sdev;
             var dnband = m_slopeAvg[0] - 2 * m_sdev;
+            //var m_sdev1 = m_slopeslope.StandardDeviationCustom(length, 1);
+            //var upband = m_slopeAvg[0] + 2 * m_sdev1;
+            //var dnband = m_slopeAvg[0] - 2 * m_sdev1;
             
             if (m_pnl[0] > 0)
             {

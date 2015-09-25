@@ -30,8 +30,6 @@ namespace PowerLanguage.Strategy {
         private _MK_CurrDHigh m_dhigh;
         private _MK_CurrDLow m_dlow;
 
-
-
         private IOrderMarket m_rsiCross_LE_Mkt;
         private IOrderMarket m_rsiCross_SE_Mkt;
         private IOrderMarket m_rsiCross_LX_Mkt;
@@ -42,33 +40,9 @@ namespace PowerLanguage.Strategy {
 		public _gRSI_E_X(object _ctx):base(_ctx)
         {
             //// XLE
-            //leg1 = 1;
-            //leg2 = -0.333;
-            //leg3 = -0.5;
-            //len_rsi = 14;
-            //len_bb = 15;
-            //confirmbars = 1;
-            //startTime = "9:30";
-            //endTime = "16:00";
-            //stop = 0.15;
-            //exit = 0.15;
-
-            //// SPY
-            //leg1 = 0.333;
-            //leg2 = -1;
-            //leg3 = 0.5;      
-            //len_rsi = 14;
-            //len_bb = 15;
-            //confirmbars = 1;
-            //startTime = "9:30";
-            //endTime = "16:00";
-            //stop = 0.15;
-            //exit = 0.15;
-
-            // CL
-            leg1 = 0.5;
-            leg2 = -1;
-            leg3 = 0.333;
+            leg1 = 1;
+            leg2 = -0.333;
+            leg3 = -0.5;
             len_rsi = 14;
             len_bb = 15;
             confirmbars = 1;
@@ -76,6 +50,30 @@ namespace PowerLanguage.Strategy {
             endTime = "16:00";
             stop = 0.15;
             exit = 0.15;
+
+            //// SPY
+            //leg1 = 0.333;
+            //leg2 = -1;
+            //leg3 = 0.5;
+            //len_rsi = 14;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //startTime = "9:30";
+            //endTime = "16:00";
+            //stop = 0.15;
+            //exit = 0.15;
+
+            //// CL
+            //leg1 = 0.5;
+            //leg2 = -1;
+            //leg3 = 0.333;
+            //len_rsi = 14;
+            //len_bb = 15;
+            //confirmbars = 1;
+            //startTime = "9:30";
+            //endTime = "16:00";
+            //stop = 0.15;
+            //exit = 0.15;
         }
         [Input]
         public double leg1 { get; set; }
@@ -180,8 +178,8 @@ namespace PowerLanguage.Strategy {
                 //m_dnband.Value = m_midband[0] - 2 * m_sdev;
                 
                 // Fix Band
-                m_upband.Value = 70;
-                m_dnband.Value = 30;
+                m_upband.Value = 75;
+                m_dnband.Value = 25;
 
                 //  
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);

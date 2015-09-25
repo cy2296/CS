@@ -205,6 +205,9 @@ namespace PowerLanguage.Indicator
                     double prevDPH = prevDLow + 1.382 * (prevDHigh - prevDLow);
                     double prevDPL = prevDHigh - 1.382 * (prevDHigh - prevDLow);
                     //plot11.Set(prevDMid);
+
+                    plot10.Set(0.5 * (m_CurrDHigh[0] + 0.5 * (m_CurrDHigh[0] + m_CurrDLow[0])));
+                    plot11.Set(0.5 * (m_CurrDLow[0] + 0.5 * (m_CurrDHigh[0] + m_CurrDLow[0])));
                     plot12.Set(m_CurrDHigh[0]);
                     plot13.Set(m_CurrDLow[0]);
                     
