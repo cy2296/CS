@@ -4,9 +4,15 @@ using System.Linq;
 using PowerLanguage.Function;
 using ATCenterProxy.interop;
 
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
+
 namespace PowerLanguage.Strategy {
 	public class _gRSI_E_X : SignalObject 
     {
+        private System.Text.StringBuilder csv;  // for debug only
+
         private _gUtility_MarketsOpened m_marketopened;
         
         private _gUtility_TimeToTrade m_timetotrade;
@@ -36,6 +42,7 @@ namespace PowerLanguage.Strategy {
         private IOrderMarket m_rsiCross_SX_Mkt;
 
         private int m_countbars = 0;    // number of bars a position has been held
+        private int m_entrycount = 0;  // entry times
 
 		public _gRSI_E_X(object _ctx):base(_ctx)
         {
@@ -98,6 +105,8 @@ namespace PowerLanguage.Strategy {
 
 		protected override void Create() 
         {
+            csv = new StringBuilder();
+
             m_marketopened = new _gUtility_MarketsOpened(this);
             m_timetotrade = new _gUtility_TimeToTrade(this);
             m_morningtime = new _gUtility_TimeToTrade(this);
@@ -123,10 +132,15 @@ namespace PowerLanguage.Strategy {
                     (new SOrderParameters(Contracts.Default, "L", EOrderAction.Buy));
             m_rsiCross_SE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
+            //m_rsiCross_LE_Mkt = OrderCreator.MarketThisBar
+            //        (new SOrderParameters(10, "L", EOrderAction.Buy));
+            //m_rsiCross_SE_Mkt = OrderCreator.MarketThisBar
+            //        (new SOrderParameters(2000, "S", EOrderAction.SellShort));
+
             m_rsiCross_LX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell));
+            (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell, OrderExit.FromAll));
             m_rsiCross_SX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover));
+            (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
 		}
 		protected override void StartCalc() 
         {
@@ -164,7 +178,7 @@ namespace PowerLanguage.Strategy {
 		protected override void CalcBar()
         {
             m_mp.Value = StrategyInfo.MarketPosition;
-
+            
             if (m_marketopened[0])
             { 
                 // find entries
@@ -186,12 +200,15 @@ namespace PowerLanguage.Strategy {
                 double midhigh = 0.5 * (m_dhigh[0] + mid);
                 double midlow = 0.5 * (m_dlow[0] + mid);
 
+                if (m_mp[0] == 0)
+                    m_entrycount = 0;
+
                 if (PublicFunctions.DoubleLess(m_rsi[0], m_upband[0]))
                     ++m_count1.Value;
                 else
                     m_count1.Value = 0;
                 if (m_count1.Value == confirmbars
-                    && m_mp[0] >= 0
+                    //&& m_mp[0] >= 0
                     //&& m_timetotrade[0]
                     )
                 {
@@ -199,22 +216,41 @@ namespace PowerLanguage.Strategy {
                     {
                         if (m_close[0] >= midhigh)
                         {
-                            m_rsiCross_SE_Mkt.Send();
-                            m_countbars = 1;
+                            if (m_mp[0] >= 0)
+                            {
+                                m_rsiCross_SE_Mkt.Send();
+                                m_entrycount = 1;
+                            }
+                            if (m_mp[0] < 0 && m_entrycount == 1
+                                && m_pnl[0] < -Math.Abs(0.3))
+                            {
+                                m_rsiCross_SE_Mkt.Send();  // add short
+                                ++m_entrycount;                              
+                            }
                         }
                         else
                         {
                             if (m_mp[0] > 0)
                             {
                                 m_rsiCross_LX_Mkt.Send();
-                                m_countbars = 0;
+                                m_entrycount = 0;
+
                             }
                         }
                     }
                     if (m_morningtime[0])
                     {
-                        m_rsiCross_SE_Mkt.Send();
-                        m_countbars = 1;
+                        if (m_mp[0] >= 0)
+                        {
+                            m_rsiCross_SE_Mkt.Send();
+                            m_entrycount = 1;
+                        }
+                        if (m_mp[0] < 0 && m_entrycount == 1   // add short
+                            && m_pnl[0] < -Math.Abs(0.3))
+                        {
+                            m_rsiCross_SE_Mkt.Send();
+                            ++m_entrycount;
+                        }
                     }
                 }
 
@@ -224,7 +260,7 @@ namespace PowerLanguage.Strategy {
                     m_count2.Value = 0;
 
                 if (m_count2.Value == confirmbars
-                    && m_mp[0] <= 0
+                    //&& m_mp[0] <= 0
                     //&& m_timetotrade[0]
                     )
                 {
@@ -232,27 +268,60 @@ namespace PowerLanguage.Strategy {
                     {
                         if (m_close[0] <= midlow)
                         {
-                            m_rsiCross_LE_Mkt.Send();
-                            m_countbars = 1;
+                            if (m_mp[0] <= 0)
+                            {
+                                m_rsiCross_LE_Mkt.Send();
+                                m_entrycount = 1;
+                            }
+                            if (m_mp[0] > 0 && m_entrycount == 1
+                                && m_pnl[0] < -Math.Abs(0.3))
+                            {
+                                m_rsiCross_LE_Mkt.Send();  // add long
+                                ++m_entrycount;
+                            }
                         }
                         else
                         {
                             if (m_mp[0] < 0)
                             {
                                 m_rsiCross_SX_Mkt.Send();
-                                m_countbars = 0;
+                                m_entrycount = 0;
                             }
                         }
                     }
                     if (m_morningtime[0])
                     {
-                        m_rsiCross_LE_Mkt.Send();
-                        m_countbars = 1;
+                        if (m_mp[0] <= 0)
+                        {
+                            m_rsiCross_LE_Mkt.Send();
+                            m_entrycount = 1;
+                        }
+                        if (m_mp[0] > 0 && m_entrycount == 1   // add long
+                            && m_pnl[0] < -Math.Abs(0.3))
+                        {
+                            m_rsiCross_LE_Mkt.Send();
+                            ++m_entrycount;
+                        }
                     }
                 }
             }
-            if (m_mp[0] != 0)
-                ++m_countbars;
+
+            if (Bars.CurrentBar < 1000)
+            {
+                var x = Bars.TimeValue.Date;
+                var a = Bars.TimeValue.TimeOfDay;
+                var b = Bars.CurrentBar;
+                var c = m_mp[0];
+                var d = m_pnl[0];
+                var e = m_entrycount;
+                var f = m_count1[0];
+                var g = m_count2[0];
+
+                var newLine = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}{8}",
+                x, a, b, c, d, e, f, g, System.Environment.NewLine);
+                csv.Append(newLine);
+                System.IO.File.WriteAllText("C:/data/debug1.csv", csv.ToString());
+            }
 
             //if (!m_marketopened[0]
             //    //|| !m_timetotrade[0]
