@@ -14,7 +14,7 @@ namespace PowerLanguage.Strategy {
     {
         private System.Text.StringBuilder csv;  // for debug only
 
-        private _gPnlFC m_pnl;
+        private _gPnlFC2 m_pnl;
         private _gBarClose m_close;
 
         private VariableSeries<int> m_pos;
@@ -60,7 +60,7 @@ namespace PowerLanguage.Strategy {
 
 		protected override void Create() 
         {
-            m_pnl = new _gPnlFC(this);
+            m_pnl = new _gPnlFC2(this);
             m_close = new _gBarClose(this);
 
             m_pos = new VariableSeries<int>(this);
@@ -76,7 +76,8 @@ namespace PowerLanguage.Strategy {
 		protected override void StartCalc() 
         {
             m_pnl.price = m_close;
-            m_pnl.calltype = "strat";
+            m_pnl.position = m_pos;
+
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
             m_close.leg3 = leg3;
@@ -103,7 +104,7 @@ namespace PowerLanguage.Strategy {
                 if (m_pos[0] < 0)
                     m_QuickMove2_SX_Mkt.Send();
             }
-
+            
             //if (Bars.CurrentBar < 4000)
             //{
             //    var x = Bars.TimeValue.Date;
