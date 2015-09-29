@@ -79,8 +79,8 @@ namespace PowerLanguage.Strategy {
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
             m_close.leg3 = leg3;
-            //m_slopeAvg.price = m_slope;
-            m_slopeAvg.price = m_slopeslope;
+            m_slopeAvg.price = m_slope;
+            //m_slopeAvg.price = m_slopeslope;
             m_slopeAvg.length = length;
             m_pnl.price = m_close;
             m_pnl.calltype = "strat";

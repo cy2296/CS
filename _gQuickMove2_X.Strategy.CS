@@ -89,8 +89,11 @@ namespace PowerLanguage.Strategy {
             else
                 m_timecount.Value = m_timecount[1] + 1;
 
-            if (m_timecount[0] <= postime
-                && m_pnl[0] >= profittar)
+            //if (m_timecount[0] <= postime
+            //    && m_pnl[0] >= profittar)
+            if ((m_timecount[0] <= 50 && m_pnl[0] >= 0.35)
+                //|| (m_timecount[0] >= 120 && m_pnl[0] < 0)
+                )
             {
                 if (m_pos[0] > 0)
                     m_QuickMove2_LX_Mkt.Send();
@@ -98,7 +101,7 @@ namespace PowerLanguage.Strategy {
                     m_QuickMove2_SX_Mkt.Send();
             }
 
-            //if (Bars.CurrentBar < 2000)
+            //if (Bars.CurrentBar < 4000)
             //{
             //    var x = Bars.TimeValue.Date;
             //    var a = Bars.TimeValue.TimeOfDay;

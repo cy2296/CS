@@ -124,9 +124,9 @@ namespace PowerLanguage.Strategy {
             m_rsiCross_SE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
             m_rsiCross_LX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell));
+                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell, OrderExit.FromAll));
             m_rsiCross_SX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover));
+                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
 		}
 		protected override void StartCalc() 
         {
@@ -250,9 +250,25 @@ namespace PowerLanguage.Strategy {
                         m_countbars = 1;
                     }
                 }
+
+                //// 攤平
+                //if (m_timetotrade[0]
+                //    //|| m_morningtime[0] 
+                //    )
+                //{
+                //    if (m_mp[0] != 0 && m_pnl[0] < 0.35)
+                //    { 
+                //        if    
+                        
+                //    }
+                //}
+
             }
             if (m_mp[0] != 0)
                 ++m_countbars;
+
+
+
 
             //if (!m_marketopened[0]
             //    //|| !m_timetotrade[0]
