@@ -84,16 +84,19 @@ namespace PowerLanguage.Strategy {
 		protected override void CalcBar()
         {
             m_pos.Value = StrategyInfo.MarketPosition;
-            if (m_pos[0] == 0)
+            if (m_pos[0] == 0
+                || (m_pos[0] != 0 && m_pos[1] != 0 
+                    && Math.Abs(m_pos[0]) >= Math.Abs(m_pos[1])  // reverse or add more
+                    )
+                )
                 m_timecount.Value = 0;
             else
+            {
                 m_timecount.Value = m_timecount[1] + 1;
+            }
 
-            //if (m_timecount[0] <= postime
-            //    && m_pnl[0] >= profittar)
-            if ((m_timecount[0] <= 50 && m_pnl[0] >= 0.35)
-                //|| (m_timecount[0] >= 120 && m_pnl[0] < 0)
-                )
+            if (m_timecount[0] <= postime
+                && m_pnl[0] >= profittar)
             {
                 if (m_pos[0] > 0)
                     m_QuickMove2_LX_Mkt.Send();
