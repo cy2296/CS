@@ -20,11 +20,11 @@ namespace PowerLanguage.Strategy {
 
         private Function.RSI m_rsi;
         
-        private _gPnlFC2 m_pnl_1;
-        private _gPnlFC2 m_pnl_2;
-
-        private VariableSeries<int> m_mp1;   // position info
-        private VariableSeries<int> m_mp2;   // position info
+        private _gPnlFC m_pnl_1;
+       // private _gPnlFC2 m_pnl_2;
+        
+        private VariableSeries<int> m_mp;   // position info
+        //private VariableSeries<int> m_mp2;   // position info
 
         private VariableSeries<Double> m_close;
         private VariableSeries<int> m_count1;   // confirm bars for oversold
@@ -120,11 +120,11 @@ namespace PowerLanguage.Strategy {
             m_morningtime = new _gUtility_TimeToTrade(this);
             m_rsi = new Function.RSI(this);
 
-            m_pnl_1 = new _gPnlFC2(this);
-            m_pnl_2 = new _gPnlFC2(this);
+            m_pnl_1 = new _gPnlFC(this);
+            //m_pnl_2 = new _gPnlFC2(this);
 
-            m_mp1 = new VariableSeries<int>(this);
-            m_mp2 = new VariableSeries<int>(this);
+            m_mp = new VariableSeries<int>(this);
+            //m_mp2 = new VariableSeries<int>(this);
             m_close = new VariableSeries<double>(this);
             m_count1 = new VariableSeries<int>(this);
             m_count2 = new VariableSeries<int>(this);
@@ -184,14 +184,15 @@ namespace PowerLanguage.Strategy {
             m_dlow.Data = m_low;
 
             m_pnl_1.price = m_close;
-            m_pnl_1.position = m_mp1;
+            m_pnl_1.calltype = "strat";
+            //m_pnl_1.position = m_mp1;
 
-            m_pnl_2.price = m_close;
-            m_pnl_2.position = m_mp2;
+            //m_pnl_2.price = m_close;
+            //m_pnl_2.position = m_mp2;
         }
 		protected override void CalcBar()
         {
-            //m_mp.Value = StrategyInfo.MarketPosition;
+            m_mp.Value = StrategyInfo.MarketPosition;
             
             if (m_marketopened[0])
             { 
@@ -214,7 +215,7 @@ namespace PowerLanguage.Strategy {
                 double midhigh = 0.5 * (m_dhigh[0] + mid);
                 double midlow = 0.5 * (m_dlow[0] + mid);
 
-                if (m_mp1[0] == 0)
+                if (m_mp[0] == 0)
                     m_entrycount = 0;
 
                 if (PublicFunctions.DoubleLess(m_rsi[0], m_upband[0]))
@@ -229,35 +230,26 @@ namespace PowerLanguage.Strategy {
                     {
                         if (m_close[0] >= midhigh)
                         {
-                            if (m_mp1[0] >= 0 || m_mp2[0] >= 0)
+                            if (m_mp[0] >= 0)
                             {
                                 m_rsiCross_LX_Mkt.Send();
-                                m_mp1.Value = 0;
-                                m_mp2.Value = 0;
-                                
                                 m_rsiCross_SE1_Mkt.Send();
-                                m_mp1.Value = -1;
-
                                 m_entrycount = 1;
                             }
-                            
-                            if (m_mp1[0] < 0 && m_entrycount == 1
-                                && m_pnl_1[0] < -Math.Abs(0.3))
+
+                            if (m_mp[0] < 0 && m_entrycount == 1
+                                && m_pnl_1[0] < -Math.Abs(0.3)
+                                )
                             {
                                 m_rsiCross_SE2_Mkt.Send();  // add short
-                                m_mp2.Value = -1;
-
-                                ++m_entrycount;                              
+                                ++m_entrycount;
                             }
                         }
                         else
                         {
-                            if (m_mp1[0] > 0 || m_mp2[0] > 0)
+                            if (m_mp[0] > 0)
                             {
                                 m_rsiCross_LX_Mkt.Send();
-                                m_mp1.Value = 0;
-                                m_mp2.Value = 0;
-                                
                                 m_entrycount = 0;
 
                             }
@@ -265,23 +257,16 @@ namespace PowerLanguage.Strategy {
                     }
                     if (m_morningtime[0])
                     {
-                        if (m_mp1[0] >= 0 || m_mp2[0] >= 0)
+                        if (m_mp[0] >= 0)
                         {
                             m_rsiCross_LX_Mkt.Send();
-                            m_mp1.Value = 0;
-                            m_mp2.Value = 0;
-
                             m_rsiCross_SE1_Mkt.Send();
-                            m_mp1.Value = -1;
-
                             m_entrycount = 1;
                         }
-                        if (m_mp1[0] < 0 && m_entrycount == 1   // add short
+                        if (m_mp[0] < 0 && m_entrycount == 1   // add short
                             && m_pnl_1[0] < -Math.Abs(0.3))
                         {
                             m_rsiCross_SE2_Mkt.Send();
-                            m_mp2.Value = -1;
-
                             ++m_entrycount;
                         }
                     }
@@ -300,54 +285,40 @@ namespace PowerLanguage.Strategy {
                     {
                         if (m_close[0] <= midlow)
                         {
-                            if (m_mp1[0] <= 0 || m_mp2[0] <= 0)
+                            if (m_mp[0] <= 0)
                             {
                                 m_rsiCross_SX_Mkt.Send();
-                                m_mp1.Value = m_mp2.Value = 0;
-
                                 m_rsiCross_LE1_Mkt.Send();
-                                m_mp1.Value = 1;
-
                                 m_entrycount = 1;
                             }
-                            if (m_mp1[0] > 0 && m_entrycount == 1
+                            if (m_mp[0] > 0 && m_entrycount == 1
                                 && m_pnl_1[0] < -Math.Abs(0.3))
                             {
                                 m_rsiCross_LE2_Mkt.Send();  // add long
-                                m_mp2.Value = 1;
-
                                 ++m_entrycount;
                             }
                         }
                         else
                         {
-                            if (m_mp1[0] < 0 || m_mp2[0] < 0)
+                            if (m_mp[0] < 0)
                             {
                                 m_rsiCross_SX_Mkt.Send();
-                                m_mp1.Value = m_mp2.Value = 0;
-
                                 m_entrycount = 0;
                             }
                         }
                     }
                     if (m_morningtime[0])
                     {
-                        if (m_mp1[0] <= 0 || m_mp2[0] <= 0)
+                        if (m_mp[0] <= 0)
                         {
                             m_rsiCross_SX_Mkt.Send();
-                            m_mp1.Value = m_mp2.Value = 0;
-
                             m_rsiCross_LE1_Mkt.Send();
-                            m_mp1.Value = 1;
-
                             m_entrycount = 1;
                         }
-                        if (m_mp1[0] > 0 && m_entrycount == 1   // add long
+                        if (m_mp[0] > 0 && m_entrycount == 1   // add long
                             && m_pnl_1[0] < -Math.Abs(0.3))
                         {
                             m_rsiCross_LE2_Mkt.Send();
-                            m_mp2.Value = 1;
-
                             ++m_entrycount;
                         }
                     }
