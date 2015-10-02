@@ -209,12 +209,13 @@ namespace PowerLanguage.Strategy {
                 // Fix Band
                 m_upband.Value = 75;
                 m_dnband.Value = 25;
-
+                double firstPnl = 0.3;
                 //  
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
                 double midhigh = 0.5 * (m_dhigh[0] + mid);
                 double midlow = 0.5 * (m_dlow[0] + mid);
 
+                // 
                 if (m_mp[0] == 0)
                     m_entrycount = 0;
 
@@ -222,13 +223,20 @@ namespace PowerLanguage.Strategy {
                     ++m_count1.Value;
                 else
                     m_count1.Value = 0;
-                if (m_count1.Value == confirmbars
-                    //&& m_mp[0] >= 0
+
+                if (PublicFunctions.DoubleGreater(m_rsi[0], m_dnband[0]))
+                    ++m_count2.Value;
+                else
+                    m_count2.Value = 0;
+
+                if (m_count1.Value == confirmbars  // just come back down
+                    && m_count2[0] > 0 // avoid >75 to <25
                     )
                 {
                     if (m_timetotrade[0])
                     {
                         if (m_close[0] >= midhigh)
+                        //if (m_close[0] >= mid)
                         {
                             if (m_mp[0] >= 0)
                             {
@@ -238,7 +246,7 @@ namespace PowerLanguage.Strategy {
                             }
 
                             if (m_mp[0] < 0 && m_entrycount == 1
-                                && m_pnl_1[0] < -Math.Abs(0.3)
+                                && m_pnl_1[0] < -Math.Abs(firstPnl)
                                 )
                             {
                                 m_rsiCross_SE2_Mkt.Send();  // add short
@@ -264,7 +272,7 @@ namespace PowerLanguage.Strategy {
                             m_entrycount = 1;
                         }
                         if (m_mp[0] < 0 && m_entrycount == 1   // add short
-                            && m_pnl_1[0] < -Math.Abs(0.3))
+                            && m_pnl_1[0] < -Math.Abs(firstPnl))
                         {
                             m_rsiCross_SE2_Mkt.Send();
                             ++m_entrycount;
@@ -272,18 +280,14 @@ namespace PowerLanguage.Strategy {
                     }
                 }
 
-                if (PublicFunctions.DoubleGreater(m_rsi[0], m_dnband[0]))
-                    ++m_count2.Value;
-                else
-                    m_count2.Value = 0;
-
-                if (m_count2.Value == confirmbars
-                    //&& m_mp[0] <= 0
+                if (m_count2.Value == confirmbars  // just come back up
+                    && m_count1[0] > 0 // avoid 
                     )
                 {
                     if (m_timetotrade[0])
                     {
                         if (m_close[0] <= midlow)
+                        //if (m_close[0] <= mid)
                         {
                             if (m_mp[0] <= 0)
                             {
@@ -292,7 +296,7 @@ namespace PowerLanguage.Strategy {
                                 m_entrycount = 1;
                             }
                             if (m_mp[0] > 0 && m_entrycount == 1
-                                && m_pnl_1[0] < -Math.Abs(0.3))
+                                && m_pnl_1[0] < -Math.Abs(firstPnl))
                             {
                                 m_rsiCross_LE2_Mkt.Send();  // add long
                                 ++m_entrycount;
@@ -316,7 +320,7 @@ namespace PowerLanguage.Strategy {
                             m_entrycount = 1;
                         }
                         if (m_mp[0] > 0 && m_entrycount == 1   // add long
-                            && m_pnl_1[0] < -Math.Abs(0.3))
+                            && m_pnl_1[0] < -Math.Abs(firstPnl))
                         {
                             m_rsiCross_LE2_Mkt.Send();
                             ++m_entrycount;

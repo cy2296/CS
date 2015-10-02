@@ -28,7 +28,14 @@ namespace PowerLanguage.Strategy
         private bool dnTrend;
 
         //private _gSpreadPnlFC m_sprdPnl;
-                      
+
+        // 
+        private _gBarHigh m_high;
+        private _gBarLow m_low;
+        private _MK_CurrDHigh m_dhigh;
+        private _MK_CurrDLow m_dlow;
+      
+
 
         // Risk functions
         private VariableSeries<Double> m_close;
@@ -36,9 +43,13 @@ namespace PowerLanguage.Strategy
         private _gRisk_StopShortCount m_stopshortcount;
 
         //private _gRisk_StopForPos m_stopPos;
-
         private IOrderMarket m_regression_LE_Mkt;
         private IOrderMarket m_regression_SE_Mkt;
+        private IOrderMarket m_regression_LX_Mkt;
+        private IOrderMarket m_regression_SX_Mkt;
+
+        // 
+
 
 		public _gRegression_E(object _ctx):base(_ctx)
         {
@@ -112,6 +123,13 @@ namespace PowerLanguage.Strategy
             m_twoLineGap = new VariableSeries<double>(this);
             m_gapIncreasing = new VariableSeries<int>(this);
             m_gapDecreasing = new VariableSeries<int>(this);
+
+            //
+            m_high = new _gBarHigh(this);
+            m_low = new _gBarLow(this);
+            m_dhigh = new _MK_CurrDHigh(this);
+            m_dlow = new _MK_CurrDLow(this);
+
             // risk ..
             m_close = new VariableSeries<double>(this);
             m_stoplongcount = new _gRisk_StopLongCount(this);
@@ -121,6 +139,10 @@ namespace PowerLanguage.Strategy
                     (new SOrderParameters(Contracts.Default, "L", EOrderAction.Buy));
             m_regression_SE_Mkt = OrderCreator.MarketThisBar
                     (new SOrderParameters(Contracts.Default, "S", EOrderAction.SellShort));
+            m_regression_LX_Mkt = OrderCreator.MarketThisBar
+                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell, OrderExit.FromAll));
+            m_regression_SX_Mkt = OrderCreator.MarketThisBar
+                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
 
             //m_sprdPnl = new _gSpreadPnlFC(this);
             //m_stopPos = new _gRisk_StopForPos(this);
@@ -146,6 +168,9 @@ namespace PowerLanguage.Strategy
             m_stopshortcount.price = m_close;
             m_stopshortcount.stopCriteria = 0.25;
 
+
+            m_dhigh.Data = m_high;
+            m_dlow.Data = m_low;
             //m_sprdPnl.leg1 = leg1;
             //m_sprdPnl.leg2 = leg2;
             //m_sprdPnl.leg3 = leg3;
@@ -159,6 +184,10 @@ namespace PowerLanguage.Strategy
             if (MarketsAreOpened())
             {
                 m_mp.Value = StrategyInfo.MarketPosition;
+
+                double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
+                double midhigh = 0.5 * (m_dhigh[0] + mid);
+                double midlow = 0.5 * (m_dlow[0] + mid);
 
                 if (leg2 == 0 && leg3 == 0)
                     m_averagePrice.Value = (Bars.High[0] + Bars.Low[0] + Bars.Close[0]) / 3;
@@ -182,24 +211,30 @@ namespace PowerLanguage.Strategy
                 if (m_mp[0] >= 0
                     && upTrend
                     && m_twoLineGap[0] > Math.Abs(highBand)
-                    && m_stopshortcount[0] == 0
+                    //&& m_stopshortcount[0] == 0
                     //&& m_stopshortcount[0] + m_stoplongcount[0] < 2
                     && m_timeToTrade[0]
                     //&& m_twoLineGap[0] < lowBand
                     )
                 {
-                    m_regression_SE_Mkt.Send();
+                    //if (m_close[0] >= mid)
+                        m_regression_SE_Mkt.Send();
+                    //else
+                    //    m_regression_LX_Mkt.Send();
                 }
                 if (m_mp[0] <= 0
                     && dnTrend
                     && m_twoLineGap[0] < -Math.Abs(lowBand)
-                    && m_stoplongcount[0] == 0
+                    //&& m_stoplongcount[0] == 0
                     //&& m_stopshortcount[0] + m_stoplongcount[0] < 2
                     && m_timeToTrade[0]
                     //&& m_twoLineGap[0] > highBand
                     )
                 {
-                    m_regression_LE_Mkt.Send();
+                    //if (m_close[0] <= mid)
+                        m_regression_LE_Mkt.Send();
+                    //else
+                    //    m_regression_SX_Mkt.Send();
                 }
 
                 //if (m_stopPos[0] == 1)

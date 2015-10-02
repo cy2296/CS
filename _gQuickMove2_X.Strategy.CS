@@ -148,7 +148,8 @@ namespace PowerLanguage.Strategy {
             }
 
             if ( (m_timecount[0] <= 50 && m_firstpnl[0] >= 0.35)
-               ||(m_timecount[0] <= 50 && m_secondpnl[0] >= 0.5)
+                 //(m_timecount[0] <= 50 && m_firstpnl[0] <= -Math.Abs(0.35))
+               ||(m_timecount[0] <= 50 && m_secondpnl[0] >= 0.50)
                //||(m_timecount[0] > 50 && m_secondpnl[0] < 0)
                 )
             //if (m_timecount[0] <= postime
