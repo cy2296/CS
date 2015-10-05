@@ -223,14 +223,14 @@ namespace PowerLanguage.Strategy {
                 else
                     m_count2.Value = 0;
 
-                if (m_count1.Value == confirmbars  // just come back down
+                if (m_count1.Value == 0  // just come back down
                     && m_count2[0] > 0 // avoid >75 to <25
                     )
                 {
                     if (m_timetotrade[0])
                     {
-                        if (m_close[0] >= midhigh)
-                        //if (m_close[0] >= mid)
+                        //if (m_close[0] >= midhigh)
+                        if (m_close[0] >= mid)
                         {
                             if (m_mp[0] >= 0)
                             {
@@ -274,14 +274,14 @@ namespace PowerLanguage.Strategy {
                     }
                 }
 
-                if (m_count2.Value == confirmbars  // just come back up
+                if (m_count2.Value == 0  // just come back up
                     && m_count1[0] > 0 // avoid 
                     )
                 {
                     if (m_timetotrade[0])
                     {
-                        if (m_close[0] <= midlow)
-                        //if (m_close[0] <= mid)
+                        //if (m_close[0] <= midlow)
+                        if (m_close[0] <= mid)
                         {
                             if (m_mp[0] <= 0)
                             {
