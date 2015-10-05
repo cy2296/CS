@@ -26,7 +26,8 @@ namespace PowerLanguage.Strategy {
         private VariableSeries<int> m_mp;   // position info
         //private VariableSeries<int> m_mp2;   // position info
 
-        private VariableSeries<Double> m_close;
+        //private VariableSeries<Double> m_close;
+        private _gBarClose m_close;
         private VariableSeries<int> m_count1;   // confirm bars for oversold
         private VariableSeries<int> m_count2;   // confirm bars for overbought
         // for RSI BB
@@ -121,11 +122,10 @@ namespace PowerLanguage.Strategy {
             m_rsi = new Function.RSI(this);
 
             m_pnl_1 = new _gPnlFC(this);
-            //m_pnl_2 = new _gPnlFC2(this);
 
             m_mp = new VariableSeries<int>(this);
-            //m_mp2 = new VariableSeries<int>(this);
-            m_close = new VariableSeries<double>(this);
+            //m_close = new VariableSeries<double>(this);
+            m_close = new _gBarClose(this);
             m_count1 = new VariableSeries<int>(this);
             m_count2 = new VariableSeries<int>(this);
 
@@ -173,6 +173,9 @@ namespace PowerLanguage.Strategy {
             m_midband.Price = m_rsi;
             m_midband.Length = 180;
 
+            m_close.leg1 = leg1;
+            m_close.leg2 = leg2;
+            m_close.leg3 = leg3;
             m_high.leg1 = leg1;
             m_high.leg2 = leg2;
             m_high.leg3 = leg3;
@@ -185,10 +188,6 @@ namespace PowerLanguage.Strategy {
 
             m_pnl_1.price = m_close;
             m_pnl_1.calltype = "strat";
-            //m_pnl_1.position = m_mp1;
-
-            //m_pnl_2.price = m_close;
-            //m_pnl_2.position = m_mp2;
         }
 		protected override void CalcBar()
         {
@@ -196,11 +195,6 @@ namespace PowerLanguage.Strategy {
             
             if (m_marketopened[0])
             { 
-                // find entries
-                m_close.Value = Bars.Close[0] * leg1
-                    + ((leg2 != 0) ? BarsOfData(2).Close[0] * leg2 : 0)
-                    + ((leg3 != 0) ? BarsOfData(3).Close[0] * leg3 : 0);
-
                 // RSI Bollinger Band
                 //var m_sdev = m_rsi.StandardDeviationCustom(180, 1);
                 //m_upband.Value = m_midband[0] + 2 * m_sdev;

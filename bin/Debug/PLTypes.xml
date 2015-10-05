@@ -2043,7 +2043,7 @@
             </summary>
             <param name="seria1">Series values.</param>
             <param name="length">The number of elements.</param>
-            <param name="offset">Offset interval for searsh.</param>
+            <param name="offset">Offset value.</param>
             <param name="comparator">Comparator to find the extremum.</param>
             <param name="extremeBar">Extremum bar index.</param>
             <typeparam name="T"></typeparam>
@@ -2056,7 +2056,7 @@
             </summary>
             <param name="seria">Series values.</param>
             <param name="length">The number of elements.</param>
-            <param name="offset">Offset interval.</param>
+            <param name="offset">Offset value.</param>
             <param name="extremeBar">Extremum bar index.</param>
             <returns>Extremum high value.</returns>
         </member>
@@ -2075,7 +2075,7 @@
             </summary>
             <param name="seria">Series values.</param>
             <param name="length">The number of elements.</param>
-            <param name="offset">Offset interval.</param>
+            <param name="offset">Offset value.</param>
             <param name="extremeBar">Extremum bar index.</param>
             <returns>Extremum low value.</returns>
         </member>
@@ -7528,8 +7528,8 @@
         </member>
         <member name="M:PowerLanguage.ITrendLineContainer.Create(PowerLanguage.ChartPoint,PowerLanguage.ChartPoint,System.Int32)">
             <summary>
-             Creates a TrendLine with '_start','_end'  coordinates and 
-             '_data_stream' number data stream.
+             Creates a TrendLine with '_start','_end'  coordinates, 
+             '_data_stream' number data stream, and '_on_same_subchart' flag.
             </summary>
             <param name="start">TrendLine's start point.</param>
             <param name="end">TrendLine's end point.</param>
@@ -7538,8 +7538,8 @@
         </member>
         <member name="M:PowerLanguage.ITrendLineContainer.Create(PowerLanguage.ChartPoint,PowerLanguage.ChartPoint,System.Boolean)">
             <summary>
-             Creates a TrendLine with '_start','_end'  coordinates
-             and '_on_same_subchart' flag.
+             Creates a TrendLine with '_start','_end'  coordinates, 
+             '_data_stream' number data stream, and '_on_same_subchart' flag.
             </summary>
             <param name="start">TrendLine's start point.</param>
             <param name="end">TrendLine's end point.</param>
@@ -7548,7 +7548,8 @@
         </member>
         <member name="M:PowerLanguage.ITrendLineContainer.Create(PowerLanguage.ChartPoint,PowerLanguage.ChartPoint)">
             <summary>
-             Creates a TrendLine with '_start','_end' coordinates.
+             Creates a TrendLine with '_start','_end' coordinates, 
+             '_data_stream' number data stream, and '_on_same_subchart' flag.
             </summary>
             <param name="start">TrendLine's start point.</param>
             <param name="end">TrendLine's end point.</param>
