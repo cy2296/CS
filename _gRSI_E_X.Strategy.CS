@@ -201,8 +201,8 @@ namespace PowerLanguage.Strategy {
                 //m_dnband.Value = m_midband[0] - 2 * m_sdev;
                 
                 // Fix Band
-                m_upband.Value = 70;
-                m_dnband.Value = 30;
+                m_upband.Value = 75;
+                m_dnband.Value = 25;
                 double firstPnl = 0.3;
                 //  
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);

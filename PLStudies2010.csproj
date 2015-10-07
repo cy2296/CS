@@ -48,8 +48,6 @@
     <Reference Include="C:\Program Files\TS Support\MultiCharts .NET64\PLDataLoader.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Copy of _gBarHigh.Function.CS" />
-    <Compile Include="Copy of _gPnlFC2.Function.CS" />
     <Compile Include="Price_Less_Avg.Indicator.CS" />
     <Compile Include="Avg_Close_Greater_Avg_Open.Indicator.CS" />
     <Compile Include="DMI.Indicator.CS" />
@@ -449,6 +447,7 @@
     <Compile Include="gRSI_E_X.Strategy.CS" />
     <Compile Include="_gTestBuy.Strategy.CS" />
     <Compile Include="_gTestSell.Strategy.CS" />
+    <Compile Include="_gManual_1.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
