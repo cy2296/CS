@@ -448,6 +448,7 @@
     <Compile Include="_gTestBuy.Strategy.CS" />
     <Compile Include="_gTestSell.Strategy.CS" />
     <Compile Include="_gManual_1.Strategy.CS" />
+    <Compile Include="_gRSI_E_X_2.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

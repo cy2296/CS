@@ -21,6 +21,7 @@ namespace PowerLanguage.Strategy {
         private VariableSeries<int> m_timecount;
         private VariableSeries<double> m_secondpnl;
         private bool m_secondpos = false;
+        
 
         [Input]
         public double leg1 { get; set; }
@@ -32,6 +33,8 @@ namespace PowerLanguage.Strategy {
         public int postime { get; set; }
         [Input]
         public double profittar { get; set; }
+        [Input]
+        public bool marketorder { get; set; }
 
 		public _gQuickMove2_X(object _ctx):base(_ctx)
         {
@@ -58,9 +61,14 @@ namespace PowerLanguage.Strategy {
         }
         private IOrderMarket m_reverse_LE1_Mkt;
         private IOrderMarket m_reverse_SE1_Mkt;
-
         private IOrderMarket m_QuickMove2_LX_Mkt;
         private IOrderMarket m_QuickMove2_SX_Mkt;
+
+        private IOrderPriced m_reverse_LE1_Lmt;
+        private IOrderPriced m_reverse_SE1_Lmt;
+        private IOrderPriced m_QuickMove2_LX_Lmt;
+        private IOrderPriced m_QuickMove2_SX_Lmt;
+
 
 		protected override void Create() 
         {
@@ -73,13 +81,21 @@ namespace PowerLanguage.Strategy {
             m_secondpnl = new VariableSeries<double>(this);
 
             m_reverse_LE1_Mkt = OrderCreator.MarketThisBar
-        (new SOrderParameters(Contracts.Default, "RevL1", EOrderAction.Buy));
+                (new SOrderParameters(Contracts.Default, "RevL1", EOrderAction.Buy));
             m_reverse_SE1_Mkt = OrderCreator.MarketThisBar
-        (new SOrderParameters(Contracts.Default, "RevS1", EOrderAction.SellShort));
-
+                (new SOrderParameters(Contracts.Default, "RevS1", EOrderAction.SellShort));
             m_QuickMove2_LX_Mkt = OrderCreator.MarketThisBar
                 (new SOrderParameters(Contracts.Default, "QLX", EOrderAction.Sell, OrderExit.FromAll));
             m_QuickMove2_SX_Mkt = OrderCreator.MarketThisBar
+                (new SOrderParameters(Contracts.Default, "QSX", EOrderAction.BuyToCover, OrderExit.FromAll));
+
+            m_reverse_LE1_Lmt = OrderCreator.Limit
+                            (new SOrderParameters(Contracts.Default, "RevL1", EOrderAction.Buy));
+            m_reverse_SE1_Lmt = OrderCreator.Limit
+                (new SOrderParameters(Contracts.Default, "RevS1", EOrderAction.SellShort));
+            m_QuickMove2_LX_Lmt = OrderCreator.Limit
+                (new SOrderParameters(Contracts.Default, "QLX", EOrderAction.Sell, OrderExit.FromAll));
+            m_QuickMove2_SX_Lmt = OrderCreator.Limit
                 (new SOrderParameters(Contracts.Default, "QSX", EOrderAction.BuyToCover, OrderExit.FromAll));
 
             csv = new StringBuilder();
@@ -158,12 +174,18 @@ namespace PowerLanguage.Strategy {
             {
                 if (m_pos[0] > 0)
                 {
-                    m_QuickMove2_LX_Mkt.Send();
+                    if (marketorder)
+                        m_QuickMove2_LX_Mkt.Send();
+                    else
+                        m_QuickMove2_LX_Lmt.Send(Bars.Close[0]);
                     //m_reverse_SE1_Mkt.Send();
                 }
                 if (m_pos[0] < 0)
                 {
-                    m_QuickMove2_SX_Mkt.Send();
+                    if (marketorder)
+                        m_QuickMove2_SX_Mkt.Send();
+                    else
+                        m_QuickMove2_SX_Lmt.Send(Bars.Close[0]);
                     //m_reverse_LE1_Mkt.Send();
                 }
             }
