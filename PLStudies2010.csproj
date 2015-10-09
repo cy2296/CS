@@ -440,8 +440,6 @@
     <Compile Include="AccessToPMMData_ex.Strategy.CS" />
     <Compile Include="_GaryRevAverageFC.Function.CS" />
     <Compile Include="_gTestStrat3.Strategy.CS" />
-    <Compile Include="_GaryTest.Indicator.CS" />
-    <Compile Include="_GaryTestIndicator.Indicator.CS" />
     <Compile Include="_gPnlFC2.Function.CS" />
     <Compile Include="_gTestStrat4.Strategy.CS" />
     <Compile Include="gRSI_E_X.Strategy.CS" />
