@@ -218,329 +218,329 @@ namespace PowerLanguage.Strategy
                 // 9:30 ~ 10:30
                 if (m_timerange1[0]) 
                 {
-                    //if (m_count2[0] > 0  // avoid >75 to <25
-                    //    && m_count1[0] == 0  // just come back down
-                    //    //&& m_close[0] > m_localhigh
-                    //    //&& m_waitingforshort[0]
-                    //    )
-                    //{
-                    //    if (m_mp[0] >= 0)
-                    //    {
-                    //        m_rsiCross_LX_Mkt.Send();
-                    //        m_rsiCross_SE1_Mkt.Send();
-                    //        m_entrycount = 1;
-                    //        m_waitingforshort.Value = false;
-                    //    }
-                    //    if (m_mp[0] < 0 && m_entrycount == 1   // add short
-                    //        && m_pnl[0] < -Math.Abs(m_firstpnl))
-                    //    {
-                    //        m_rsiCross_SE2_Mkt.Send();
-                    //        ++m_entrycount;
-                    //    }
-                    //}
-                    //if (m_count1[0] > 0  // avoid <25 to >75
-                    //    && m_count2[0] == 0  // just come back up
-                    //    )
-                    //{
-                    //    if (m_mp[0] <= 0)
-                    //    {
-                    //        m_rsiCross_SX_Mkt.Send();
-                    //        m_rsiCross_LE1_Mkt.Send();
-                    //        m_entrycount = 1;
-                    //    }
-                    //    if (m_mp[0] > 0 && m_entrycount == 1   // add long
-                    //        && m_pnl[0] < -Math.Abs(m_firstpnl))
-                    //    {
-                    //        m_rsiCross_LE2_Mkt.Send();
-                    //        ++m_entrycount;
-                    //    }
-                    //}
-                    ////
-                    if (m_count2[0] > 0)  // avoid >75 to <25
+                    if (m_count2[0] > 0  // avoid >75 to <25
+                        && m_count1[0] == 0  // just come back down
+                        //&& m_close[0] > m_localhigh
+                        //&& m_waitingforshort[0]
+                        )
                     {
-                        if (m_count1[0] == 0)
+                        if (m_mp[0] >= 0)
                         {
-                            if (m_mp[0] >= 0)
-                            {
-                                m_rsiCross_LX_Mkt.Send();
-                                m_secondpos = false;
-                                m_rsiCross_SE1_Mkt.Send();
-                                m_entrycount = 1;
-                                //m_waitingforshort.Value = false;
-                            }
-                            if (m_mp[0] < 0
-                                && m_entrycount <= 2
-                                && m_pnl[0] < -Math.Abs(m_firstpnl))
-                            {
-                                m_rsiCross_SE2_Mkt.Send();
-                                m_secondpos = true;
-                                ++m_entrycount;
-                            }
+                            m_rsiCross_LX_Mkt.Send();
+                            m_rsiCross_SE1_Mkt.Send();
+                            m_entrycount = 1;
+                            m_waitingforshort.Value = false;
                         }
-                        if (m_count1[0] == 1)
+                        if (m_mp[0] < 0 && m_entrycount == 1   // add short
+                            && m_pnl[0] < -Math.Abs(m_firstpnl))
                         {
-                            switch (m_entrycount)
-                            {
-                                case 1:
-                                    m_rsiCross_SE1_Mkt.Send();
-                                    //++m_entrycount;
-                                    break;
-                                case 2:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_SE1_Mkt.Send();
-                                        m_rsiCross_SE2_Mkt.Send();
-                                        // m_entrycount += 2;
-                                    }
-                                    break;
-                                case 3:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_SE2_Mkt.Send();
-                                        //++m_entrycount;
-                                    }
-                                    break;
-                            }
+                            m_rsiCross_SE2_Mkt.Send();
                             ++m_entrycount;
                         }
                     }
+                    if (m_count1[0] > 0  // avoid <25 to >75
+                        && m_count2[0] == 0  // just come back up
+                        )
+                    {
+                        if (m_mp[0] <= 0)
+                        {
+                            m_rsiCross_SX_Mkt.Send();
+                            m_rsiCross_LE1_Mkt.Send();
+                            m_entrycount = 1;
+                        }
+                        if (m_mp[0] > 0 && m_entrycount == 1   // add long
+                            && m_pnl[0] < -Math.Abs(m_firstpnl))
+                        {
+                            m_rsiCross_LE2_Mkt.Send();
+                            ++m_entrycount;
+                        }
+                    }
+                    //////
+                    //if (m_count2[0] > 0)  // avoid >75 to <25
+                    //{
+                    //    if (m_count1[0] == 0)
+                    //    {
+                    //        if (m_mp[0] >= 0)
+                    //        {
+                    //            m_rsiCross_LX_Mkt.Send();
+                    //            m_secondpos = false;
+                    //            m_rsiCross_SE1_Mkt.Send();
+                    //            m_entrycount = 1;
+                    //            //m_waitingforshort.Value = false;
+                    //        }
+                    //        if (m_mp[0] < 0
+                    //            && m_entrycount <= 2
+                    //            && m_pnl[0] < -Math.Abs(m_firstpnl))
+                    //        {
+                    //            m_rsiCross_SE2_Mkt.Send();
+                    //            m_secondpos = true;
+                    //            ++m_entrycount;
+                    //        }
+                    //    }
+                    //    if (m_count1[0] == 1)
+                    //    {
+                    //        switch (m_entrycount)
+                    //        {
+                    //            case 1:
+                    //                m_rsiCross_SE1_Mkt.Send();
+                    //                //++m_entrycount;
+                    //                break;
+                    //            case 2:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_SE1_Mkt.Send();
+                    //                    m_rsiCross_SE2_Mkt.Send();
+                    //                    // m_entrycount += 2;
+                    //                }
+                    //                break;
+                    //            case 3:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_SE2_Mkt.Send();
+                    //                    //++m_entrycount;
+                    //                }
+                    //                break;
+                    //        }
+                    //        ++m_entrycount;
+                    //    }
+                    //}
 
-                    if (m_count1[0] > 0)
-                    {
-                        if (m_count2[0] == 0)
-                        {
-                            if (m_mp[0] <= 0)
-                            {
-                                m_rsiCross_SX_Mkt.Send();
-                                m_secondpos = false;
-                                m_rsiCross_LE1_Mkt.Send();
-                                m_entrycount = 1;
-                            }
-                            if (m_mp[0] > 0
-                                && m_entrycount <= 2
-                                && m_pnl[0] < -Math.Abs(m_firstpnl))
-                            {
-                                m_rsiCross_LE2_Mkt.Send();
-                                m_secondpos = true;
-                                ++m_entrycount;
-                            }
-                        }
-                        if (m_count2[0] == 1)
-                        {
-                            switch (m_entrycount)
-                            {
-                                case 1:
-                                    m_rsiCross_LE1_Mkt.Send();
-                                    //++m_entrycount;
-                                    break;
-                                case 2:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_LE1_Mkt.Send();
-                                        m_rsiCross_LE2_Mkt.Send();
-                                        //m_entrycount += 2;
-                                    }
-                                    break;
-                                case 3:
-                                    {
-                                        m_rsiCross_LE2_Mkt.Send();
-                                        //++m_entrycount;
-                                    }
-                                    break;
-                            }
-                            ++m_entrycount;
-                        }
-                    }
-                    ////
+                    //if (m_count1[0] > 0)
+                    //{
+                    //    if (m_count2[0] == 0)
+                    //    {
+                    //        if (m_mp[0] <= 0)
+                    //        {
+                    //            m_rsiCross_SX_Mkt.Send();
+                    //            m_secondpos = false;
+                    //            m_rsiCross_LE1_Mkt.Send();
+                    //            m_entrycount = 1;
+                    //        }
+                    //        if (m_mp[0] > 0
+                    //            && m_entrycount <= 2
+                    //            && m_pnl[0] < -Math.Abs(m_firstpnl))
+                    //        {
+                    //            m_rsiCross_LE2_Mkt.Send();
+                    //            m_secondpos = true;
+                    //            ++m_entrycount;
+                    //        }
+                    //    }
+                    //    if (m_count2[0] == 1)
+                    //    {
+                    //        switch (m_entrycount)
+                    //        {
+                    //            case 1:
+                    //                m_rsiCross_LE1_Mkt.Send();
+                    //                //++m_entrycount;
+                    //                break;
+                    //            case 2:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_LE1_Mkt.Send();
+                    //                    m_rsiCross_LE2_Mkt.Send();
+                    //                    //m_entrycount += 2;
+                    //                }
+                    //                break;
+                    //            case 3:
+                    //                {
+                    //                    m_rsiCross_LE2_Mkt.Send();
+                    //                    //++m_entrycount;
+                    //                }
+                    //                break;
+                    //        }
+                    //        ++m_entrycount;
+                    //    }
+                    //}
+                    //////
                 }
 
                 // 10:31 ~ 15:30
                 if (m_timerange2[0])    
                 {
-                    //if (m_count2[0] > 0  // avoid >75 to <25
-                    //    && m_count1[0] == 0  // just come back down
-                    //    //&& m_close[0] >= m_localhigh
-                    //    //&& m_waitingforshort[0]
-                    //    )
-                    //{
-                    //    if (m_close[0] >= mid)
-                    //    {
-                    //        if (m_mp[0] >= 0)
-                    //        {
-                    //            m_rsiCross_LX_Mkt.Send();
-                    //            m_rsiCross_SE1_Mkt.Send();
-                    //            m_entrycount = 1;
-                    //            m_waitingforshort.Value = false;
-                    //        }
-
-                    //        if (m_mp[0] < 0 && m_entrycount == 1
-                    //            && m_pnl[0] < -Math.Abs(m_firstpnl)
-                    //            )
-                    //        {
-                    //            m_rsiCross_SE2_Mkt.Send();  // add short
-                    //            ++m_entrycount;
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        if (m_mp[0] > 0)
-                    //        {
-                    //            m_rsiCross_LX_Mkt.Send();
-                    //            m_entrycount = 0;
-                    //        }
-                    //    }
-                    //}
-                    //if (m_count2[0] == 0  // just come back up
-                    //    && m_count1[0] > 0  // avoid <25 to >75
-                    //    )
-                    //{
-                    //    if (m_close[0] <= mid)
-                    //    {
-                    //        if (m_mp[0] <= 0)
-                    //        {
-                    //            m_rsiCross_SX_Mkt.Send();
-                    //            m_rsiCross_LE1_Mkt.Send();
-                    //            m_entrycount = 1;
-                    //        }
-                    //        if (m_mp[0] > 0 && m_entrycount == 1
-                    //            && m_pnl[0] < -Math.Abs(m_firstpnl))
-                    //        {
-                    //            m_rsiCross_LE2_Mkt.Send();  // add long
-                    //            ++m_entrycount;
-                    //        }
-                    //    }
-                    //    else
-                    //    {
-                    //        if (m_mp[0] < 0)
-                    //        {
-                    //            m_rsiCross_SX_Mkt.Send();
-                    //            m_entrycount = 0;
-                    //        }
-                    //    }
-                    //}
-                    ////
-                    if (m_count2[0] > 0)  // avoid >75 to <25
+                    if (m_count2[0] > 0  // avoid >75 to <25
+                        && m_count1[0] == 0  // just come back down
+                        //&& m_close[0] >= m_localhigh
+                        //&& m_waitingforshort[0]
+                        )
                     {
-                        if (m_count1[0] == 0)
+                        if (m_close[0] >= mid)
                         {
-                            if (m_close[0] >= mid)
+                            if (m_mp[0] >= 0)
                             {
-                                if (m_mp[0] >= 0)
-                                {
-                                    m_rsiCross_LX_Mkt.Send();
-                                    m_secondpos = false;
-                                    m_rsiCross_SE1_Mkt.Send();
-                                    m_entrycount = 1;
-                                    //m_waitingforshort.Value = false;
-                                }
-
-                                if (m_mp[0] < 0
-                                    && m_entrycount <= 2
-                                    && m_pnl[0] < -Math.Abs(m_firstpnl)
-                                    )
-                                {
-                                    m_rsiCross_SE2_Mkt.Send();  // add short
-                                    m_secondpos = true;
-                                    ++m_entrycount;
-                                }
+                                m_rsiCross_LX_Mkt.Send();
+                                m_rsiCross_SE1_Mkt.Send();
+                                m_entrycount = 1;
+                                m_waitingforshort.Value = false;
                             }
-                            else
+
+                            if (m_mp[0] < 0 && m_entrycount == 1
+                                && m_pnl[0] < -Math.Abs(m_firstpnl)
+                                )
                             {
-                                if (m_mp[0] > 0)
-                                {
-                                    m_rsiCross_LX_Mkt.Send();
-                                    m_secondpos = false;
-                                    m_entrycount = 0;
-                                }
+                                m_rsiCross_SE2_Mkt.Send();  // add short
+                                ++m_entrycount;
                             }
                         }
-                        if (m_count1[0] == 1)
+                        else
                         {
-                            switch (m_entrycount)
+                            if (m_mp[0] > 0)
                             {
-                                case 1:
-                                    m_rsiCross_SE1_Mkt.Send();
-                                    //++m_entrycount;
-                                    break;
-                                case 2:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_SE1_Mkt.Send();
-                                        m_rsiCross_SE2_Mkt.Send();
-                                        //m_entrycount += 2;
-                                    }
-                                    break;
-                                case 3:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_SE2_Mkt.Send();
-                                        //++m_entrycount;
-                                    }
-                                    break;
+                                m_rsiCross_LX_Mkt.Send();
+                                m_entrycount = 0;
                             }
-                            ++m_entrycount;
                         }
                     }
-                    if (m_count1[0] > 0)  // avoid <25 to >75
+                    if (m_count2[0] == 0  // just come back up
+                        && m_count1[0] > 0  // avoid <25 to >75
+                        )
                     {
-                        if (m_count2[0] == 0)
+                        if (m_close[0] <= mid)
                         {
-                            if (m_close[0] <= mid)
+                            if (m_mp[0] <= 0)
                             {
-                                if (m_mp[0] <= 0)
-                                {
-                                    m_rsiCross_SX_Mkt.Send();
-                                    m_secondpos = false;
-                                    m_rsiCross_LE1_Mkt.Send();
-                                    m_entrycount = 1;
-                                }
-                                if (m_mp[0] > 0
-                                    && m_entrycount <= 2
-                                    && m_pnl[0] < -Math.Abs(m_firstpnl))
-                                {
-                                    m_rsiCross_LE2_Mkt.Send();  // add long
-                                    m_secondpos = true;
-                                    ++m_entrycount;
-                                }
+                                m_rsiCross_SX_Mkt.Send();
+                                m_rsiCross_LE1_Mkt.Send();
+                                m_entrycount = 1;
                             }
-                            else
+                            if (m_mp[0] > 0 && m_entrycount == 1
+                                && m_pnl[0] < -Math.Abs(m_firstpnl))
                             {
-                                if (m_mp[0] < 0)
-                                {
-                                    m_rsiCross_SX_Mkt.Send();
-                                    m_secondpos = false;
-                                    m_entrycount = 0;
-                                }
+                                m_rsiCross_LE2_Mkt.Send();  // add long
+                                ++m_entrycount;
                             }
                         }
-                        if (m_count2[0] == 1)
+                        else
                         {
-                            switch (m_entrycount)
+                            if (m_mp[0] < 0)
                             {
-                                case 1:
-                                    m_rsiCross_LE1_Mkt.Send();
-                                    //  ++m_entrycount;
-                                    break;
-                                case 2:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_LE1_Mkt.Send();
-                                        m_rsiCross_LE2_Mkt.Send();
-                                        // m_entrycount += 2;
-                                    }
-                                    break;
-                                case 3:
-                                    if (m_secondpos)
-                                    {
-                                        m_rsiCross_LE2_Mkt.Send();
-                                        //++m_entrycount;
-                                    }
-                                    break;
+                                m_rsiCross_SX_Mkt.Send();
+                                m_entrycount = 0;
                             }
-                            ++m_entrycount;
                         }
                     }
                     ////
+                    //if (m_count2[0] > 0)  // avoid >75 to <25
+                    //{
+                    //    if (m_count1[0] == 0)
+                    //    {
+                    //        if (m_close[0] >= mid)
+                    //        {
+                    //            if (m_mp[0] >= 0)
+                    //            {
+                    //                m_rsiCross_LX_Mkt.Send();
+                    //                m_secondpos = false;
+                    //                m_rsiCross_SE1_Mkt.Send();
+                    //                m_entrycount = 1;
+                    //                //m_waitingforshort.Value = false;
+                    //            }
+
+                    //            if (m_mp[0] < 0
+                    //                && m_entrycount <= 2
+                    //                && m_pnl[0] < -Math.Abs(m_firstpnl)
+                    //                )
+                    //            {
+                    //                m_rsiCross_SE2_Mkt.Send();  // add short
+                    //                m_secondpos = true;
+                    //                ++m_entrycount;
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            if (m_mp[0] > 0)
+                    //            {
+                    //                m_rsiCross_LX_Mkt.Send();
+                    //                m_secondpos = false;
+                    //                m_entrycount = 0;
+                    //            }
+                    //        }
+                    //    }
+                    //    if (m_count1[0] == 1)
+                    //    {
+                    //        switch (m_entrycount)
+                    //        {
+                    //            case 1:
+                    //                m_rsiCross_SE1_Mkt.Send();
+                    //                //++m_entrycount;
+                    //                break;
+                    //            case 2:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_SE1_Mkt.Send();
+                    //                    m_rsiCross_SE2_Mkt.Send();
+                    //                    //m_entrycount += 2;
+                    //                }
+                    //                break;
+                    //            case 3:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_SE2_Mkt.Send();
+                    //                    //++m_entrycount;
+                    //                }
+                    //                break;
+                    //        }
+                    //        ++m_entrycount;
+                    //    }
+                    //}
+                    //if (m_count1[0] > 0)  // avoid <25 to >75
+                    //{
+                    //    if (m_count2[0] == 0)
+                    //    {
+                    //        if (m_close[0] <= mid)
+                    //        {
+                    //            if (m_mp[0] <= 0)
+                    //            {
+                    //                m_rsiCross_SX_Mkt.Send();
+                    //                m_secondpos = false;
+                    //                m_rsiCross_LE1_Mkt.Send();
+                    //                m_entrycount = 1;
+                    //            }
+                    //            if (m_mp[0] > 0
+                    //                && m_entrycount <= 2
+                    //                && m_pnl[0] < -Math.Abs(m_firstpnl))
+                    //            {
+                    //                m_rsiCross_LE2_Mkt.Send();  // add long
+                    //                m_secondpos = true;
+                    //                ++m_entrycount;
+                    //            }
+                    //        }
+                    //        else
+                    //        {
+                    //            if (m_mp[0] < 0)
+                    //            {
+                    //                m_rsiCross_SX_Mkt.Send();
+                    //                m_secondpos = false;
+                    //                m_entrycount = 0;
+                    //            }
+                    //        }
+                    //    }
+                    //    if (m_count2[0] == 1)
+                    //    {
+                    //        switch (m_entrycount)
+                    //        {
+                    //            case 1:
+                    //                m_rsiCross_LE1_Mkt.Send();
+                    //                //  ++m_entrycount;
+                    //                break;
+                    //            case 2:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_LE1_Mkt.Send();
+                    //                    m_rsiCross_LE2_Mkt.Send();
+                    //                    // m_entrycount += 2;
+                    //                }
+                    //                break;
+                    //            case 3:
+                    //                if (m_secondpos)
+                    //                {
+                    //                    m_rsiCross_LE2_Mkt.Send();
+                    //                    //++m_entrycount;
+                    //                }
+                    //                break;
+                    //        }
+                    //        ++m_entrycount;
+                    //    }
+                    //}
+                    //////
                 }
             }
 
