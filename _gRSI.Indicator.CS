@@ -15,7 +15,7 @@ namespace PowerLanguage.Indicator{
         private double m_currSessionSum;
         private double m_currDeviationSum;
 
-
+        private XAverage m_rsiXavg;
 
 		public _gRSI(object _ctx):base(_ctx)
         {
@@ -50,7 +50,9 @@ namespace PowerLanguage.Indicator{
 
 		protected override void Create() {
             m_rsi = new Function.RSI(this);
+            m_rsiXavg = new XAverage(this);
             m_spread = new VariableSeries<double>(this);
+
             plot1 = AddPlot(new PlotAttributes("", EPlotShapes.Line, Color.Yellow));
             plot2 = AddPlot(new PlotAttributes("", EPlotShapes.Line, Color.Green));
             plot3 = AddPlot(new PlotAttributes("", EPlotShapes.Line, Color.Green));
@@ -64,6 +66,8 @@ namespace PowerLanguage.Indicator{
             midline = 0.5 * (oversold + overbought);
             m_rsi.price = m_spread;
             m_rsi.length = rsi_len;
+            m_rsiXavg.Price = m_rsi;
+            m_rsiXavg.Length = 240;
         }
 		protected override void CalcBar()
         {
@@ -71,9 +75,11 @@ namespace PowerLanguage.Indicator{
                 + ((leg2 != 0) ? BarsOfData(2).Close[0] : Bars.Close[0]) * leg2
                 + ((leg3 != 0) ? BarsOfData(3).Close[0] : Bars.Close[0]) * leg3;
 
+            double diff1 = m_rsiXavg[0] - 50;
+
             plot1.Set(m_rsi[0]);
-            plot2.Set(overbought);
-            plot3.Set(oversold);
+            plot2.Set(overbought + diff1);
+            plot3.Set(oversold + diff1);
             plot4.Set(midline);
 
             if (m_prevBarEndedSession)
@@ -99,9 +105,9 @@ namespace PowerLanguage.Indicator{
             double stdev = Math.Sqrt(m_currDeviationSum / m_todaybarcount);
             if (!Bars.LastBarInSession)
             {
-                plot5.Set(mean, Color.SkyBlue);
-                plot6.Set(mean + 1.645 * stdev, Color.White);
-                plot7.Set(mean - 1.645 * stdev, Color.White);
+                //plot5.Set(mean, Color.SkyBlue);
+                //plot6.Set(mean + 1.645 * stdev, Color.White);
+                //plot7.Set(mean - 1.645 * stdev, Color.White);
             }
 		}   
 	}

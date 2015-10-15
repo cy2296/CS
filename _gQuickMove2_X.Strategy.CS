@@ -21,7 +21,7 @@ namespace PowerLanguage.Strategy {
         private VariableSeries<int> m_timecount;
         private VariableSeries<double> m_secondpnl;
         private bool m_secondpos = false;
-        
+        //private bool marketorder = true;
 
         [Input]
         public double leg1 { get; set; }
@@ -44,6 +44,7 @@ namespace PowerLanguage.Strategy {
             leg3 = -0.5;
             postime = 20;
             profittar = 0.2;
+            marketorder = false;
 
             //// SPY
             //leg1 = 0.333;
@@ -51,6 +52,7 @@ namespace PowerLanguage.Strategy {
             //leg3 = 0.5;
             //postime = 20;
             //profittar = 0.2;
+            //marketorder = false;
 
             //// CL
             //leg1 = 0.5;
@@ -58,6 +60,7 @@ namespace PowerLanguage.Strategy {
             //leg3 = 0.333;
             //postime = 20;
             //profittar = 0.2;
+            //marketorder = false;
         }
         private IOrderMarket m_reverse_LE1_Mkt;
         private IOrderMarket m_reverse_SE1_Mkt;
@@ -104,7 +107,7 @@ namespace PowerLanguage.Strategy {
         {
             m_firstpnl.price = m_close;
             m_firstpnl.calltype = "strat";
-
+            
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
             m_close.leg3 = leg3;

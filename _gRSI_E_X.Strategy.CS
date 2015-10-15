@@ -34,6 +34,9 @@ namespace PowerLanguage.Strategy {
         private XAverage m_midband;
         private VariableSeries<Double> m_upband;
         private VariableSeries<Double> m_dnband;
+        private XAverage m_rsiXavg;
+        private AverageFC m_rsiAvg;
+        private int marketorder;
 
         // 
         private _gBarHigh m_high;
@@ -119,8 +122,8 @@ namespace PowerLanguage.Strategy {
         public double stop { get; set; }
         [Input]
         public double exit { get; set; }
-        [Input]
-        public int marketorder { get; set; }
+        //[Input]
+        //public int marketorder { get; set; }
 
 		protected override void Create() 
         {
@@ -142,6 +145,9 @@ namespace PowerLanguage.Strategy {
             m_midband = new XAverage(this);
             m_upband = new VariableSeries<double>(this);
             m_dnband = new VariableSeries<double>(this);
+            m_rsiXavg = new XAverage(this);
+            m_rsiAvg = new AverageFC(this);
+
 
             m_high = new _gBarHigh(this);
             m_low = new _gBarLow(this);
@@ -198,6 +204,13 @@ namespace PowerLanguage.Strategy {
             m_midband.Price = m_rsi;
             m_midband.Length = 180;
 
+            m_rsiXavg.Price = m_rsi;
+            m_rsiXavg.Length = 240;
+            
+            m_rsiAvg.price = m_rsi;
+            m_rsiAvg.length = 240;
+            marketorder = 0;
+
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
             m_close.leg3 = leg3;
@@ -226,8 +239,10 @@ namespace PowerLanguage.Strategy {
                 //m_dnband.Value = m_midband[0] - 2 * m_sdev;
                 
                 // Fix Band
-                m_upband.Value = 70;
-                m_dnband.Value = 30;
+                double diff1 = m_rsiXavg[0] - 50;
+                double diff2 = m_rsiAvg[0] - 50;
+                m_upband.Value = 70 - diff1;
+                m_dnband.Value = 30 - diff1;
                 double firstPnl = 0.3;
                 //  
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);

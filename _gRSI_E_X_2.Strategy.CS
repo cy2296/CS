@@ -21,6 +21,13 @@ namespace PowerLanguage.Strategy {
 
         // Price
         private _gBarClose m_close;
+        private _gBarHigh m_high;
+        private _gBarLow m_low;
+        private _MK_CurrDHigh m_dhigh;
+        private _MK_CurrDLow m_dlow;
+        private double m_localhigh;
+        private double m_locallow;
+        private bool m_updatelocalvalue = false;
 
         // Indicator
         private Function.RSI m_rsi;
