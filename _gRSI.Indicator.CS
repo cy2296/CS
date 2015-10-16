@@ -78,8 +78,8 @@ namespace PowerLanguage.Indicator{
             double diff1 = m_rsiXavg[0] - 50;
 
             plot1.Set(m_rsi[0]);
-            plot2.Set(overbought + diff1);
-            plot3.Set(oversold + diff1);
+            plot2.Set(overbought - diff1);
+            plot3.Set(oversold - diff1);
             plot4.Set(midline);
 
             if (m_prevBarEndedSession)

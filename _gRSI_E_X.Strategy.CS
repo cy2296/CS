@@ -248,7 +248,6 @@ namespace PowerLanguage.Strategy {
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
                 double midhigh = 0.5 * (m_dhigh[0] + mid);
                 double midlow = 0.5 * (m_dlow[0] + mid);
-
                 // 
                 if (m_mp[0] == 0)
                     m_entrycount = 0;
@@ -412,6 +411,11 @@ namespace PowerLanguage.Strategy {
                     }
                 }
             }
+
+
+
+
+
 
             //if (Bars.CurrentBar < 1000)
             //{
