@@ -209,7 +209,7 @@ namespace PowerLanguage.Strategy {
             
             m_rsiAvg.price = m_rsi;
             m_rsiAvg.length = 240;
-            marketorder = 0;
+            marketorder = 1;
 
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
@@ -241,8 +241,10 @@ namespace PowerLanguage.Strategy {
                 // Fix Band
                 double diff1 = m_rsiXavg[0] - 50;
                 double diff2 = m_rsiAvg[0] - 50;
-                m_upband.Value = 70 - diff1;
-                m_dnband.Value = 30 - diff1;
+                //m_upband.Value = 75;
+                //m_dnband.Value = 25;
+                m_upband.Value = 70; //-diff1;
+                m_dnband.Value = 30; //-diff1;
                 double firstPnl = 0.3;
                 //  
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);

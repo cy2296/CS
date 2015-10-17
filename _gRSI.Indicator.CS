@@ -23,8 +23,8 @@ namespace PowerLanguage.Indicator{
             leg2 = -0.333;
             leg3 = -0.5;
             rsi_len = 14;
-            overbought = 70;
-            oversold = 30;
+            overbought = 75;
+            oversold = 25;
         }
         private IPlotObject plot1;   // plot rsi
 		private IPlotObject plot2;
@@ -78,8 +78,11 @@ namespace PowerLanguage.Indicator{
             double diff1 = m_rsiXavg[0] - 50;
 
             plot1.Set(m_rsi[0]);
-            plot2.Set(overbought - diff1);
-            plot3.Set(oversold - diff1);
+            //plot2.Set(overbought - diff1);
+            //plot3.Set(oversold - diff1);
+            plot2.Set(overbought);
+            plot3.Set(oversold);
+
             plot4.Set(midline);
 
             if (m_prevBarEndedSession)
