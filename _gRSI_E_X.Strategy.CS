@@ -28,6 +28,9 @@ namespace PowerLanguage.Strategy {
 
         //private VariableSeries<Double> m_close;
         private _gBarClose m_close;
+        private XAverage m_xavg;
+        private XAverage m_avg;
+
         private VariableSeries<int> m_count1;   // confirm bars for oversold
         private VariableSeries<int> m_count2;   // confirm bars for overbought
         // for RSI BB
@@ -139,6 +142,8 @@ namespace PowerLanguage.Strategy {
             m_mp = new VariableSeries<int>(this);
             //m_close = new VariableSeries<double>(this);
             m_close = new _gBarClose(this);
+            m_xavg = new XAverage(this);
+            m_avg = new XAverage(this);
             m_count1 = new VariableSeries<int>(this);
             m_count2 = new VariableSeries<int>(this);
 
@@ -209,7 +214,7 @@ namespace PowerLanguage.Strategy {
             
             m_rsiAvg.price = m_rsi;
             m_rsiAvg.length = 240;
-            marketorder = 0;
+            marketorder = 1;
 
             m_close.leg1 = leg1;
             m_close.leg2 = leg2;
@@ -226,6 +231,11 @@ namespace PowerLanguage.Strategy {
 
             m_pnl_1.price = m_close;
             m_pnl_1.calltype = "strat";
+
+            m_xavg.Price = m_close;
+            m_xavg.Length = 60;
+            m_avg.Price = m_close;
+            m_avg.Length = 240;
         }
 		protected override void CalcBar()
         {
@@ -245,7 +255,11 @@ namespace PowerLanguage.Strategy {
                 m_dnband.Value = 30 - diff1;
                 double firstPnl = 0.3;
                 //  
-                double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
+                //double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
+                //double mid = m_xavg[0];
+                double mid = m_avg[0];
+
+
                 double midhigh = 0.5 * (m_dhigh[0] + mid);
                 double midlow = 0.5 * (m_dlow[0] + mid);
                 // 

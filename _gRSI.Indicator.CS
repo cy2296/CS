@@ -25,6 +25,7 @@ namespace PowerLanguage.Indicator{
             rsi_len = 14;
             overbought = 70;
             oversold = 30;
+            dynamicBand = true;
         }
         private IPlotObject plot1;   // plot rsi
 		private IPlotObject plot2;
@@ -47,6 +48,8 @@ namespace PowerLanguage.Indicator{
         public double oversold { get; set; }
         [Input]
         public double overbought { get; set; }
+        [Input]
+        public bool dynamicBand { get; set; }
 
 		protected override void Create() {
             m_rsi = new Function.RSI(this);
@@ -78,8 +81,16 @@ namespace PowerLanguage.Indicator{
             double diff1 = m_rsiXavg[0] - 50;
 
             plot1.Set(m_rsi[0]);
-            plot2.Set(overbought - diff1);
-            plot3.Set(oversold - diff1);
+            if (dynamicBand)
+            {
+                plot2.Set(overbought - diff1);
+                plot3.Set(oversold - diff1);
+            }
+            else
+            {
+                plot2.Set(overbought);
+                plot3.Set(oversold);
+            }
             plot4.Set(midline);
 
             if (m_prevBarEndedSession)
