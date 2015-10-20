@@ -26,6 +26,7 @@ namespace PowerLanguage.Indicator{
             overbought = 70;
             oversold = 30;
             dynamicBand = true;
+
         }
         private IPlotObject plot1;   // plot rsi
 		private IPlotObject plot2;
@@ -81,6 +82,7 @@ namespace PowerLanguage.Indicator{
             double diff1 = m_rsiXavg[0] - 50;
 
             plot1.Set(m_rsi[0]);
+
             if (dynamicBand)
             {
                 plot2.Set(overbought - diff1);
