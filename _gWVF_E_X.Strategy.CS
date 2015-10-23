@@ -65,12 +65,12 @@ namespace PowerLanguage.Strategy
             else 
                 m_count2.Value = 0;
 
-            if (m_mp[0] == 0)
-            { 
-                if (m_count1 == 
+            //if (m_mp[0] == 0)
+            //{ 
+            //    //if (m_count1 == 
             
-            }
-			buy_order.Send();
+            //}
+			//buy_order.Send();
 		}
 	}
 }

@@ -19,9 +19,9 @@ namespace PowerLanguage.Indicator
         private VariableSeries<int> m_pos;
        // private _gTestFC1 m_stairway;
 
-        private LinearRegValue m_linearregvalue1;
-        private VariableSeries<Double> m_linreg;
-        private XAverage m_linregEma;
+        //private LinearRegValue m_linearregvalue1;
+        //private VariableSeries<Double> m_linreg;
+        //private XAverage m_linregEma;
 
         private _MK_PrevDHigh m_prevDHigh;
         private _MK_PrevDLow m_prevDLow;
@@ -33,17 +33,17 @@ namespace PowerLanguage.Indicator
         private IPlotObject plot2;
         private IPlotObject plot3;
         private IPlotObject plot4;
-        // plot stairs
-        private IPlotObject plot5;
-        private IPlotObject plot6;
-        // regression line
-        private IPlotObject plot7;
-        private IPlotObject plot8;
+        //// plot stairs
+        //private IPlotObject plot5;
+        //private IPlotObject plot6;
+        //// regression line
+        //private IPlotObject plot7;
+        //private IPlotObject plot8;
 
-        private IPlotObject plot9;
-        private IPlotObject plot10;
+        //private IPlotObject plot9;
+        //private IPlotObject plot10;
+
         private IPlotObject plot11;
-
         private IPlotObject plot12;
         private IPlotObject plot13;
 
@@ -51,10 +51,7 @@ namespace PowerLanguage.Indicator
         {
             leg1 = 1.0;
             leg2 = -0.333;
-            leg3 = -0.5;
-            reg_length = 20;
-            displace = 0;
-            emalength = 4;
+            leg3 = -1.5;
         }
         [Input]
         public double leg1 { get; set; }
@@ -62,12 +59,12 @@ namespace PowerLanguage.Indicator
         public double leg2 { get; set; }
         [Input]
         public double leg3 { get; set; }
-        [Input]
-        public int reg_length { get; set; }
-        [Input]
-        public int displace { get; set; }
-        [Input]
-        public int emalength { get; set; }
+        //[Input]
+        //public int reg_length { get; set; }
+        //[Input]
+        //public int displace { get; set; }
+        //[Input]
+        //public int emalength { get; set; }
 
 		protected override void Create() 
         {
@@ -84,26 +81,26 @@ namespace PowerLanguage.Indicator
             m_pos = new VariableSeries<int>(this);
             //m_stairway = new _gTestFC1(this);
 
-            m_linearregvalue1 = new LinearRegValue(this);
-            m_linreg = new VariableSeries<Double>(this);
-            m_linregEma = new XAverage(this);
+            //m_linearregvalue1 = new LinearRegValue(this);
+            //m_linreg = new VariableSeries<Double>(this);
+            //m_linregEma = new XAverage(this);
 
             plot1 = AddPlot(new PlotAttributes("Open", EPlotShapes.LeftTick, Color.Red));
             plot2 = AddPlot(new PlotAttributes("High", EPlotShapes.BarHigh, Color.Red));
             plot3 = AddPlot(new PlotAttributes("Low", EPlotShapes.BarLow, Color.Red));
             plot4 = AddPlot(new PlotAttributes("Close", EPlotShapes.RightTick, Color.Red));
 
-            plot5 = AddPlot(new PlotAttributes("Low", EPlotShapes.LeftTick, Color.Red));
-            plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
+            //plot5 = AddPlot(new PlotAttributes("Low", EPlotShapes.LeftTick, Color.Red));
+            //plot6 = AddPlot(new PlotAttributes("Close", EPlotShapes.Line, Color.Red));
 
-            plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
-            plot8 = AddPlot(new PlotAttributes("LinRegEMA", EPlotShapes.Line, Color.Aqua));
+            //plot7 = AddPlot(new PlotAttributes("LinReg", EPlotShapes.Line, Color.Yellow));
+            //plot8 = AddPlot(new PlotAttributes("LinRegEMA", EPlotShapes.Line, Color.Aqua));
 
-            plot9 = AddPlot(new PlotAttributes("pDayHigh", EPlotShapes.Line, Color.Yellow));
-            plot10 = AddPlot(new PlotAttributes("pDayLow", EPlotShapes.Line, Color.Yellow));
-            plot11 = AddPlot(new PlotAttributes("pDayMid", EPlotShapes.Line, Color.Yellow));
+            //plot9 = AddPlot(new PlotAttributes("pDayHigh", EPlotShapes.Line, Color.Yellow));
+            //plot10 = AddPlot(new PlotAttributes("pDayLow", EPlotShapes.Line, Color.Yellow));
 
-            plot12 = AddPlot(new PlotAttributes("PH", EPlotShapes.Line, Color.White));
+            plot11 = AddPlot(new PlotAttributes("PH", EPlotShapes.Line, Color.White));
+            plot12 = AddPlot(new PlotAttributes("pDayMid", EPlotShapes.Line, Color.Yellow));
             plot13 = AddPlot(new PlotAttributes("PL", EPlotShapes.Line, Color.White));
 		}
         protected override void StartCalc()
@@ -133,12 +130,12 @@ namespace PowerLanguage.Indicator
             //m_stairway.c = (leg2 == 0 && leg3 == 0) ? Bars.Close : m_spreadClosFC;
             //m_stairway.calltype = "indic";
 
-            m_linearregvalue1.price = m_average;
-            m_linearregvalue1.length = reg_length;
-            m_linearregvalue1.tgtbar = 0;
+            //m_linearregvalue1.price = m_average;
+            //m_linearregvalue1.length = reg_length;
+            //m_linearregvalue1.tgtbar = 0;
 
-            m_linregEma.Price = m_linreg;
-            m_linregEma.Length = emalength;
+            //m_linregEma.Price = m_linreg;
+            //m_linregEma.Length = emalength;
 
             m_prevDHigh.Data = m_high;
             m_prevDLow.Data = m_low;
@@ -180,7 +177,7 @@ namespace PowerLanguage.Indicator
                 //    plot6.Set(m_stairway[0], Color.Aqua);
                 //}
 
-                m_linreg.Value = m_linearregvalue1[0];
+                //m_linreg.Value = m_linearregvalue1[0];
                 //plot7.Set(displace, m_linreg.Value);
                 //plot8.Set(m_linregEma[0]);
 
@@ -218,11 +215,5 @@ namespace PowerLanguage.Indicator
                 }
             }
 		}
-
-
-
-
 	}
-
-
 }
