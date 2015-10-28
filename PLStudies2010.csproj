@@ -450,6 +450,7 @@
     <Compile Include="_gWVF.Indicator.CS" />
     <Compile Include="gSpread.Indicator.CS" />
     <Compile Include="_gWVF_E_X.Strategy.CS" />
+    <Compile Include="_gHighLow.Strategy.CS" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -32,10 +32,11 @@ namespace PowerLanguage.Strategy
 
         // Indicator
         private Function.RSI m_rsi;
-        private double m_overbot = 75;
-        private double m_oversod = 25;
+        private VariableSeries<Double> m_upband;
+        private VariableSeries<Double> m_dnband;
         private VariableSeries<int> m_count1;   // confirm bars for oversold
         private VariableSeries<int> m_count2;   // confirm bars for overbought
+        private XAverage m_rsiXavg;             // xaverage of RSI
        
         // Position 
         private _gPnlFC m_pnl;
@@ -57,14 +58,18 @@ namespace PowerLanguage.Strategy
         private IOrderMarket m_rsiCross_SX2_Mkt;
         private IOrderMarket m_rsiCross_LX_Mkt;
         private IOrderMarket m_rsiCross_SX_Mkt;
-		
+        private int numlots;
+
+
         public gRSI_E_X(object _ctx):base(_ctx)
         {
             //// XLE
+           // Inst = "XLE";
             Leg1 = 1;
             Leg2 = -0.333;
             Leg3 = -0.5;
             LengthRSI = 14;
+            isBigSize = false;
 
             //// SPY
             //Leg1 = 0.333;
@@ -78,7 +83,8 @@ namespace PowerLanguage.Strategy
             //Leg3 = 0.333;
             //LengthRSI = 14; 
         }
-        
+        [Input]
+        public int numlots2 { get; set; } // XLE, SPY, CL, ES
         [Input]
         public double Leg1 { get; set; }
         [Input]
@@ -87,6 +93,8 @@ namespace PowerLanguage.Strategy
         public double Leg3 { get; set; }
         [Input]
         public int LengthRSI { get; set; }
+        [Input]
+        public bool isBigSize { get; set; }
 
 		protected override void Create() 
         {
@@ -103,37 +111,60 @@ namespace PowerLanguage.Strategy
             m_dlow = new _MK_CurrDLow(this);
 
             m_rsi = new Function.RSI(this);
+            m_upband = new VariableSeries<double>(this);
+            m_dnband = new VariableSeries<double>(this);
             m_count1 = new VariableSeries<int>(this);
             m_count2 = new VariableSeries<int>(this);
+            m_rsiXavg = new XAverage(this);  
 
             m_pnl = new _gPnlFC(this);
             m_mp = new VariableSeries<int>(this);
 
             m_waitingforshort = new VariableSeries<bool>(this);
             m_waitingforlong = new VariableSeries<bool>(this);
+            
+
+            
             m_rsiCross_LE1_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "L1", EOrderAction.Buy));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "L1", EOrderAction.Buy));
             m_rsiCross_LE2_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "L2", EOrderAction.Buy));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "L2", EOrderAction.Buy));
             m_rsiCross_SE1_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "S1", EOrderAction.SellShort));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "S1", EOrderAction.SellShort));
             m_rsiCross_SE2_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "S2", EOrderAction.SellShort));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "S2", EOrderAction.SellShort));
             m_rsiCross_LX1_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX1", EOrderAction.Sell));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "LX1", EOrderAction.Sell));
             m_rsiCross_LX2_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX2", EOrderAction.Sell));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "LX2", EOrderAction.Sell));
             m_rsiCross_SX1_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX1", EOrderAction.BuyToCover));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "SX1", EOrderAction.BuyToCover));
             m_rsiCross_SX2_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX2", EOrderAction.BuyToCover));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "SX2", EOrderAction.BuyToCover));
             m_rsiCross_LX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "LX", EOrderAction.Sell, OrderExit.FromAll));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "LX", EOrderAction.Sell, OrderExit.FromAll));
             m_rsiCross_SX_Mkt = OrderCreator.MarketThisBar
-                    (new SOrderParameters(Contracts.Default, "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
+                    (new SOrderParameters(Contracts.CreateUserSpecified(numlots), "SX", EOrderAction.BuyToCover, OrderExit.FromAll));
 		}
 		protected override void StartCalc()
         {
+            numlots = numlots2;
+            //if (Inst == "XLE")
+            //{
+            //    numlots = (isBigSize) ? 2000 : 150;
+            //}
+            //else if (Inst == "SPY")
+            //{
+            //    numlots = (isBigSize) ? 166 : 50;
+            //}
+            //else if (Inst == "USO")
+            //{
+            //    numlots = 225;
+            //}
+            //else if (Inst == "CL" || Inst == "ES")
+            //{
+            //    numlots = (isBigSize) ? 1 : 0;
+            //}
             m_marketopened.leg1 = Leg1;
             m_marketopened.leg2 = Leg2;
             m_marketopened.leg3 = Leg3;
@@ -156,6 +187,8 @@ namespace PowerLanguage.Strategy
 
             m_rsi.price = m_close;
             m_rsi.length = LengthRSI;
+            m_rsiXavg.Price = m_rsi;
+            m_rsiXavg.Length = 240;
 
             m_pnl.price = m_close;
             m_pnl.calltype = "strat";
@@ -169,9 +202,13 @@ namespace PowerLanguage.Strategy
 
             if (m_marketopened[0])
             {
+                double diff1 = m_rsiXavg[0] - 50;
+                m_upband.Value = 70 - diff1;
+                m_dnband.Value = 30 - diff1;
+
                 double mid = 0.5 * (m_dhigh[0] + m_dlow[0]);
-                double midhigh = 0.5 * (m_dhigh[0] + mid);
-                double midlow = 0.5 * (m_dlow[0] + mid);
+                //double midhigh = 0.5 * (m_dhigh[0] + mid);
+                //double midlow = 0.5 * (m_dlow[0] + mid);
 
                 if (m_mp[0] == 0)
                 {
@@ -187,12 +224,12 @@ namespace PowerLanguage.Strategy
                 }
 
 
-                if (PublicFunctions.DoubleLess(m_rsi[0], m_overbot))
+                if (PublicFunctions.DoubleLess(m_rsi[0], m_upband[0]))
                     ++m_count1.Value;
                 else
                     m_count1.Value = 0;
 
-                if (PublicFunctions.DoubleGreater(m_rsi[0], m_oversod))
+                if (PublicFunctions.DoubleGreater(m_rsi[0], m_dnband[0]))
                     ++m_count2.Value;
                 else
                     m_count2.Value = 0;
